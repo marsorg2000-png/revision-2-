@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German History Revision Hub - 200 Question Flashcard Bank</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight state management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        [x-cloak] { display: none !important; }
+
+        /* 3D Flashcard Animation Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ede3d0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbb389;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c5c3e;
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="flashcardApp()" x-cloak>
+
+    <!-- Top Navigation Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-600 flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap text-beige-200 text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">German History Revision Hub</h1>
+                        <span class="bg-accent-burgundy text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">200 Bank</span>
+                    </div>
+                    <p class="text-xs text-beige-300">Germany 1890–1945 • Verified Syllabus Recall & Diagnostic Re-testing</p>
+                </div>
+            </div>
+            
+            <!-- Quick Actions Toolbar -->
+            <div class="flex flex-wrap items-center gap-2 justify-center">
+                <!-- Search All 200 Questions Drawer Toggle -->
+                <button 
+                    @click="showSearchModal = true"
+                    class="bg-brown-800 hover:bg-brown-700 text-beige-100 border border-brown-700 px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-magnifying-glass text-beige-300"></i>
+                    <span>Browse All 200 Qs</span>
+                </button>
+
+                <!-- Revisit Missed Cards Button / Indicator -->
+                <button 
+                    @click="toggleWrongOnlyMode()"
+                    :disabled="wrongCards.length === 0 && !isWrongOnlyMode"
+                    :class="isWrongOnlyMode 
+                        ? 'bg-accent-burgundy text-white ring-2 ring-red-400 font-bold shadow-md' 
+                        : (wrongCards.length > 0 ? 'bg-red-500/20 text-red-200 border border-red-500/40 hover:bg-red-500/30' : 'bg-brown-800 text-beige-400/40 border border-brown-700/50 cursor-not-allowed')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center space-x-2">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Review Missed Cards</span>
+                    <span 
+                        class="px-1.5 py-0.2 rounded-full text-[10px] font-bold"
+                        :class="wrongCards.length > 0 ? 'bg-red-600 text-white' : 'bg-brown-700 text-beige-400'"
+                        x-text="wrongCards.length">
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-start">
+        
+        <!-- Controls & Configuration Bar -->
+        <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 shadow-sm space-y-3 mb-6">
+            <!-- Filter by Topic -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                    <span class="font-bold text-brown-800 flex items-center mr-1">
+                        <i class="fa-solid fa-filter text-brown-700 mr-1.5"></i> Unit / Topic:
+                    </span>
+                    <select 
+                        x-model="selectedTopic" 
+                        @change="applyFilters()"
+                        class="bg-beige-50 border border-beige-300 text-brown-900 rounded-xl px-3 py-1.5 font-semibold focus:outline-none focus:ring-2 focus:ring-brown-600">
+                        <option value="all">All Topics (Full 200 Questions Bank)</option>
+                        <option value="kaiser">Unit 1: 1900 Imperial System & Kaiser's Aims</option>
+                        <option value="versailles">Unit 1: WW1 Impact & Treaty of Versailles</option>
+                        <option value="weimar">Unit 1: 1919 Weimar Constitution & Early Uprisings</option>
+                        <option value="hyperinflation">Unit 1: 1923 Ruhr & Hyperinflation Crisis</option>
+                        <option value="stresemann">Unit 1: Stresemann Era & Golden Twenties Culture</option>
+                        <option value="depression">Unit 2: The Great Depression & Impact</option>
+                        <option value="risenazis">Unit 2: Rise of Nazis, Propaganda & Promises</option>
+                        <option value="dictatorship">Unit 2: 1930–1934 Path to Dictatorship</option>
+                        <option value="economic">Unit 3: Nazi Economic & Job Policies</option>
+                        <option value="womenyouth">Unit 3: Women, Education & Youth Groups</option>
+                        <option value="church">Unit 3: Religion, Churches & Opposition</option>
+                        <option value="minorities">Unit 3: Persecution of Minorities & Holocaust</option>
+                        <option value="police">Unit 3: Police State, Propaganda & War Opposition</option>
+                    </select>
+                </div>
+
+                <!-- Session Length Selector -->
+                <div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                    <span class="font-bold text-brown-800 mr-1">Batch Size:</span>
+                    <button @click="setSessionLimit(15)" :class="sessionLimit === 15 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">15</button>
+                    <button @click="setSessionLimit(25)" :class="sessionLimit === 25 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">25</button>
+                    <button @click="setSessionLimit(50)" :class="sessionLimit === 50 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">50</button>
+                    <button @click="setSessionLimit(200)" :class="sessionLimit === 200 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">All (200)</button>
+                </div>
+            </div>
+
+            <!-- Utility Controls (Shuffle, Jump, Reset) -->
+            <div class="flex flex-wrap items-center justify-between border-t border-beige-300/70 pt-2.5 text-xs gap-2">
+                <div class="flex items-center space-x-2">
+                    <button 
+                        @click="shuffleDeck()"
+                        class="bg-beige-50 hover:bg-beige-100 text-brown-800 border border-beige-300 px-3 py-1 rounded-xl font-medium transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-shuffle text-brown-600"></i>
+                        <span>Shuffle</span>
+                    </button>
+                    <button 
+                        @click="resetDeckProgress()"
+                        class="bg-beige-50 hover:bg-beige-100 text-brown-800 border border-beige-300 px-3 py-1 rounded-xl font-medium transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-rotate-left text-brown-600"></i>
+                        <span>Restart Session</span>
+                    </button>
+                </div>
+
+                <!-- Jump to Question Number -->
+                <div class="flex items-center space-x-1.5">
+                    <span class="text-brown-700">Jump to card:</span>
+                    <input 
+                        type="number" 
+                        min="1" 
+                        :max="activeDeck.length" 
+                        x-model.number="jumpInput" 
+                        @keydown.enter="jumpToCard()"
+                        placeholder="#"
+                        class="w-14 bg-beige-50 border border-beige-300 rounded-lg px-2 py-1 text-center font-bold text-brown-900 focus:outline-none focus:ring-1 focus:ring-brown-600">
+                    <button 
+                        @click="jumpToCard()" 
+                        class="bg-brown-800 text-beige-50 px-2 py-1 rounded-lg font-semibold hover:bg-brown-900 transition">Go</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-6">
+            <div class="bg-beige-50 p-3 rounded-2xl border border-beige-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-brown-600 block">Deck Size</span>
+                    <span class="text-lg font-bold text-brown-900" x-text="activeDeck.length"></span>
+                </div>
+                <i class="fa-regular fa-clone text-brown-400 text-xl"></i>
+            </div>
+            <div class="bg-green-50 p-3 rounded-2xl border border-green-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-green-800 block">Recalled (Right)</span>
+                    <span class="text-lg font-bold text-green-900" x-text="correctCards.length"></span>
+                </div>
+                <i class="fa-regular fa-circle-check text-green-600 text-xl"></i>
+            </div>
+            <div class="bg-red-50 p-3 rounded-2xl border border-red-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-red-800 block">Needs Practice</span>
+                    <span class="text-lg font-bold text-red-900" x-text="wrongCards.length"></span>
+                </div>
+                <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+            </div>
+            <div class="bg-beige-50 p-3 rounded-2xl border border-beige-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-brown-600 block">Current Focus</span>
+                    <span class="text-xs font-bold truncate max-w-[110px]" :class="isWrongOnlyMode ? 'text-accent-burgundy' : 'text-brown-800'" x-text="isWrongOnlyMode ? 'Missed Cards' : getTopicLabel(selectedTopic)"></span>
+                </div>
+                <i class="fa-solid fa-bookmark text-brown-400 text-xl"></i>
+            </div>
+        </div>
+
+        <template x-if="activeDeck.length > 0 && !deckCompleted">
+            <div class="space-y-4">
+                <!-- Progress Indicators -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs text-brown-700 font-medium">
+                        <span>Card <span class="font-bold text-brown-900" x-text="currentIndex + 1"></span> of <span class="font-bold text-brown-900" x-text="activeDeck.length"></span></span>
+                        <span>Bank ID: #<span x-text="currentCard.id"></span> • Progress: <span class="font-bold text-brown-900" x-text="Math.round(((currentIndex) / activeDeck.length) * 100) + '%'"></span></span>
+                    </div>
+                    <div class="w-full bg-beige-200 rounded-full h-2.5 overflow-hidden border border-beige-300">
+                        <div class="bg-brown-700 h-2.5 rounded-full transition-all duration-300" :style="`width: ${((currentIndex) / activeDeck.length) * 100}%`"></div>
+                    </div>
+                </div>
+
+                <!-- 3D Flashcard Flip Container -->
+                <div class="perspective-1000 w-full min-h-[380px] sm:min-h-[410px] cursor-pointer select-none" @click="flipCard()">
+                    <div 
+                        class="relative w-full h-full min-h-[380px] sm:min-h-[410px] transition-transform duration-500 transform-style-3d rounded-3xl shadow-md border border-beige-300 bg-beige-50"
+                        :class="isFlipped ? 'rotate-y-180' : ''">
+                        
+                        <!-- CARD FRONT: The Question -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden p-6 sm:p-8 flex flex-col justify-between bg-beige-50 rounded-3xl">
+                            <!-- Card Header Info -->
+                            <div class="flex justify-between items-center border-b border-beige-200 pb-3">
+                                <span 
+                                    class="text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider text-white shadow-sm"
+                                    :class="getTopicColor(currentCard.topic)">
+                                    <i class="fa-solid fa-graduation-cap text-[10px] mr-1"></i>
+                                    <span x-text="currentCard.topicLabel"></span>
+                                </span>
+                                <div class="flex items-center space-x-2">
+                                    <template x-if="isCardInWrongList(currentCard.id)">
+                                        <span class="bg-red-100 text-red-800 border border-red-300 text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-exclamation text-red-600"></i> Marked for Revision
+                                        </span>
+                                    </template>
+                                    <span class="text-xs text-brown-600 font-semibold hidden sm:inline">Click or press Space to flip</span>
+                                </div>
+                            </div>
+
+                            <!-- Question Content -->
+                            <div class="py-6 flex flex-col justify-center items-center text-center">
+                                <span class="text-[11px] uppercase font-extrabold tracking-widest text-brown-600 mb-2">Question</span>
+                                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-brown-900 leading-snug max-w-3xl" x-text="currentCard.question"></h2>
+                                <p class="text-xs text-brown-600 mt-4 italic bg-beige-200/70 px-4 py-2 rounded-xl border border-beige-300">
+                                    <i class="fa-regular fa-lightbulb text-brown-700 mr-1.5"></i> Recall the exact facts, figures and details from your notes, then flip to check!
+                                </p>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="flex justify-between items-center text-xs text-brown-600 border-t border-beige-200 pt-3">
+                                <span>Question <span x-text="currentIndex + 1"></span> of <span x-text="activeDeck.length"></span></span>
+                                <span class="font-medium text-brown-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate text-brown-600"></i> Tap to Reveal Answer
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- CARD BACK: The Answer & Notes -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 p-6 sm:p-8 flex flex-col justify-between bg-white rounded-3xl border-2 border-brown-600/40">
+                            <!-- Card Header Info -->
+                            <div class="flex justify-between items-center border-b border-beige-200 pb-3">
+                                <span 
+                                    class="text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider text-white shadow-sm"
+                                    :class="getTopicColor(currentCard.topic)">
+                                    <i class="fa-solid fa-check-double text-[10px] mr-1"></i>
+                                    <span>Verified Answer</span>
+                                </span>
+                                <span class="text-xs text-brown-600 font-semibold">Tap anywhere to flip back</span>
+                            </div>
+
+                            <!-- Answer Body -->
+                            <div class="py-4 flex flex-col justify-center text-left space-y-3">
+                                <div>
+                                    <span class="text-[11px] uppercase font-bold tracking-wider text-accent-navy block mb-1">Key Revision Answer:</span>
+                                    <p class="text-base sm:text-lg md:text-xl font-bold text-brown-900 leading-snug" x-text="currentCard.answer"></p>
+                                </div>
+                                <div class="bg-beige-100 p-4 rounded-2xl border border-beige-200 text-xs sm:text-sm text-brown-800 leading-relaxed shadow-inner">
+                                    <span class="font-bold text-brown-900 block mb-1 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info text-brown-700"></i> Syllabus Context & Details:
+                                    </span>
+                                    <p x-text="currentCard.details"></p>
+                                </div>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="flex justify-between items-center text-xs text-brown-600 border-t border-beige-200 pt-3">
+                                <span>Self-Check: Did you recall this accurately?</span>
+                                <span class="text-brown-700 font-semibold">Use controls below</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Bottom Testing Controls -->
+                <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 flex flex-col sm:flex-row justify-between items-center gap-3 shadow-sm">
+                    <!-- Navigation / Flip -->
+                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <button 
+                            @click="previousCard()" 
+                            :disabled="currentIndex === 0"
+                            :class="currentIndex === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-beige-300 active:scale-95'"
+                            class="bg-beige-100 text-brown-800 border border-beige-300 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span>Previous</span>
+                        </button>
+                        <button 
+                            @click="flipCard()" 
+                            class="bg-beige-100 text-brown-800 border border-beige-300 px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:bg-beige-300 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span x-text="isFlipped ? 'Show Question' : 'Show Answer'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Evaluation Buttons -->
+                    <div class="flex items-center space-x-2.5 w-full sm:w-auto justify-end">
+                        <button 
+                            @click="markCard(false)" 
+                            class="flex-1 sm:flex-initial bg-red-100 hover:bg-red-200 text-red-900 border border-red-300 px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-xmark text-red-600 text-base"></i>
+                            <span>Got it Wrong [←]</span>
+                        </button>
+                        <button 
+                            @click="markCard(true)" 
+                            class="flex-1 sm:flex-initial bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-check text-white text-base"></i>
+                            <span>Got it Right [→]</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Keyboard shortcuts reminder -->
+                <div class="text-center text-[11px] text-brown-600">
+                    Shortcuts: <kbd class="bg-beige-200 border border-beige-300 px-1.5 py-0.5 rounded text-[10px] font-mono">Space</kbd> Flip card • <kbd class="bg-beige-200 border border-beige-300 px-1.5 py-0.5 rounded text-[10px] font-mono">←</kbd> Got it Wrong • <kbd class="bg-beige-200 border border-beige-300 px-1.5 py-0.5 rounded text-[10px] font-mono">→</kbd> Got it Right
+                </div>
+            </div>
+        </template>
+
+        <template x-if="deckCompleted">
+            <div class="max-w-2xl mx-auto w-full bg-beige-50 rounded-3xl border border-beige-300 shadow-md p-6 sm:p-8 text-center space-y-6">
+                <div class="w-16 h-16 mx-auto rounded-full bg-brown-800 text-beige-100 flex items-center justify-center text-2xl shadow-inner">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-brown-900">Session Complete!</h2>
+                    <p class="text-xs text-brown-700 mt-1">Here is your recall performance summary for this session:</p>
+                </div>
+
+                <!-- Performance Statistics Grid -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-beige-100 p-3.5 rounded-2xl border border-beige-200">
+                        <span class="text-xs text-brown-600 block">Tested</span>
+                        <span class="text-2xl font-bold text-brown-900" x-text="activeDeck.length"></span>
+                    </div>
+                    <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200">
+                        <span class="text-xs text-green-800 block">Recalled</span>
+                        <span class="text-2xl font-bold text-green-900" x-text="correctCards.length"></span>
+                    </div>
+                    <div class="bg-red-50 p-3.5 rounded-2xl border border-red-200">
+                        <span class="text-xs text-red-800 block">Need Revision</span>
+                        <span class="text-2xl font-bold text-red-900" x-text="wrongCards.length"></span>
+                    </div>
+                </div>
+
+                <!-- Mastery Status Banner -->
+                <div class="p-4 rounded-2xl border text-left space-y-2" :class="wrongCards.length > 0 ? 'bg-red-50/80 border-red-300' : 'bg-green-50 border-green-300'">
+                    <div class="flex items-center space-x-2">
+                        <i :class="wrongCards.length > 0 ? 'fa-solid fa-triangle-exclamation text-accent-burgundy text-lg' : 'fa-solid fa-circle-check text-green-700 text-lg'"></i>
+                        <h3 class="font-bold text-sm" :class="wrongCards.length > 0 ? 'text-accent-burgundy' : 'text-green-900'" x-text="wrongCards.length > 0 ? `You have ${wrongCards.length} question(s) marked for revision.` : 'Outstanding! You achieved 100% recall on all tested questions!'"></h3>
+                    </div>
+                    <p class="text-xs text-brown-800" x-text="wrongCards.length > 0 ? 'Re-testing questions that you got wrong activates spaced repetition and cements critical historical facts for your exams.' : 'You have mastered this selection! Choose another topic from the 200 question bank or reset to practice again.'"></p>
+                </div>
+
+                <!-- Primary Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <template x-if="wrongCards.length > 0">
+                        <button 
+                            @click="revisitWrongCards()" 
+                            class="bg-accent-burgundy hover:bg-red-900 text-white font-bold px-6 py-3 rounded-xl text-sm transition shadow flex items-center justify-center space-x-2 active:scale-95">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>Revisit The <span x-text="wrongCards.length"></span> Questions You Got Wrong</span>
+                        </button>
+                    </template>
+
+                    <button 
+                        @click="resetDeckProgress()" 
+                        class="bg-brown-800 hover:bg-brown-900 text-white font-semibold px-5 py-3 rounded-xl text-sm transition shadow flex items-center justify-center space-x-2 active:scale-95">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Restart Full Session</span>
+                    </button>
+                </div>
+
+                <!-- Scrollable Review List of Missed Cards -->
+                <template x-if="wrongCards.length > 0">
+                    <div class="border-t border-beige-300 pt-5 text-left space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check text-accent-burgundy"></i>
+                            <span>Quick Review of Missed Questions & Answers:</span>
+                        </h4>
+                        <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                            <template x-for="item in wrongCards" :key="item.id">
+                                <div class="bg-white p-3.5 rounded-2xl border border-beige-300 text-xs space-y-1.5 shadow-sm">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <span class="font-bold text-brown-900 text-sm" x-text="item.question"></span>
+                                        <span class="text-[10px] text-accent-burgundy font-semibold uppercase bg-red-50 border border-red-200 px-1.5 py-0.5 rounded whitespace-nowrap" x-text="item.topicLabel"></span>
+                                    </div>
+                                    <p class="text-brown-800"><strong class="text-brown-900">Correct Answer:</strong> <span x-text="item.answer"></span></p>
+                                    <p class="text-[11px] text-brown-600 bg-beige-50 p-2.5 rounded-xl border border-beige-200" x-text="item.details"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template x-if="activeDeck.length === 0 && !deckCompleted">
+            <div class="max-w-md mx-auto bg-beige-50 p-8 rounded-3xl border border-beige-300 text-center space-y-4 shadow-sm my-auto">
+                <div class="w-12 h-12 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="font-bold text-brown-900 text-base">No Cards In This Filter!</h3>
+                <p class="text-xs text-brown-700">You currently have no missed questions recorded or the filter has no matches. Reset your filters to continue.</p>
+                <button @click="selectedTopic = 'all'; isWrongOnlyMode = false; applyFilters();" class="bg-brown-800 text-beige-50 text-xs font-semibold px-4 py-2.5 rounded-xl transition hover:bg-brown-900 shadow">
+                    Show All 200 Questions
+                </button>
+            </div>
+        </template>
+
+    </main>
+
+    <div 
+        x-show="showSearchModal" 
+        class="fixed inset-0 z-50 bg-brown-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+        @keydown.escape.window="showSearchModal = false">
+        
+        <div 
+            class="bg-beige-50 rounded-3xl border border-beige-300 max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden"
+            @click.away="showSearchModal = false">
+            
+            <div class="p-4 bg-brown-900 text-beige-100 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-book-bookmark text-beige-300"></i>
+                    <h3 class="font-bold text-sm text-beige-50">Browse All 200 Questions (From Verified Notes)</h3>
+                </div>
+                <button @click="showSearchModal = false" class="text-beige-300 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Search input bar -->
+            <div class="p-4 border-b border-beige-200 bg-beige-100 flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass text-brown-600"></i>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Search keywords (e.g., Article 48, Rentenmark, Kapp, Autobahn, 41%, Stauffenberg)..." 
+                    class="w-full bg-beige-50 border border-beige-300 rounded-xl px-3 py-2 text-xs text-brown-900 focus:outline-none focus:ring-2 focus:ring-brown-600">
+            </div>
+
+            <!-- Search Results Scroll list -->
+            <div class="p-4 overflow-y-auto space-y-3 flex-grow text-xs">
+                <p class="text-brown-600 font-semibold" x-text="`Showing ${filteredBankList.length} of 200 questions`"></p>
+                <template x-for="item in filteredBankList" :key="item.id">
+                    <div class="bg-white p-3.5 rounded-2xl border border-beige-200 hover:border-brown-600 transition shadow-sm space-y-1">
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="font-bold text-brown-900 text-sm" x-text="`#${item.id}. ${item.question}`"></span>
+                            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded font-bold bg-beige-200 text-brown-800 whitespace-nowrap" x-text="item.topicLabel"></span>
+                        </div>
+                        <p class="text-brown-800"><strong class="text-brown-900">Answer:</strong> <span x-text="item.answer"></span></p>
+                        <p class="text-[11px] text-brown-600 bg-beige-50 p-2 rounded-lg" x-text="item.details"></p>
+                    </div>
+                </template>
+            </div>
+
+            <div class="p-3 bg-beige-200/80 border-t border-beige-300 text-right">
+                <button @click="showSearchModal = false" class="bg-brown-800 hover:bg-brown-900 text-beige-50 px-4 py-1.5 rounded-xl text-xs font-semibold transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-3 text-xs border-t border-brown-800">
+        <p>German History Revision Hub (1890–1945) • 200 Questions 100% Derived from Course Document 📚</p>
+    </footer>
+
+    <script>
+        function flashcardApp() {
+            return {
+                selectedTopic: 'all',
+                sessionLimit: 25,
+                isWrongOnlyMode: false,
+                jumpInput: null,
+                showSearchModal: false,
+                searchQuery: '',
+
+                activeDeck: [],
+                currentIndex: 0,
+                isFlipped: false,
+                deckCompleted: false,
+
+                correctCards: [],
+                wrongCards: [],
+
+                // FULL 200-QUESTION DATA BANK DERIVED 100% EXCLUSIVELY FROM GERMANY.DOCX
+                allCards: [
+                    // Unit 1: 1900 Imperial System & Kaiser's Aims (Cards 1 to 18)
+                    { id: 1, topic: 'kaiser', topicLabel: "1900 Political System", question: "In the 1900 German political system, how was the position of the Kaiser decided?", answer: "Hereditary position: The Kaiser was born into the job, not appointed or elected.", details: "He held supreme power over the military and could propose laws directly." },
+                    { id: 2, topic: 'kaiser', topicLabel: "1900 Political System", question: "Could the Kaiser be voted out of office in the 1900 political system if he was poor at his job?", answer: "No; he had the job for life and could not be voted out even if he was not very good at it.", details: "The Kaiser was an autocratic monarch not subject to electoral recall." },
+                    { id: 3, topic: 'kaiser', topicLabel: "1900 Political System", question: "What military authority did the Kaiser hold in the 1900 political system?", answer: "He had complete control over the army.", details: "The military answered directly to the Kaiser rather than the Reichstag." },
+                    { id: 4, topic: 'kaiser', topicLabel: "1900 Political System", question: "What was the role of the Kaiser regarding the creation of laws in 1900?", answer: "He could propose laws.", details: "These laws were then presented to the Reichstag for approval." },
+                    { id: 5, topic: 'kaiser', topicLabel: "1900 Political System", question: "Who appointed the Chancellor and the government ministers in 1900?", answer: "The Kaiser appointed the Chancellor and the government.", details: "The government was made up of ministers who helped the Kaiser run the country." },
+                    { id: 6, topic: 'kaiser', topicLabel: "1900 Political System", question: "To whom was the Chancellor answerable in the 1900 German political system?", answer: "He was answerable only to the Kaiser.", details: "The Chancellor was the most important minister and proposed new laws to the Reichstag." },
+                    { id: 7, topic: 'kaiser', topicLabel: "1900 Political System", question: "How often were members of the Reichstag elected in the 1900 political system?", answer: "Every 3 years.", details: "They represented various political parties voted in by the electorate." },
+                    { id: 8, topic: 'kaiser', topicLabel: "1900 Political System", question: "What power did the Reichstag have regarding laws proposed by the Kaiser or government in 1900?", answer: "They could agree to or reject laws put forward by the Kaiser or the government.", details: "This meant that the government had to co-operate with the Reichstag to pass legislation." },
+                    { id: 9, topic: 'kaiser', topicLabel: "1900 Political System", question: "Why did the 1900 government need the support of the Reichstag concerning state revenue?", answer: "The government needed the Reichstag to agree on how money could be spent and collected (for example, through taxes).", details: "Control over budgets and taxation was the Reichstag's principal constitutional leverage." },
+                    { id: 10, topic: 'kaiser', topicLabel: "1900 Political System", question: "Who made up the electorate in Germany in 1900?", answer: "Men over the age of 25.", details: "Only adult males aged 25 and over could vote for members of the Reichstag." },
+                    { id: 11, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "What proportion of the world's electrical goods did Germany produce during its rapid economic rise before WW1?", answer: "Germany produced a third (1/3) of all electrical goods.", details: "This rapid economic growth was a key factor helping the Kaiser's aim to make Germany a world power." },
+                    { id: 12, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "By how much did Germany's population increase during the Kaiser's reign?", answer: "It increased massively from 49 million to 65 million.", details: "This substantial population boom provided manpower for factories and the growing military." },
+                    { id: 13, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "How did the German population view the army under the Kaiser?", answer: "The German people followed the army and supported financially supporting them.", details: "Militarism was deeply ingrained in Imperial German culture and society." },
+                    { id: 14, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "What was Kaiser Wilhelm II's famous declaration expressing his hatred of the Reichstag?", answer: "“There is only one ruler… and I am he”.", details: "He resented power-sharing and frequently argued with the Chancellor and parliament." },
+                    { id: 15, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "Who were the Junkers and what role did they play in the Kaiser's political system?", answer: "Prussian landowners who held a lot of power within politics and supported building an overseas empire.", details: "Prussia had heavy militaristic influence across the entire German political system." },
+                    { id: 16, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "How many industrial workers were part of trade unions in Germany by 1914?", answer: "3 million workers were part of trade unions by 1914.", details: "Strikes caused the German economy to suffer and presented difficulties for the Kaiser." },
+                    { id: 17, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "Which external European powers made it difficult for the Kaiser to make Germany the top world power?", answer: "Britain and France, because they were more powerful.", details: "Britain possessed a larger empire and navy, while France held competing continental ambitions." },
+                    { id: 18, topic: 'kaiser', topicLabel: "Kaiser's Aims", question: "What were the Kaiser's two main domestic and foreign political aims?", answer: "1. Make Germany a world power; 2. Control the political system.", details: "Both aims encountered resistance from the Reichstag, trade unions, and rival European nations." },
+
+                    // Unit 1: WW1 Impact & Treaty of Versailles (Cards 19 to 33)
+                    { id: 19, topic: 'versailles', topicLabel: "WW1 Impact", question: "What fraction of pre-war production levels was Germany producing after the First World War?", answer: "Germany was only producing 2/3 of pre-war levels.", details: "The war wrecked the national economy, leaving less money for social issues like pensions and benefits." },
+                    { id: 20, topic: 'versailles', topicLabel: "WW1 Impact", question: "What naval action by Britain led to severe food shortages in German society during WW1?", answer: "The British navy blockaded the ports.", details: "This cut off critical overseas food and fertilizer imports, leading to widespread malnutrition." },
+                    { id: 21, topic: 'versailles', topicLabel: "WW1 Impact", question: "What social division occurred regarding workers' wages versus factory owners during WW1?", answer: "Wages were kept low while owners were earning bonuses.", details: "This sparked deep social resentment and labor strikes among the working class." },
+                    { id: 22, topic: 'versailles', topicLabel: "WW1 Impact", question: "On what exact date did Kaiser Wilhelm II abdicate?", answer: "9th November 1918 (9/11/1918).", details: "Faced with military defeat and revolution, the Kaiser abdicated and Germany shifted to a democracy." },
+                    { id: 23, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What percentage of its land did Germany lose under the Treaty of Versailles?", answer: "Germany lost 10% of its land.", details: "Territories lost included Alsace-Lorraine, West Prussia, and Posen." },
+                    { id: 24, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What percentage of its population did Germany lose under the Treaty of Versailles?", answer: "Germany lost 13% of its people.", details: "Millions of ethnic Germans were placed under foreign sovereignty (such as Poland and France)." },
+                    { id: 25, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What percentage of Germany's coal reserves was lost under the Treaty of Versailles?", answer: "26% of coal.", details: "This loss of vital natural resources severely constrained Germany's economic recovery." },
+                    { id: 26, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What manpower limit was imposed on the German army by the Treaty of Versailles?", answer: "100,000 men.", details: "General conscription was also completely banned to ensure the army remained small." },
+                    { id: 27, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "How many battleships was the German navy permitted to keep under the Treaty of Versailles?", answer: "6 battleships.", details: "The rest of the fleet was confiscated or scuttled, and naval expansion was prohibited." },
+                    { id: 28, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "Which military weapons and forces were completely banned from Germany by Versailles?", answer: "No tanks, no submarines, and no air force.", details: "These restrictions were intended to permanently prevent Germany from waging offensive warfare." },
+                    { id: 29, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What was decided about the reparations sum at the initial signing of the Treaty of Versailles?", answer: "There was no fixed number set at the Treaty of Versailles.", details: "The exact financial bill was deferred to a subsequent reparations commission." },
+                    { id: 30, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "At what figure was Germany's reparations bill fixed in 1921?", answer: "£6.6 billion (132 billion gold marks).", details: "Repaying this immense sum placed severe strains on the Weimar Republic's public finances." },
+                    { id: 31, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What clause in the Treaty of Versailles forced Germany to accept sole responsibility for the war?", answer: "The War Guilt Clause (Article 231).", details: "Germans deeply resented being forced to accept all moral and financial blame for the conflict." },
+                    { id: 32, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "Why did the signing of the Armistice come as a complete surprise to the German public?", answer: "They had been told Germany was winning the war and Germany was never invaded.", details: "This gave rise to the false 'stab in the back' myth (Dolchstoßlegende)." },
+                    { id: 33, topic: 'versailles', topicLabel: "Treaty of Versailles", question: "What terms did the German people use to describe the politicians and the Versailles treaty?", answer: "Politicians were called the 'November Criminals'; the treaty was called a 'stab in the back' and a 'diktat'.", details: "A 'diktat' signified that terms were dictated without allowing Germany any negotiation." },
+
+                    // Unit 1: 1919 Weimar Constitution & Early Rebellions (Cards 34 to 50)
+                    { id: 34, topic: 'weimar', topicLabel: "1919 Constitution", question: "In the 1919 Weimar Constitution, how often was the President elected?", answer: "Elected every seven years.", details: "The President stayed out of the day-to-day running of the country." },
+                    { id: 35, topic: 'weimar', topicLabel: "1919 Constitution", question: "Who controlled the armed forces under the 1919 Weimar Constitution?", answer: "The President controlled the armed forces.", details: "This gave the presidency significant constitutional authority during national crises." },
+                    { id: 36, topic: 'weimar', topicLabel: "1919 Constitution", question: "What emergency legislative power did Article 48 grant to the Weimar President?", answer: "In an emergency he could make laws without going through the Reichstag (parliament).", details: "This intended safety valve was later heavily abused between 1930 and 1933." },
+                    { id: 37, topic: 'weimar', topicLabel: "1919 Constitution", question: "Who was the first President of the Weimar Republic and which party did he belong to?", answer: "Ebert, a Social Democrat (SPD).", details: "He governed during the turbulent birth of the republic, crushed rebellions, and signed the constitution." },
+                    { id: 38, topic: 'weimar', topicLabel: "1919 Constitution", question: "What was the role of the Chancellor and who appointed him in 1919?", answer: "Responsible for the day-to-day running of the country (like a prime minister); chosen from the Reichstag by the President.", details: "He led the cabinet and needed majority parliamentary support to govern." },
+                    { id: 39, topic: 'weimar', topicLabel: "1919 Constitution", question: "How much support in the Reichstag did the Chancellor need to govern?", answer: "He needed the support of more than half of the Reichstag.", details: "Without over 50% support, the government could not pass standard laws or budgets." },
+                    { id: 40, topic: 'weimar', topicLabel: "1919 Constitution", question: "How often were members of the Weimar Reichstag elected, and through what system?", answer: "Elected every four years, through a system called PR (proportional representation).", details: "This system allowed even small political parties a chance to have a voice in parliament." },
+                    { id: 41, topic: 'weimar', topicLabel: "1919 Constitution", question: "Who had the right to vote in the Weimar Republic under the 1919 constitution?", answer: "Everyone over the age of 20 could vote.", details: "This represented true universal suffrage, giving both men and women equal voting rights." },
+                    { id: 42, topic: 'weimar', topicLabel: "1919 Constitution", question: "Name three fundamental civil rights guaranteed to German citizens in the 1919 constitution.", answer: "Equal rights, the right of free speech, and freedom to own a business and take part in trade and industry.", details: "These protections transformed Germany into one of Europe's most liberal democracies." },
+                    { id: 43, topic: 'weimar', topicLabel: "Weimar Strengths/Weaknesses", question: "What were the primary democratic strengths of the Weimar Republic?", answer: "Fair (votes equal seats), everyone had the same say, state governments helped local politics, and term limits mitigated damage.", details: "Every vote directly shaped the composition of the national parliament." },
+                    { id: 44, topic: 'weimar', topicLabel: "Weimar Strengths/Weaknesses", question: "What were the major structural weaknesses of the Weimar political system?", answer: "Lots of parties meant no majorities/limited mandates, Article 48 could be abused, and state governments could pass laws against the Reichstag.", details: "Coalitions constantly fractured, causing chronic ministerial instability." },
+                    { id: 45, topic: 'weimar', topicLabel: "Party Support/Opposition", question: "Why did the Communist Party oppose the Weimar Republic?", answer: "They believed the country should run on behalf of the workers (modelled after Soviet Russia).", details: "They viewed the democratic republic as an instrument of capitalist exploitation." },
+                    { id: 46, topic: 'weimar', topicLabel: "Party Support/Opposition", question: "Why did the Nazi Party and German National Party oppose the Weimar Republic?", answer: "The Nazi Party wanted one strong leader and wanted to ignore the ToV; the German National Party wanted to return to a Kaiser.", details: "Both right-wing groups sought the destruction of parliamentary democracy." },
+                    { id: 47, topic: 'weimar', topicLabel: "Party Support/Opposition", question: "Which moderate political parties supported the Weimar Republic and why?", answer: "Social Democrats (set it up), Centre Party (protected Catholic Church), Democratic Party (middle-class PR supporters), and People's Party.", details: "These parties formed the initial coalitions that defended the constitutional order." },
+                    { id: 48, topic: 'weimar', topicLabel: "Early Rebellions", question: "Who led the Spartacist Uprising in January 1919 and what did they want?", answer: "A communist group led by Rosa Luxemburg and Karl Liebknecht who wanted a full-scale communist revolution like 1917 Russia.", details: "They did not trust the new government to improve conditions for the working class." },
+                    { id: 49, topic: 'weimar', topicLabel: "Early Rebellions", question: "How was the Spartacist Uprising suppressed in Berlin and what was the outcome?", answer: "The Freikorps and the army suppressed it; over 100 workers were killed, Luxemburg was killed, and Liebknecht was shot.", details: "The uprising was badly planned and lacked the support of other left-wing groups." },
+                    { id: 50, topic: 'weimar', topicLabel: "Early Rebellions", question: "What triggered the Kapp Putsch in March 1920 and how was it defeated?", answer: "The government tried to reduce the army and disband the Freikorps; 12,000 marched on Berlin, but a general strike stopped them after 4 days.", details: "The regular army refused to fire on the Freikorps, forcing the government to flee to Stuttgart until the strike paralyzed Kapp." },
+
+                    // Unit 1: 1923 Ruhr & Hyperinflation Crisis (Cards 51 to 65)
+                    { id: 51, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "Why did France and Belgium occupy the Ruhr in January 1923?", answer: "Germans were unable to pay their scheduled reparations payments.", details: "France was determined to seize raw materials and industrial goods by force." },
+                    { id: 52, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "How many French and Belgian troops occupied the Ruhr valley in 1923?", answer: "60,000 troops.", details: "They occupied factories, railways, and mines in Germany's industrial heartland." },
+                    { id: 53, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "How did the Ruhr occupation directly cause hyperinflation in Germany?", answer: "Less money came in, so the government printed more paper money to pay striking workers, causing the value of money to collapse.", details: "With production paralyzed and cash flooding the market, runaway inflation took hold." },
+                    { id: 54, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "What was the exchange rate of 1 US Dollar in Marks in January 1919 versus November 1923?", answer: "Jan 1919: 1 USD = 9 marks; Nov 1923: 1 USD = 2 billion marks.", details: "This demonstrates the catastrophic depreciation of the paper mark over four years." },
+                    { id: 55, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "During peak hyperinflation in late 1923, what were the prices of an egg and a glass of beer?", answer: "An egg cost 80 million marks and a glass of beer cost 150 million marks.", details: "Prices rose by the hour, forcing people to carry cash in laundry baskets." },
+                    { id: 56, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "How were German wage earners affected by hyperinflation?", answer: "Wages didn't keep up with price rises, and food shortages occurred because farmers refused to sell for worthless money (leading to starvation deaths).", details: "Workers rushed to buy goods immediately upon receiving their wages twice daily." },
+                    { id: 57, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "Why did older people and pensioners suffer severely during hyperinflation?", answer: "Pensions were worth less and they had no pay rises.", details: "Fixed incomes could not adjust to soaring market prices, leaving elderly citizens destitute." },
+                    { id: 58, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "What happened to the savings of the German middle class during hyperinflation?", answer: "Savings that could have bought a house now barely bought a loaf of bread.", details: "Decades of prudent financial saving were completely wiped out in months." },
+                    { id: 59, topic: 'hyperinflation', topicLabel: "1923 Crisis", question: "Who were the primary 'winners' of hyperinflation and why?", answer: "Upper classes (invested in real assets), debtors (loans were easier to pay off), and business people (paid back loans and raised prices faster than wages).", details: "Those with substantial fixed debts could clear them with essentially worthless currency." },
+                    { id: 60, topic: 'weimar', topicLabel: "Munich Putsch", question: "What were the aims of Adolf Hitler and the Nazis in the Munich Putsch of November 1923?", answer: "Get rid of democracy as it was weak, and set General Ludendorff as leader of Germany.", details: "Hitler sought to seize power in Bavaria and march on Berlin to overthrow the Weimar government." },
+                    { id: 61, topic: 'weimar', topicLabel: "Munich Putsch", question: "How many members did the Nazi Party have in 1923 prior to the Munich Putsch?", answer: "55,000 members in 1923.", details: "The party had grown substantially in Bavaria, supported by its private paramilitary wing, the SA." },
+                    { id: 62, topic: 'weimar', topicLabel: "Munich Putsch", question: "Who was Gustav von Kahr and why did the Nazis expect his backing during the Munich Putsch?", answer: "He was the right-wing Chancellor/leader in Bavaria who wanted to rebel against the Weimar Republic.", details: "Hitler expected Kahr and the Bavarian military commander Lossow to march alongside him." },
+                    { id: 63, topic: 'weimar', topicLabel: "Munich Putsch", question: "State four core reasons why the Munich Putsch collapsed in failure.", answer: "Bad planning, mistakes of Hitler and Ludendorff, reactions of Kahr and Lossow (withdrew support), and prompt reactions of the Weimar government.", details: "State police opened fire at the Odeonsplatz, killing 16 Nazis and dispersing the march." },
+                    { id: 64, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What new currency was introduced in November 1923 to end hyperinflation?", answer: "The Rentenmark (1 Rentenmark replaced 1 trillion old marks).", details: "It was quickly accepted by the public and brought soaring inflation under control." },
+                    { id: 65, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What lingering negative result remained after the hyperinflation crisis was solved?", answer: "The people never forgot losing their savings, were never compensated, and blamed the Weimar Republic for it all.", details: "The ruined middle classes harbored lasting cynicism toward parliamentary democracy." },
+
+                    // Unit 1: Stresemann Era & Golden Twenties Culture (Cards 66 to 80)
+                    { id: 66, topic: 'stresemann', topicLabel: "Stresemann Era", question: "How did Gustav Stresemann persuade the French to end their occupation of the Ruhr?", answer: "By promising to keep repaying them, allowing Germans to take back their industry.", details: "The French withdrew, though right-wing opponents attacked this as a sign of government weakness." },
+                    { id: 67, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What were the positive provisions of the Dawes Plan in 1924?", answer: "It gave Germany longer to pay reparations and provided American loans to kickstart the economy.", details: "US capital funded public works, social housing, hospitals, schools, and roads." },
+                    { id: 68, topic: 'stresemann', topicLabel: "Stresemann Era", question: "How did the Young Plan of 1929 alter Germany's reparations obligations?", answer: "It lowered the total amount Germany had to pay from £6.6 billion to under £2 billion.", details: "However, nationalists complained that payments were scheduled to continue until 1988." },
+                    { id: 69, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What was the significance of the Locarno Pact signed in 1925?", answer: "A peace pact with Britain, France, Belgium, and Italy where Germany accepted its western borders.", details: "It dramatically improved international relations, though nationalists argued Stresemann gave in to France." },
+                    { id: 70, topic: 'stresemann', topicLabel: "Stresemann Era", question: "When did Germany join the League of Nations and what status was it granted?", answer: "Germany joined in 1926 and was given “Great Power” status.", details: "This formally ended Germany's post-war diplomatic isolation." },
+                    { id: 71, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What international honour was awarded to Gustav Stresemann in 1926?", answer: "The Nobel Peace Prize.", details: "Awarded jointly with Aristide Briand of France for their work on the Locarno treaties." },
+                    { id: 72, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What was agreed in the Kellogg-Briand Pact of 1928?", answer: "An international pact where Germany and other nations renounced war as an instrument of national policy.", details: "It represented the peak of 1920s international diplomatic cooperation." },
+                    { id: 73, topic: 'stresemann', topicLabel: "Stresemann Era", question: "By 1928, what rank did Germany hold among the world's industrial powers?", answer: "Germany was the 2nd strongest industrial power in 1928.", details: "Industrial exports flourished and production surpassed 1913 pre-war levels." },
+                    { id: 74, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What happened to political violence and support for extremist parties between 1924 and 1928?", answer: "There were no attempts to overthrow the Republic, support for extremists dropped, and the Nazis got under 3% of the vote.", details: "Economic stability temporarily stabilized democratic parliamentary coalitions." },
+                    { id: 75, topic: 'stresemann', topicLabel: "Stresemann Era", question: "What was the dangerous underlying economic weakness of the Stresemann era?", answer: "Germany depended heavily on the USA and this linked their economies; unemployment remained at 1 million and began rising in 1928.", details: "If American loans were recalled, the German banking system would instantly collapse." },
+                    { id: 76, topic: 'stresemann', topicLabel: "Weimar Culture", question: "How did Weimar culture become open and unrestricted in the 1920s?", answer: "Restrictions were lifted: clubbing became popular, cabaret music openly criticized the government, and sex was much more open.", details: "Berlin became a glittering European capital of daring nightlife and artistic experimentation." },
+                    { id: 77, topic: 'stresemann', topicLabel: "Weimar Culture", question: "Which conservative groups opposed the moral openness of Weimar culture?", answer: "The Wandervogel movement, and the Catholic and Protestant churches.", details: "They viewed jazz, nightlife, and cabaret as dangerous signs of moral decay." },
+                    { id: 78, topic: 'stresemann', topicLabel: "Weimar Culture", question: "What cinema masterpiece is cited in the notes showing open and unrestricted Weimar topics?", answer: "Nosferatu, which engaged with unrestricted themes (such as a singer engaging with an elderly professor).", details: "German expressionist cinema gained worldwide renown for psychological depth and bold themes." },
+                    { id: 79, topic: 'stresemann', topicLabel: "Weimar Culture", question: "Which famous novel reflected strong anti-war political messages in Weimar literature?", answer: "All Quiet on the Western Front by Erich Maria Remarque.", details: "It highlighted the senseless slaughter of WW1, though nationalists despised its anti-war tone." },
+                    { id: 80, topic: 'stresemann', topicLabel: "Weimar Culture", question: "Which German artist's paintings portrayed the sharp inequality between the rich and poor in Weimar society?", answer: "Otto Dix.", details: "His gritty paintings of disabled veterans and corrupt elites were hated by Hitler as unpatriotic." },
+
+                    // Unit 2: The Great Depression & Impact (Cards 81 to 95)
+                    { id: 81, topic: 'depression', topicLabel: "Great Depression", question: "When did the Wall Street Crash occur and what happened on the New York stock exchange?", answer: "October 1929; shares on the New York stock exchange crashed in value.", details: "This triggered a worldwide economic depression and a severe decline in world trade." },
+                    { id: 82, topic: 'depression', topicLabel: "Great Depression", question: "Why did the Wall Street Crash strike Germany harder than other European countries?", answer: "US banks recalled their loans, and German businesses were heavily dependent on US loans.", details: "Without American credit, German businesses went bankrupt and dismissed their workforces." },
+                    { id: 83, topic: 'depression', topicLabel: "Great Depression", question: "How high did registered unemployment climb in Germany by 1932 during the Great Depression?", answer: "Unemployment reached 6 million in 1932.", details: "Roughly one-third of the total German working population was left without a job." },
+                    { id: 84, topic: 'depression', topicLabel: "Great Depression", question: "By how much did average wages fall in Germany in 1932 due to the Depression?", answer: "Wages fell by 1/3 (one third) in 1932.", details: "Even workers who retained their jobs suffered severe reductions in living standards." },
+                    { id: 85, topic: 'depression', topicLabel: "Great Depression", question: "How many German firms/businesses closed down between 1929 and 1932?", answer: "50,000 firms closed between 1929 and 1932.", details: "With consumer demand dried up, sales and profits plummeted nationwide." },
+                    { id: 86, topic: 'depression', topicLabel: "Great Depression", question: "How many German farmers had gone bankrupt by 1932?", answer: "18,000 farmers had gone bankrupt by 1932.", details: "Food prices remained high yet sales crashed because unemployed city dwellers could not afford to buy food." },
+                    { id: 87, topic: 'depression', topicLabel: "Great Depression", question: "Why did the Weimar welfare system collapse during the Great Depression?", answer: "It had been set up for 800,000 unemployed, not 6 million.", details: "The overwhelming demand emptied state coffers and triggered bitter political disputes." },
+                    { id: 88, topic: 'depression', topicLabel: "Great Depression", question: "By how much did the Weimar government cut unemployment benefits during the Depression?", answer: "They cut unemployment benefits by 60%.", details: "This severe austerity under Chancellor Brüning deepened poverty and homelessness." },
+                    { id: 89, topic: 'depression', topicLabel: "Great Depression", question: "Name three social symptoms of the Great Depression on ordinary German citizens.", answer: "People sold possessions, homelessness and squatting increased, and crime/street gangs grew.", details: "Families were forced to live in acute poverty and line up at soup kitchens." },
+                    { id: 90, topic: 'depression', topicLabel: "Great Depression", question: "How did political party supporters behave on German streets during the Great Depression?", answer: "Supporters of different political parties fought on the streets and tried to disrupt each other's meetings.", details: "Paramilitary violence between Nazi SA stormtroopers and Communist Red Front fighters became routine." },
+                    { id: 91, topic: 'depression', topicLabel: "Great Depression", question: "Why did the Great Depression reduce public confidence in the Weimar democracy?", answer: "It reminded them of the economic problems in the 1920s, and they were angry that nothing seemed to be done.", details: "Voters turned away from moderate parties and embraced political extremists." },
+                    { id: 92, topic: 'depression', topicLabel: "Great Depression", question: "Who did the Nazis blame for Germany's economic ruin during the Great Depression?", answer: "Jewish people (and the Treaty of Versailles).", details: "Hitler provided scapegoats, arguing Germany was suffering while foreign powers and financiers profited." },
+                    { id: 93, topic: 'depression', topicLabel: "Great Depression", question: "Why did rising unemployment drive voters directly to the Nazi Party?", answer: "People were starving and losing jobs, and looked to the Nazis to solve the problem with strong leadership.", details: "Hitler's promises of 'work and bread' appealed to millions of desperate citizens." },
+                    { id: 94, topic: 'risenazis', topicLabel: "Nazi Rise", question: "What political benefit did Hitler gain from his trial following the Munich Putsch?", answer: "He got more publicity from the arrest and trial after the Munich Putsch.", details: "The trial provided Hitler with a national podium to broadcast his nationalist platform." },
+                    { id: 95, topic: 'risenazis', topicLabel: "Nazi Rise", question: "What happened to the Nazi Party while Hitler was imprisoned in Landsberg in 1924?", answer: "The Nazi party struggled while Hitler was in prison.", details: "Without Hitler's leadership and speaking ability, party membership and organization declined." },
+
+                    // Unit 2: Rise of the Nazis, Propaganda & Promises (Cards 96 to 110)
+                    { id: 96, topic: 'risenazis', topicLabel: "Nazi Rise", question: "What were Hitler's core personal political qualities that attracted followers?", answer: "He was a strong leader, persuasive, and an inspiring speaker to those who went to see him speak.", details: "His energetic speechmaking projected confidence and national strength." },
+                    { id: 97, topic: 'risenazis', topicLabel: "Mein Kampf", question: "Name four core beliefs outlined by Hitler in 'Mein Kampf'.", answer: "Needed 1 strong leader; scrap the Treaty of Versailles; Aryans are the superior race; destroy Communism.", details: "He also argued for the rearmament of the military and the union of all German-speakers." },
+                    { id: 98, topic: 'risenazis', topicLabel: "Mein Kampf", question: "What view did Hitler express in 'Mein Kampf' regarding parliamentary debate?", answer: "Debate and discussion on laws from government or the people was negative.", details: "He rejected liberal democracy in favor of the absolute authority of a single leader." },
+                    { id: 99, topic: 'risenazis', topicLabel: "Nazi Propaganda", question: "Who did the Nazis put in charge of their propaganda machine?", answer: "Josef Goebbels.", details: "He coordinated newspapers, rallies, radio broadcasts, and posters across Germany." },
+                    { id: 100, topic: 'risenazis', topicLabel: "Nazi Propaganda", question: "What golden rule did Goebbels follow when designing Nazi propaganda?", answer: "He made sure that their message was clear, simple, and easy to understand.", details: "Repetitive slogans and emotional appeals replaced complex political arguments." },
+                    { id: 101, topic: 'risenazis', topicLabel: "Nazi Propaganda", question: "How many daily or weekly newspapers did the Nazi Party own to spread their propaganda?", answer: "The Nazis owned 120 daily or weekly newspapers.", details: "These were read by hundreds of thousands, putting across a continuous pro-Nazi message." },
+                    { id: 102, topic: 'risenazis', topicLabel: "The SA", question: "In what year was the SA (Sturmabteilung) established?", answer: "The SA was set up in 1921.", details: "They wore brown shirts and served as the armed enforcement arm of the NSDAP." },
+                    { id: 103, topic: 'risenazis', topicLabel: "The SA", question: "What was the initial primary purpose of the SA when founded in 1921?", answer: "To stop Nazi meetings being interrupted, allowing support to grow and stopping communist support.", details: "They protected Nazi speakers and violently broke up rival left-wing gatherings." },
+                    { id: 104, topic: 'risenazis', topicLabel: "The SA", question: "Why were many unemployed young men eager to join the SA during the Depression?", answer: "Many were unemployed and were offered a way out of their situation (uniform, food, and purpose).", details: "The SA provided meals, camaraderie, and an outlet for violent frustration." },
+                    { id: 105, topic: 'risenazis', topicLabel: "The SA", question: "How did the SA assist in election campaigning during the early 1930s?", answer: "They delivered propaganda to people’s homes and made those threatened by communists feel protected.", details: "Their ubiquitous presence in streets projected order, discipline, and anti-communist strength." },
+                    { id: 106, topic: 'risenazis', topicLabel: "Nazi Promises", question: "What promises did the Nazis make to farmers and families to win their support?", answer: "Increase food prices for farmers, and support families.", details: "Nazi promises were carefully tailored to offer solutions to every social class." },
+                    { id: 107, topic: 'risenazis', topicLabel: "Nazi Promises", question: "What broad promises did the Nazi Party make to conservative German voters?", answer: "Encourage good (conservative) morals, provide strong leadership, and make Germany great again.", details: "They promised to restore national pride and reverse the perceived cultural degeneracy of Weimar." },
+                    { id: 108, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "Why was Chancellor Heinrich Brüning deeply unpopular in 1930?", answer: "Brüning was unpopular because he had wanted to cut benefits.", details: "His severe austerity policies earned him the nickname 'the Hunger Chancellor'." },
+                    { id: 109, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What electoral breakthrough did the Nazis achieve in the September 1930 election?", answer: "People turned to the Nazis in response to cuts, making them the 2nd largest party in the Reichstag.", details: "They surged from 12 seats to 107 seats, entering the political mainstream." },
+                    { id: 110, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "How did Chancellor Brüning govern between 1930 and 1932 without a Reichstag majority?", answer: "Brüning had no allies and couldn't pass laws, so he relied on Hindenburg’s emergency powers (Article 48).", details: "This marked the practical end of normal parliamentary democracy in Weimar Germany." },
+
+                    // Unit 2: 1930–1934 Path to Dictatorship (Cards 111 to 125)
+                    { id: 111, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What historic result did the Nazis achieve in the July 1932 Reichstag election?", answer: "The Nazis won 37% of the vote and became the largest party in the Reichstag.", details: "Hitler demanded to be appointed Chancellor, but President Hindenburg refused." },
+                    { id: 112, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "Who was appointed Chancellor in July 1932 instead of Hitler?", answer: "Franz von Papen.", details: "He was aristocratic and unpopular, struggling to govern without parliamentary support." },
+                    { id: 113, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "Who replaced Franz von Papen as Chancellor in November 1932?", answer: "General Kurt von Schleicher.", details: "Schleicher also struggled to gain political support and rule effectively." },
+                    { id: 114, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What secret deal was struck at the end of 1932 between Hitler and Franz von Papen?", answer: "Hitler and Von Papen made a deal for Hitler to be Chancellor and Papen to be Vice-Chancellor.", details: "Papen plotted to use Hitler's mass popular backing to oust his rival Schleicher." },
+                    { id: 115, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "Why did President Hindenburg agree to appoint Hitler Chancellor in January 1933?", answer: "Papen promised Hindenburg that Hitler could be controlled, with only 3 Nazis allowed in the cabinet.", details: "Conservatives mistakenly believed they could box Hitler in and use him as a puppet." },
+                    { id: 116, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "On what date did the Reichstag Fire occur and who was blamed?", answer: "27th February 1933; Marinus van der Lubbe (Dutch Communist) was found guilty and communists were blamed.", details: "The fire gave Hitler the pretext to claim a communist revolution was underway." },
+                    { id: 117, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "How many communist leaders were arrested in the immediate aftermath of the Reichstag Fire?", answer: "4,000 communist leaders were arrested.", details: "Hindenburg granted emergency decrees suspending civil liberties, eliminating Hitler's political opponents." },
+                    { id: 118, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What result did the Nazis achieve in the 5th March 1933 election?", answer: "The Nazis got 44% of the vote while the police and SA put pressure on voters.", details: "Even with voter intimidation and state control, they fell short of an outright majority." },
+                    { id: 119, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "On what date was the Enabling Act passed and what power did it give Hitler?", answer: "24th March 1933; it gave Hitler the power to pass laws without the President or Reichstag.", details: "It legally established Hitler's dictatorship and dismantled parliamentary democracy." },
+                    { id: 120, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "By what parliamentary vote margin did the Enabling Act pass on 24th March 1933?", answer: "It passed by 444 votes to 94 (with communists banned from voting).", details: "Armed SA thugs surrounded the Kroll Opera House while deputies cast their ballots." },
+                    { id: 121, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What happened to German trade unions on 2nd May 1933?", answer: "All trade unions were closed down and merged into the Nazi-controlled German Labour Front (DAF).", details: "Union headquarters were raided, bank funds seized, and the right to strike abolished." },
+                    { id: 122, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What decree was issued in July 1933 regarding political parties in Germany?", answer: "Germany became a 1-party system and all other political parties were banned.", details: "The NSDAP was declared the sole legal political party in the nation." },
+                    { id: 123, topic: 'dictatorship', topicLabel: "Night of Long Knives", question: "When did the Night of the Long Knives occur and why did Hitler launch it?", answer: "29–30 June 1934; the SA was becoming too powerful (3 million members and Röhm becoming a rival).", details: "SA leaders were shot and arrested to put them in line and secure the loyalty of the army." },
+                    { id: 124, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What constitutional change did Hitler enact when President Hindenburg died on 2nd August 1934?", answer: "Hitler made himself President and Chancellor and now became Führer (supreme leader).", details: "This merged the head of state and head of government into a single absolute office." },
+                    { id: 125, topic: 'dictatorship', topicLabel: "Path to Dictatorship", question: "What oath did all members of the German army swear in August 1934?", answer: "The army all swore an oath of personal loyalty to Hitler, and Hitler became Supreme Commander.", details: "Soldiers swore unconditional obedience to Hitler personally, rather than to the constitution." },
+
+                    // Unit 2 & 3: Night of the Long Knives & Economic Policies (Cards 126 to 140)
+                    { id: 126, topic: 'dictatorship', topicLabel: "Night of Long Knives", question: "Why did Ernst Röhm's SA pose a threat to Hitler's political standing in early 1934?", answer: "The SA had over 3 million members, was arming with weapons from abroad, and was poorly disciplined.", details: "Their violent street behavior was turning many ordinary Germans and business leaders against the party." },
+                    { id: 127, topic: 'dictatorship', topicLabel: "Night of Long Knives", question: "Which top Nazi leaders had rivalries with Ernst Röhm prior to the purge?", answer: "Hermann Goering and Heinrich Himmler didn't like Röhm's influence.", details: "The SS and Himmler wanted to break away from the SA and gain independent control of security." },
+                    { id: 128, topic: 'dictatorship', topicLabel: "Night of Long Knives", question: "Why was the support of the regular German army critical to Hitler during the 1934 crisis?", answer: "The army feared the SA taking over, and Hitler needed them because they were well-trained and had the power to overthrow him.", details: "By purging Röhm, Hitler won the army's complete institutional allegiance." },
+                    { id: 129, topic: 'economic', topicLabel: "Economic Policies", question: "How many miles of Autobahns were built under Nazi public works programmes?", answer: "2,000 miles of autobahns.", details: "Government investment also extended railways, built new bridges, and dug canals." },
+                    { id: 130, topic: 'economic', topicLabel: "Economic Policies", question: "What was the National Labour Service (RAD) established in 1935?", answer: "1935 compulsory work for 19–25 year old men (extended to women in 1939).", details: "Workers lived in barracks, allowing the state to send workers wherever labor was needed." },
+                    { id: 131, topic: 'economic', topicLabel: "Economic Policies", question: "What fraction of German government spending was directed to the military by 1936?", answer: "2/3 (two thirds) of government spending was on the military by 1936.", details: "Rearmament was a core policy, creating millions of factory jobs and boosting national pride." },
+                    { id: 132, topic: 'economic', topicLabel: "Economic Policies", question: "By how much did the German armed forces expand between 1935 and rearmament?", answer: "The armed forces grew from 100,000 to 1.4 million men.", details: "Military conscription introduced in 1935 absorbed hundreds of thousands of young unemployed men." },
+                    { id: 133, topic: 'economic', topicLabel: "Economic Policies", question: "What was 'invisible unemployment' under the Nazi regime?", answer: "Women and Jewish people were taken off the register so employment figures looked better.", details: "Conscripts doing compulsory military and RAD service were also counted as employed." },
+                    { id: 134, topic: 'economic', topicLabel: "Economic Policies", question: "How low did the official unemployment rate for male workers drop by 1939?", answer: "By 1939 only 0.14% of male workers were registered as unemployed.", details: "Rearmament and public works practically eradicated peacetime male unemployment." },
+                    { id: 135, topic: 'economic', topicLabel: "Economic Policies", question: "How did big businesses (like Daimler-Benz) benefit under Nazi rule?", answer: "Trade unions were banned so workers had fewer rights, wages stayed low, and rearmament contracts boosted profits.", details: "Companies could work employees longer hours without paying overtime or sick pay." },
+                    { id: 136, topic: 'economic', topicLabel: "Economic Policies", question: "Why did small businesses lose out under Nazi economic policy?", answer: "The government focused on rearmament, so consumer goods firms lost out; over 300,000 small businesses closed.", details: "Raw materials and capital were directed exclusively to heavy armament industries." },
+                    { id: 137, topic: 'economic', topicLabel: "Economic Policies", question: "By how much did German farmers' incomes increase between 1933 and 1936?", answer: "Incomes increased 41% between 1933 and 1936.", details: "Debts were cancelled and food prices increased, though strict price controls limited later growth." },
+                    { id: 138, topic: 'economic', topicLabel: "Economic Policies", question: "What was the 'Beauty of Labour' scheme?", answer: "A scheme that improved working conditions by providing low-cost food, better ventilation, and new facilities.", details: "Workers, however, often had to carry out these renovations on unpaid overtime." },
+                    { id: 139, topic: 'economic', topicLabel: "Economic Policies", question: "What was the 'Strength Through Joy' (KdF) scheme and how many took holidays through it?", answer: "It provided improved leisure opportunities and cheap sports; over 10 million took subsidized holidays.", details: "Organized by the German Labour Front to reward workers and keep morale high." },
+                    { id: 140, topic: 'economic', topicLabel: "Economic Policies", question: "What happened to the 1938 Volkswagen car savings scheme for workers?", answer: "No worker ever gained a car; in 1939 the scheme was scrapped in favour of military production.", details: "Workers paid regular stamps into savings books, but the factory was repurposed for military jeeps." },
+
+                    // Unit 3: Women, Education & Youth (Cards 141 to 155)
+                    { id: 141, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "What was the traditional Nazi slogan summarizing the expected role of women?", answer: "Kinder, Küche, Kirche (Children, Church, and Cooking).", details: "Women were seen as natural homemakers who should have no public or political role." },
+                    { id: 142, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "What political ban was imposed on women under Nazi rule?", answer: "Women were banned from the Reichstag and removed from state decision-making.", details: "The regime promoted the idea that women should play no role in running or defending the state." },
+                    { id: 143, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "In what year were women banned from serving as judges or lawyers in Germany?", answer: "In 1936.", details: "Female professionals were systematically purged from the civil service and legal profession." },
+                    { id: 144, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "How did Nazi marriage loans of up to 1,000 marks work?", answer: "Women had to quit their jobs; repayment was reduced by 25% for each child born (4 children cleared the loan).", details: "Designed to encourage marriages, increase the birth rate, and remove women from the workforce." },
+                    { id: 145, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "What enrollment quota was placed on female university students?", answer: "Female university enrollment was capped at 10%.", details: "This prevented women from entering higher professional careers." },
+                    { id: 146, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "Did the policy of reducing female employment succeed long-term?", answer: "No; total employed women rose from 4.2m to 6.2m, and over 6m women worked in agriculture during the war.", details: "Wartime factory and farming labour shortages forced the regime to rely heavily on female labour." },
+                    { id: 147, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "What medal was awarded to German women for having multiple children?", answer: "The Mother's Cross.", details: "Bronze was awarded for 4 children, Silver for 6, and Gold for 8 or more." },
+                    { id: 148, topic: 'womenyouth', topicLabel: "Nazis and Women", question: "Name three lifestyle or fashion habits frowned upon or banned for women under the Nazis.", answer: "Slimming, smoking, late nights, wearing trousers, and dyeing hair.", details: "Simple, traditional clothing was promoted over modern Western fashion trends." },
+                    { id: 149, topic: 'womenyouth', topicLabel: "Education", question: "How was the school curriculum altered to promote Nazi ideology?", answer: "History taught German victories, Geography taught conquest, Science taught weapons, Maths taught cost of disabled people, and Race Studies (Eugenics) was taught.", details: "All subjects were rewritten to reflect racial struggle and nationalist pride." },
+                    { id: 150, topic: 'womenyouth', topicLabel: "Education", question: "Why was PE (Physical Education) time trebled in Nazi schools?", answer: "Time was trebled in order to create the best soldiers (and strong mothers).", details: "Physical fitness was prioritized over academic scholarship." },
+                    { id: 151, topic: 'womenyouth', topicLabel: "Education", question: "What organization were all schoolteachers forced to join?", answer: "The German Teachers' League.", details: "Teachers had to swear loyalty to Hitler and teach strictly within Nazi guidelines." },
+                    { id: 152, topic: 'womenyouth', topicLabel: "Youth Groups", question: "Name the three youth organizations for boys based on age brackets.", answer: "‘Little Fellows’ (6–10), ‘Young Folk’ (10–14), and ‘Hitler Youth’ (14–18).", details: "Boys were taught military drill, map reading, rifle shooting, and unquestioning obedience." },
+                    { id: 153, topic: 'womenyouth', topicLabel: "Youth Groups", question: "What were the youth groups for girls aged 10–14 and 14–17 called?", answer: "Young Girls (10–14) and League of German Girls (14–17).", details: "Girls were trained in domestic duties, childcare, gymnastics, and health." },
+                    { id: 154, topic: 'womenyouth', topicLabel: "Youth Groups", question: "In what year was membership of the Hitler Youth made completely compulsory?", answer: "In 1939.", details: "All rival youth groups (church, scout, sports) had already been banned or forcibly merged." },
+                    { id: 155, topic: 'womenyouth', topicLabel: "Youth Opposition", question: "Who were the Edelweiss Pirates and what did they do to oppose the Nazis?", answer: "Working-class youth who camped, listened to banned jazz, mocked the Nazis, and beat up Hitler Youth members.", details: "During the war, they distributed Allied propaganda leaflets and helped deserters." },
+
+                    // Unit 3: Religion, Churches & Opposition (Cards 156 to 168)
+                    { id: 156, topic: 'church', topicLabel: "The Church", question: "How many Germans were members of the Catholic Church in Nazi Germany?", answer: "22 million members (32% of the population).", details: "Because the Church was so popular, Hitler had to tread carefully to avoid widespread revolt." },
+                    { id: 157, topic: 'church', topicLabel: "The Church", question: "Why did Hitler hate Christianity?", answer: "It went against the idea that Hitler was the supreme leader, and teachings of love and tolerance didn’t fit Nazi ideas.", details: "Christianity's Jewish origins and universal morality directly opposed Nazi racial theory." },
+                    { id: 158, topic: 'church', topicLabel: "The Church", question: "What was the Concordat signed between Hitler and the Pope in July 1933?", answer: "An agreement where the Church stayed out of politics in exchange for remaining independent.", details: "Catholic bishops also had to take an oath of loyalty toward the Nazi state." },
+                    { id: 159, topic: 'church', topicLabel: "The Church", question: "What was the Reich Church and who was its leader?", answer: "A Nazi-controlled Protestant church led by Bishop Ludwig Müller where services ended with the Heil Hitler salute.", details: "Swastikas replaced crosses, and the Old Testament was removed from services." },
+                    { id: 160, topic: 'church', topicLabel: "The Church", question: "What was the official slogan of the Nazi Reich Church?", answer: "“With the swastika on our chests and the cross in our hearts”.", details: "It sought to merge Christian theology with Aryan racial supremacy." },
+                    { id: 161, topic: 'church', topicLabel: "The Church", question: "What proportion of Jehovah's Witnesses were killed in concentration camps?", answer: "1/3 (one third) of Jehovah's Witnesses were killed in the camps.", details: "They were ruthlessly persecuted because they refused to give the Hitler salute or serve in the military." },
+                    { id: 162, topic: 'church', topicLabel: "Church Opposition", question: "What was the Confessional Church and who led it?", answer: "A Protestant group led by Martin Niemöller that refused to swear allegiance to Hitler (6,000 pastors by 1934).", details: "Niemöller was arrested and spent eight years imprisoned in concentration camps." },
+                    { id: 163, topic: 'church', topicLabel: "Church Opposition", question: "Who was Bishop von Galen and what major Nazi policy did he halt in 1941?", answer: "A popular Catholic bishop whose sermons criticized racial policies and forced the euthanasia programme to be halted.", details: "He was too popular to be executed, so the regime instead targeted priests who distributed his sermons." },
+                    { id: 164, topic: 'church', topicLabel: "Church Opposition", question: "Who was Dietrich Bonhoeffer and what did he do to resist the Nazis?", answer: "A pastor who taught Nazism was anti-Christian, helped Jewish people escape, was arrested, and executed in 1945.", details: "He was involved in the underground resistance movement and the plot to assassinate Hitler." },
+                    { id: 165, topic: 'church', topicLabel: "The Church", question: "State two reasons why overall opposition from churches was limited.", answer: "Nazis agreed with traditional morals/marriage, leaders wanted to protect church institutions, and they feared communism.", details: "Many churchgoers preferred compromise over persecution or violent confrontation." },
+                    { id: 166, topic: 'minorities', topicLabel: "Persecution", question: "How many 'work-shy' or 'socially useless' people were sent to concentration camps in 1933?", answer: "500,000 people were sent to concentration camps in 1933.", details: "The regime targeted vagrants, the homeless, and the chronically unemployed." },
+                    { id: 167, topic: 'minorities', topicLabel: "Persecution", question: "How many disabled people with genetic conditions were forcibly sterilized by the Nazis?", answer: "350,000 people with genetic diseases were forcibly sterilized.", details: "Justified under eugenic laws to prevent hereditary diseases from passing to future generations." },
+                    { id: 168, topic: 'minorities', topicLabel: "Persecution", question: "How many people died under the Nazi Euthanasia programme by 1941?", answer: "52,000 children and 71,000 adults had been killed (total over 120,000).", details: "The disabled were viewed as a financial and racial burden the state shouldn't provide for." },
+
+                    // Unit 3: Persecution of Minorities & Holocaust Timeline (Cards 169 to 182)
+                    { id: 169, topic: 'minorities', topicLabel: "Persecution", question: "How many homosexuals were sent to concentration camps under Nazi rule?", answer: "15,000 sent to concentration camps (and many were castrated).", details: "Homosexuality was seen as contrary to traditional German values and family expansion." },
+                    { id: 170, topic: 'minorities', topicLabel: "Persecution", question: "How many black Germans were forcibly sterilized by the Nazi regime?", answer: "385 black Germans were sterilized.", details: "They were targeted under racial purity laws to prevent intermarriage with Aryans." },
+                    { id: 171, topic: 'minorities', topicLabel: "Persecution", question: "How many Roma Germans and total Roma people were murdered by the Nazis?", answer: "25,000 out of 30,000 Roma Germans killed, and 500,000 Roma people killed across Europe.", details: "Roma were classified as racially inferior and targeted for systematic extermination." },
+                    { id: 172, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "What anti-Jewish persecution measures were introduced in 1933?", answer: "Boycotts of Jewish shops, bans from state jobs, and segregation of Jewish children in schools.", details: "This marked the initial phase of public economic and social exclusion." },
+                    { id: 173, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "What were the Nuremberg Laws passed in 1935?", answer: "Prohibited intermarriage with non-Jews, stripped Jewish people of German citizenship, and denied them voting rights.", details: "Jews were officially reclassified as subjects without constitutional rights." },
+                    { id: 174, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "Why were outward signs of anti-Jewish persecution temporarily removed in Berlin in 1936?", answer: "For the 1936 Berlin Olympic Games.", details: "Signs were removed to present a peaceful, civilized facade to international visitors." },
+                    { id: 175, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "Name three things Jewish people were banned from owning or doing in 1938.", answer: "Banned from owning radios, bicycles, businesses; attending cinemas, buying newspapers, and state education.", details: "This stripped Jewish citizens of leisure, transport, and intellectual life." },
+                    { id: 176, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "What triggered Kristallnacht in November 1938 and what occurred during it?", answer: "A Jewish student shot a German diplomat; synagogues and homes destroyed, over 91 killed, and thousands arrested.", details: "This state-orchestrated pogrom marked a sharp escalation into physical violence." },
+                    { id: 177, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "How many Jewish people came under Nazi control following the invasion of Poland in 1939?", answer: "3.5 million more Jewish people (many confined to walled ghettos).", details: "Ghettos like Warsaw suffered immense overcrowding, disease, and starvation." },
+                    { id: 178, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "What were the Einsatzgruppen during the 1941 invasion of the USSR?", answer: "Mobile SS execution squads that followed the army, rounding up and executing Jewish people by shooting.", details: "Over one million victims were shot into mass pits across Eastern Europe." },
+                    { id: 179, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "When was the Wannsee Conference held and what was planned there?", answer: "January 1942; high-ranking Nazis planned the 'Final Solution' (death camps).", details: "Chaired by Reinhard Heydrich to coordinate the industrial mass murder of European Jews." },
+                    { id: 180, topic: 'minorities', topicLabel: "Holocaust Timeline", question: "How many Jewish people in total were murdered during the Holocaust?", answer: "6 million Jewish people (about 80% of death camp arrivals were killed immediately).", details: "They were systematically murdered through gas chambers, shooting, starvation, and slave labour." },
+                    { id: 181, topic: 'minorities', topicLabel: "Impact on Jews", question: "Name three areas of daily life impacted by Nazi persecution of Jewish people.", answer: "Work (boycotted/poverty), Leisure (denied radios/cinemas), and Education (barred from schools/universities).", details: "They were completely excluded from civil society and lived in constant physical danger." },
+                    { id: 182, topic: 'police', topicLabel: "Police State", question: "Who controlled all German police forces and was fanatically loyal to Hitler?", answer: "Heinrich Himmler.", details: "As Reichsführer-SS, he consolidated the regular police, Gestapo, and concentration camps." },
+
+                    // Unit 3: Police State, Culture, War & Opposition (Cards 183 to 200)
+                    { id: 183, topic: 'police', topicLabel: "Police State", question: "In what year was the SS established, and what was the role of the SD?", answer: "The SS was founded in 1925; the SD (“security”) could arrest anyone, including Nazi party members.", details: "The SS grew from Hitler's personal bodyguard into a massive racial and police empire." },
+                    { id: 184, topic: 'police', topicLabel: "Police State", question: "How did the regular German police force handle crimes committed by Nazi party members?", answer: "Police ignored crimes committed by Nazis; top jobs in the police force were held by Nazis.", details: "The legal and judicial system was entirely subordinated to party interests." },
+                    { id: 185, topic: 'police', topicLabel: "Police State", question: "What was the Gestapo and what authority did it possess?", answer: "The secret police that spied on people and could arrest anyone for any reason.", details: "They relied on domestic surveillance and voluntary denunciations to terrorize citizens." },
+                    { id: 186, topic: 'police', topicLabel: "Propaganda", question: "What title was given to Josef Goebbels in the Nazi government?", answer: "Minister of Enlightenment and Propaganda.", details: "He controlled the press, radio, theatre, literature, music, art, and cinema." },
+                    { id: 187, topic: 'police', topicLabel: "Propaganda", question: "How did the Nazis utilize radio broadcasting to maintain domestic control?", answer: "Controlled stations, installed street loudspeakers, and boosted radio ownership past American levels.", details: "Cheap 'People's Receivers' brought Hitler's speeches into millions of ordinary living rooms." },
+                    { id: 188, topic: 'police', topicLabel: "Art & Culture", question: "How did Goebbels control the film industry and cinema audiences?", answer: "Approved all film scripts, owned film studios via supporters (Hugenberg), and showed newsreels of Hitler before films.", details: "Cinema was treated as an essential vehicle for ideological indoctrination." },
+                    { id: 189, topic: 'police', topicLabel: "Art & Culture", question: "Which composers were promoted by the Nazis, and which music was banned?", answer: "Promoted Bach, Mozart, and Wagner; banned Weimar music, Jewish composers (Mahler/Mendelssohn), and jazz.", details: "Jazz was banned due to its Black origins, which contradicted Aryan racial doctrines." },
+                    { id: 190, topic: 'police', topicLabel: "Art & Culture", question: "How many paintings did the Nazis burn in 1936 after deeming modern art 'degenerate'?", answer: "In 1936, the Nazis burned 5,000 paintings they considered unacceptable.", details: "Hitler demanded realistic, heroic art depicting German soldiers, peasants, and families." },
+                    { id: 191, topic: 'police', topicLabel: "Art & Culture", question: "What was the best-selling book in Nazi Germany?", answer: "Mein Kampf by Adolf Hitler.", details: "All Quiet on the Western Front by Remarque was officially banned and burned." },
+                    { id: 192, topic: 'police', topicLabel: "Wartime Impact", question: "How many German men were serving in the military during WW2, causing acute labour shortages?", answer: "13 million men were serving.", details: "This pulled millions of workers away from essential farming and factory lines." },
+                    { id: 193, topic: 'police', topicLabel: "Wartime Impact", question: "How did the regime attempt to resolve wartime labour shortages in munitions factories?", answer: "Employing women, concentration camp prisoners as forced labour, banning holidays, and 60-hour work weeks.", details: "Consumer production was halted in favor of round-the-clock war armaments." },
+                    { id: 194, topic: 'police', topicLabel: "Wartime Impact", question: "What basic diet was food rationing restricted to in wartime Germany?", answer: "Restricted diets to bread, potatoes, and vegetables.", details: "Rationing started at the outbreak of war in 1939 and became dire by 1944–1945." },
+                    { id: 195, topic: 'police', topicLabel: "Wartime Impact", question: "What casualties and destruction occurred in 1943 from Allied bombing raids on German cities?", answer: "Civilian targets hit: 350,000 killed, 780,000 injured, and 2 million homes destroyed.", details: "Hitler had promised German cities would never be bombed, causing morale to plummet." },
+                    { id: 196, topic: 'police', topicLabel: "Wartime Impact", question: "Why did German civilian morale begin to drop drastically from 1943 onwards?", answer: "1943 military setbacks, defeats in USSR, news from soldiers on leave, and secret BBC radio broadcasts.", details: "Some citizens stopped attending rallies and refused to give the Heil Hitler salute." },
+                    { id: 197, topic: 'police', topicLabel: "War Opposition", question: "Who were the leaders of the 'White Rose' student resistance group at Munich University?", answer: "Hans and Sophie Scholl, and Professor Kurt Huber.", details: "They distributed anti-Nazi and anti-war leaflets across university campuses." },
+                    { id: 198, topic: 'police', topicLabel: "War Opposition", question: "How were Hans and Sophie Scholl captured and what was their fate?", answer: "Reported to the Gestapo by a janitor, and were executed by hanging/guillotine.", details: "They were tried before the notorious People's Court and put to death on the same day." },
+                    { id: 199, topic: 'police', topicLabel: "War Opposition", question: "What was the July Bomb Plot of 1944 (Operation Valkyrie) and why did it fail?", answer: "Count von Stauffenberg placed a bomb in a suitcase to kill Hitler, but the suitcase was moved behind a heavy table leg.", details: "The bomb killed 4 people; Hitler escaped with minor injuries, leading to the execution of 5,746 people." },
+                    { id: 200, topic: 'police', topicLabel: "War Opposition", question: "What public punishment was carried out by the Gestapo on captured Edelweiss Pirates during the war?", answer: "A group was caught by the Gestapo and publicly hanged.", details: "The regime brutally suppressed any youth defiance to deter further civilian rebellion." }
+                ],
+
+                init() {
+                    this.applyFilters();
+                    
+                    // Keyboard navigation
+                    window.addEventListener('keydown', (e) => {
+                        if (this.showSearchModal || this.deckCompleted || this.activeDeck.length === 0) return;
+                        if (e.code === 'Space') {
+                            e.preventDefault();
+                            this.flipCard();
+                        } else if (e.code === 'ArrowRight') {
+                            e.preventDefault();
+                            this.markCard(true);
+                        } else if (e.code === 'ArrowLeft') {
+                            e.preventDefault();
+                            this.markCard(false);
+                        }
+                    });
+                },
+
+                get currentCard() {
+                    return this.activeDeck[this.currentIndex] || {};
+                },
+
+                get filteredBankList() {
+                    if (!this.searchQuery.trim()) return this.allCards;
+                    const query = this.searchQuery.toLowerCase();
+                    return this.allCards.filter(c => 
+                        c.question.toLowerCase().includes(query) || 
+                        c.answer.toLowerCase().includes(query) || 
+                        c.details.toLowerCase().includes(query) ||
+                        c.topicLabel.toLowerCase().includes(query)
+                    );
+                },
+
+                getTopicColor(topic) {
+                    switch (topic) {
+                        case 'kaiser': return 'bg-accent-navy';
+                        case 'versailles': return 'bg-brown-800';
+                        case 'weimar': return 'bg-accent-burgundy';
+                        case 'hyperinflation': return 'bg-brown-700';
+                        case 'stresemann': return 'bg-accent-forest';
+                        case 'depression': return 'bg-brown-800';
+                        case 'risenazis': return 'bg-accent-burgundy';
+                        case 'dictatorship': return 'bg-brown-900';
+                        case 'economic': return 'bg-accent-forest';
+                        case 'womenyouth': return 'bg-accent-navy';
+                        case 'church': return 'bg-brown-700';
+                        case 'minorities': return 'bg-accent-burgundy';
+                        case 'police': return 'bg-brown-900';
+                        default: return 'bg-brown-800';
+                    }
+                },
+
+                getTopicLabel(topic) {
+                    switch (topic) {
+                        case 'kaiser': return "1900 Imperial System";
+                        case 'versailles': return "WW1 & Versailles";
+                        case 'weimar': return "Weimar Constitution & Uprisings";
+                        case 'hyperinflation': return "1923 Hyperinflation";
+                        case 'stresemann': return "Stresemann & Culture";
+                        case 'depression': return "Great Depression";
+                        case 'risenazis': return "Nazi Rise & Propaganda";
+                        case 'dictatorship': return "Path to Dictatorship";
+                        case 'economic': return "Nazi Economic Policies";
+                        case 'womenyouth': return "Women, Education & Youth";
+                        case 'church': return "Churches & Religion";
+                        case 'minorities': return "Minorities & Holocaust";
+                        case 'police': return "Police State & War";
+                        default: return "All 200 Questions";
+                    }
+                },
+
+                applyFilters() {
+                    let deck = [];
+                    if (this.isWrongOnlyMode) {
+                        deck = [...this.wrongCards];
+                    } else if (this.selectedTopic === 'all') {
+                        deck = [...this.allCards];
+                    } else {
+                        deck = this.allCards.filter(c => c.topic === this.selectedTopic);
+                    }
+
+                    // Shuffle deck for testing
+                    deck = deck.sort(() => Math.random() - 0.5);
+
+                    if (this.sessionLimit < deck.length && !this.isWrongOnlyMode) {
+                        deck = deck.slice(0, this.sessionLimit);
+                    }
+
+                    this.activeDeck = deck;
+                    this.currentIndex = 0;
+                    this.isFlipped = false;
+                    this.deckCompleted = this.activeDeck.length === 0;
+                },
+
+                setSessionLimit(limit) {
+                    this.sessionLimit = limit;
+                    this.isWrongOnlyMode = false;
+                    this.applyFilters();
+                },
+
+                flipCard() {
+                    this.isFlipped = !this.isFlipped;
+                },
+
+                previousCard() {
+                    if (this.currentIndex > 0) {
+                        this.currentIndex--;
+                        this.isFlipped = false;
+                    }
+                },
+
+                markCard(isCorrect) {
+                    const card = this.currentCard;
+                    if (!card.id) return;
+
+                    if (isCorrect) {
+                        if (!this.correctCards.some(c => c.id === card.id)) {
+                            this.correctCards.push(card);
+                        }
+                        this.wrongCards = this.wrongCards.filter(c => c.id !== card.id);
+                    } else {
+                        if (!this.wrongCards.some(c => c.id === card.id)) {
+                            this.wrongCards.push(card);
+                        }
+                        this.correctCards = this.correctCards.filter(c => c.id !== card.id);
+                    }
+
+                    if (this.currentIndex < this.activeDeck.length - 1) {
+                        this.currentIndex++;
+                        this.isFlipped = false;
+                    } else {
+                        this.deckCompleted = true;
+                    }
+                },
+
+                isCardInWrongList(id) {
+                    return this.wrongCards.some(c => c.id === id);
+                },
+
+                revisitWrongCards() {
+                    if (this.wrongCards.length === 0) return;
+                    this.isWrongOnlyMode = true;
+                    this.deckCompleted = false;
+                    this.applyFilters();
+                },
+
+                toggleWrongOnlyMode() {
+                    if (this.wrongCards.length === 0 && !this.isWrongOnlyMode) return;
+                    this.isWrongOnlyMode = !this.isWrongOnlyMode;
+                    this.applyFilters();
+                },
+
+                shuffleDeck() {
+                    this.activeDeck = [...this.activeDeck].sort(() => Math.random() - 0.5);
+                    this.currentIndex = 0;
+                    this.isFlipped = false;
+                    this.deckCompleted = false;
+                },
+
+                resetDeckProgress() {
+                    this.currentIndex = 0;
+                    this.isFlipped = false;
+                    this.deckCompleted = false;
+                },
+
+                jumpToCard() {
+                    if (!this.jumpInput || this.jumpInput < 1 || this.jumpInput > this.activeDeck.length) return;
+                    this.currentIndex = this.jumpInput - 1;
+                    this.isFlipped = false;
+                    this.jumpInput = null;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
