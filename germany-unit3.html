@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German History Revision Hub - Unit 3: Nazi Germany (Dictatorship in Action)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            slate: '#36454f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="unit3App()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-600">
+                    <i class="fa-solid fa-landmark text-beige-200 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">German History Revision Hub</h1>
+                    <p class="text-xs text-beige-300">Unit 3: Nazi Germany — Dictatorship in Action & Society</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap justify-center gap-1.5 bg-brown-800 p-1.5 rounded-xl border border-brown-700 text-sm">
+                <button @click="currentTab = 'all'" :class="currentTab === 'all' ? 'bg-brown-600 text-white shadow' : 'text-beige-300 hover:text-white hover:bg-brown-700/50'" class="px-3 py-2 rounded-lg font-medium transition flex items-center space-x-1.5 text-xs">
+                    <i class="fa-solid fa-layer-group"></i><span>All Unit 3</span>
+                </button>
+                <button @click="currentTab = 'economy'" :class="currentTab === 'economy' ? 'bg-brown-600 text-white shadow' : 'text-beige-300 hover:text-white hover:bg-brown-700/50'" class="px-3 py-2 rounded-lg font-medium transition flex items-center space-x-1.5 text-xs">
+                    <i class="fa-solid fa-coins"></i><span>Economy & War</span>
+                </button>
+                <button @click="currentTab = 'society'" :class="currentTab === 'society' ? 'bg-brown-600 text-white shadow' : 'text-beige-300 hover:text-white hover:bg-brown-700/50'" class="px-3 py-2 rounded-lg font-medium transition flex items-center space-x-1.5 text-xs">
+                    <i class="fa-solid fa-users"></i><span>Women, Youth & Church</span>
+                </button>
+                <button @click="currentTab = 'terror'" :class="currentTab === 'terror' ? 'bg-brown-600 text-white shadow' : 'text-beige-300 hover:text-white hover:bg-brown-700/50'" class="px-3 py-2 rounded-lg font-medium transition flex items-center space-x-1.5 text-xs">
+                    <i class="fa-solid fa-shield-halved"></i><span>Persecution & Terror</span>
+                </button>
+                <button @click="currentTab = 'culture'" :class="currentTab === 'culture' ? 'bg-brown-600 text-white shadow' : 'text-beige-300 hover:text-white hover:bg-brown-700/50'" class="px-3 py-2 rounded-lg font-medium transition flex items-center space-x-1.5 text-xs">
+                    <i class="fa-solid fa-bullhorn"></i><span>Propaganda & Culture</span>
+                </button>
+                <button @click="currentTab = 'opposition'" :class="currentTab === 'opposition' ? 'bg-brown-600 text-white shadow' : 'text-beige-300 hover:text-white hover:bg-brown-700/50'" class="px-3 py-2 rounded-lg font-medium transition flex items-center space-x-1.5 text-xs">
+                    <i class="fa-solid fa-hand-fist"></i><span>Opposition</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto space-y-6">
+
+        <!-- Filter & Search Bar -->
+        <div class="bg-beige-200/80 p-4 rounded-2xl border border-beige-300 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+            <div class="flex items-center space-x-3 w-full md:w-auto">
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brown-600">
+                        <i class="fa-solid fa-search text-xs"></i>
+                    </span>
+                    <input type="text" x-model="searchQuery" placeholder="Search keywords (e.g. Autobahns, Nuremberg, Church)..." class="w-full pl-9 pr-4 py-2 bg-beige-50 border border-beige-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brown-600 text-brown-900">
+                </div>
+            </div>
+            <div class="text-xs font-semibold text-brown-700">
+                <i class="fa-solid fa-info-circle mr-1 text-brown-600"></i> Active View: <span class="uppercase tracking-wider text-brown-900 font-bold" x-text="currentTab === 'all' ? 'All Unit 3 Topics' : currentTab"></span>
+            </div>
+        </div>
+
+        <!-- ================= ECONOMY & WWII SECTION (Tab: economy or all) ================= -->
+        <div x-show="currentTab === 'all' || currentTab === 'economy'" class="space-y-6" x-cloak>
+            
+            <!-- Nazi Economic Policies Section -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('economic policy autobahns RAD rearmament invisible unemployment DAF KDF Volkswagen beauty of labour')">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-industry text-beige-300"></i>
+                        <span>Nazi Economic Policies & Unemployment Solutions</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Section 1</span>
+                </div>
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 text-xs text-brown-800">
+                        <p><strong>Overview:</strong> Employment levels and improving the economy were core parts of Nazi election promises. They also wanted to improve international standing and reputation so they could seem like they were benefiting the German people, growing the economy, and creating jobs.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                        
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Public Works</strong>
+                            <p class="text-brown-800">Lots of government investment into public projects like building autobahns. Provided jobs for unemployed, improved the economy, and developed the country. 2,000 miles of autobahns, extended railways, new canals, and bridges.</p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">National Labour Service (RAD)</strong>
+                            <p class="text-brown-800">1935: 19-25 year old men given compulsory work. Extended to women in 1939. Provided accommodation in barracks so location was less important, allowing employment where work was rather than where workers lived.</p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Rearmament</strong>
+                            <p class="text-brown-800">Creating a bigger army was core to Hitler's policies. 2/3 of government spending went to the military by 1936. Created millions of factory jobs and boosted national pride.</p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Invisible Unemployment</strong>
+                            <p class="text-brown-800">Women and Jewish people not counted, making employment levels look better. Conscription introduced in 1935 (18-25 year olds did 2 years), counting as employed and expanding armed forces from 100,000 to 1.4 million.</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Impact on Different Groups -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-sm"><i class="fa-solid fa-users-line mr-1 text-accent-burgundy"></i> Impact of Economic/Job Policies on the German People</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                            
+                            <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                                <strong class="text-brown-900 font-bold block text-accent-burgundy">Big Businesses</strong>
+                                <p class="text-brown-800">✓ Trade unions banned so workers had fewer rights; companies could work people longer and cut sick pay.<br>✓ Kept wages low.<br>✓ Firms like Daimler-Benz benefited from rearmament contracts.</p>
+                            </div>
+
+                            <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                                <strong class="text-brown-900 font-bold block text-accent-burgundy">Small Businesses</strong>
+                                <p class="text-brown-800">✗ Government focus on rearmament meant consumer goods producers lost out.<br>✗ Over 300,000 small businesses lost out and had to close.</p>
+                            </div>
+
+                            <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                                <strong class="text-brown-900 font-bold block text-accent-burgundy">Farmers</strong>
+                                <p class="text-brown-800">✓ Initially benefited: debts cancelled, food prices increased (incomes up 41% 1933-36).<br>✗ Strict price controls, limited growth, worker shortages, and low farm tech investment.</p>
+                            </div>
+
+                            <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                                <strong class="text-brown-900 font-bold block text-accent-burgundy">Workers</strong>
+                                <p class="text-brown-800">✓ By 1939 only 0.14% male unemployment; armament workers paid more.<br>✗ Agriculture and consumer goods workers paid less; longer working hours.</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- DAF, KdF, Beauty of Labour -->
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div>
+                            <strong class="text-brown-900 font-bold block mb-1">German Labour Front (DAF)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li>All trade unions disbanded and incorporated into the DAF (less protection for workers).</li>
+                                <li>Organized training for 2.5 million workers to retrain where needed.</li>
+                                <li>Employers in control; no strikes or protests allowed.</li>
+                                <li>Refusing assigned jobs meant forced labour camp detention (no voluntary unemployment).</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong class="text-brown-900 font-bold block mb-1">Strength Through Joy (KdF)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li>Improved leisure opportunities and cheap sports.</li>
+                                <li>Over 10 million took subsidized holidays.</li>
+                                <li>1938 Volkswagen savings scheme let workers buy a car through a fund, but no worker ever gained a car and it was scrapped in 1939 for military production.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong class="text-brown-900 font-bold block mb-1">Beauty of Labour (SdA)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li>Aimed to improve working conditions.</li>
+                                <li>Provided low-cost food and new washing facilities in factories.</li>
+                                <li>Workers still lacked legal rights or negotiating power.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Impact of WWII Section -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('World War morale labour shortages rationing bombing refugees WWII')">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-bomb text-beige-300"></i>
+                        <span>Impact of the Second World War on the German People</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Section 2</span>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Morale</strong>
+                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                            <li>Lack of preparation at war start with shortages in fuel, oil, and steel, but initial morale was generally good.</li>
+                            <li>Germany winning early on: invaded USSR in 1941, conquered most of Europe by end of 1942.</li>
+                            <li>1943 turning point: military situation worsened so morale fell.</li>
+                            <li>News suppressed by press but seeped in via soldiers on leave and secret BBC broadcasts, leading some to stay away from Nazi rallies or refuse the Hitler salute.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Labour Shortages</strong>
+                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                            <li>13 million men drafted into the armed forces, creating mass labor shortages.</li>
+                            <li>Addressed by employing women and concentration camp prisoners as forced labor.</li>
+                            <li>Factories pivoted entirely to munitions; workers forced into extra shifts, holidays banned, minimum 60-hour work weeks.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Rationing</strong>
+                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                            <li>Introduced at war start due to farm labor shortages.</li>
+                            <li>Clothing and shoe shortages led Nazi officials to begin confiscating footwear.</li>
+                            <li>Diet restricted to bread, potatoes, and vegetables; reasonable until mid-1944, then worsening and dire by 1945.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Allied Bombing</strong>
+                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                            <li>Despite Hitler's promises that German cities would never be bombed, Allied air raids escalated.</li>
+                            <li>1943 civilian targets hit: 350,000 killed, 780,000 injured, and 2 million homes destroyed.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2 md:col-span-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Refugees (1945)</strong>
+                        <p class="text-brown-800">By 1945, Allied forces advancing from the west and Soviet forces from the east produced massive refugee waves fleeing westward, straining already disastrous conditions in West Germany.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= WOMEN, YOUTH & CHURCH SECTION (Tab: society or all) ================= -->
+        <div x-show="currentTab === 'all' || currentTab === 'society'" class="space-y-6" x-cloak>
+            
+            <!-- Nazis and Women Section -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('women marriage birth rate children education higher ed Kinder Kirche Kuche')">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-person-dress text-beige-300"></i>
+                        <span>Nazi Policies on Women (Kinder, Küche, Kirche)</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Section 3</span>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 text-xs text-brown-800">
+                        <p><strong>Philosophy:</strong> Nazi policy toward women was influenced by beliefs that men were naturally suited for leadership and national defense, while women were "nurturing" homemakers with no public role. Their primary duty was addressing Germany's falling birth rate by bearing strong, racially pure children.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Political Impact on Women</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Exclusion from Government:</strong> Banned from the Reichstag and unrepresented.</li>
+                                <li><strong>Judicial Bans:</strong> Banned from serving as judges or lawyers in 1936.</li>
+                                <li><strong>Loss of Influence:</strong> Promoted the idea that women should play no role in running or defending the state.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Economic Impact on Women</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Marriage Loans:</strong> Up to 1,000 marks (half-year pay); required quitting work. Repayment cut by 25% per child; 4 children meant zero repayment.</li>
+                                <li><strong>State Sacks:</strong> Female professionals (doctors, teachers, civil servants) sacked.</li>
+                                <li><strong>Education Quotas:</strong> Higher education capped at 10%.</li>
+                                <li><strong>Reality vs Policy:</strong> Employed women rose from 4.2m to 6.2m; over 6m worked in agriculture during WWII.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Social, Cultural & Lifestyle</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Family:</strong> Abortions restricted; childlessness became grounds for divorce; Mother's Cross medals awarded.</li>
+                                <li><strong>Domestic Training:</strong> State-run Women's Enterprises trained women in domestic duties.</li>
+                                <li><strong>Behavior & Dress:</strong> Slimming, smoking, late nights, trousers, and hair dye frowned upon; restaurants banned female smoking.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education & Youth Groups Section -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('education schools Hitler Youth youth groups Edelweiss Pirates Swing Youth')">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-graduation-cap text-beige-300"></i>
+                        <span>Education & Youth Control</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Section 4</span>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                    
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Schools & Curriculum</strong>
+                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                            <li><strong>History:</strong> German victories & Treaty of Versailles grievances.</li>
+                            <li><strong>Geography:</strong> Territories for future conquest.</li>
+                            <li><strong>Science & Maths:</strong> Weapon calculations and discriminatory statistics (e.g., cost of disabled people).</li>
+                            <li><strong>PE:</strong> Time trebled to create the best soldiers.</li>
+                            <li><strong>Race Studies:</strong> Eugenics. Teachers required to teach Nazi ideology and join the German Teachers' League.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Youth Groups & Compulsion</strong>
+                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                            <li><strong>Timeline:</strong> Hitler Youth created in 1922; all other youth groups banned in 1933; 1936 Law gave Hitler Youth 'equal status' to school/home; membership made <strong>compulsory in 1939</strong>.</li>
+                            <li><strong>Boys:</strong> Little Fellows (6-10), Young Folk (10-14), Hitler Youth (14-18) — trained as future soldiers and heads of families.</li>
+                            <li><strong>Girls:</strong> Young Girls (10-14), League of German Girls (14-17) — trained to be "good women".</li>
+                            <li><strong>Youth Opposition:</strong> Refusing to join, listening to banned jazz (black origins), and groups like "roving dudes" and "Edelweiss Pirates" who camped and mocked Nazis.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- The Church Section -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('Church Protestant Catholic Concordat Reich Church Martin Niemoller von Galen Bonhoeffer')">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-church text-beige-300"></i>
+                        <span>The Churches in Nazi Germany (Protestant & Catholic)</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full">Section 5</span>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <p class="text-xs text-brown-800">Hitler hated Christianity as its teachings of love and tolerance clashed with Nazi ideology and the idea of Hitler as supreme leader. With 40m Protestants and 22m Catholics (32%), the Church was immensely popular, forcing Hitler to tread carefully with gradual control, the Concordat, and the Reich Church.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Methods of Control</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Concordat:</strong> Agreement with the Pope ensuring church independence from politics in exchange for loyalty oaths from bishops.</li>
+                                <li><strong>Closing Church Groups:</strong> Youth groups forced to merge with Hitler Youth by 1936.</li>
+                                <li><strong>Reich Church:</strong> Protestant unification under Bishop Ludwig Müller ("with the swastika on our chests and the cross in our hearts").</li>
+                                <li><strong>Intimidation:</strong> Arresting critical priests; Jehovah's Witnesses faced 1/3 mortality in camps.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Church Opposition</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Confessional Church:</strong> Led by Martin Niemöller (6,000 pastors refusing Nazi allegiance).</li>
+                                <li><strong>Bishop von Galen:</strong> Highly popular; criticized racial policies and successfully halted the 1941 euthanasia program.</li>
+                                <li><strong>Dietrich Bonhoeffer:</strong> Denounced Nazism as anti-Christian from 1933, helped Jews escape, and was executed in 1945.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Reasons for Lack of Opposition</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li>Many Germans actively supported Nazis or sat in the middle.</li>
+                                <li>Nazis agreed with traditional moral and family values.</li>
+                                <li>Church leaders wanted to protect religious institutions.</li>
+                                <li>Widespread fear of atheistic communism.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= PERSECUTION & TERROR SECTION (Tab: terror or all) ================= -->
+        <div x-show="currentTab === 'all' || currentTab === 'terror'" class="space-y-6" x-cloak>
+            
+            <!-- Minority Persecution Table -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('minorities disabled homosexuals Roma Jews Euthanasia concentration camps')">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-triangle-exclamation text-beige-300"></i>
+                        <span>Persecution of Minorities & "Socially Useless" Groups</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Section 6</span>
+                </div>
+                <div class="p-6 overflow-x-auto text-xs">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-beige-200 text-brown-900 border-b border-beige-300">
+                                <th class="p-3 font-bold">Target Group</th>
+                                <th class="p-3 font-bold">When & How Persecuted</th>
+                                <th class="p-3 font-bold">Reasoning / Ideology</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-beige-200 text-brown-800">
+                            <tr>
+                                <td class="p-3 font-semibold text-brown-900">Those Who Wouldn't Work</td>
+                                <td class="p-3">Rounded up in 1933; 500,000 sent to concentration camps.</td>
+                                <td class="p-3">Deemed "socially useless".</td>
+                            </tr>
+                            <tr class="bg-beige-100/50">
+                                <td class="p-3 font-semibold text-brown-900">The Disabled</td>
+                                <td class="p-3">350,000 with genetic diseases forcibly sterilized. Euthanasia program (1939): 52,000 children and 71,000 adults killed by 1941.</td>
+                                <td class="p-3">Regarded as a financial and genetic burden the government shouldn't provide for.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-brown-900">Homosexuals</td>
+                                <td class="p-3">15,000 sent to concentration camps; many castrated.</td>
+                                <td class="p-3">Violated traditional family values.</td>
+                            </tr>
+                            <tr class="bg-beige-100/50">
+                                <td class="p-3 font-semibold text-brown-900">Political Enemies</td>
+                                <td class="p-3">Put in concentration camps without trial.</td>
+                                <td class="p-3">Demanded everyone follow Hitler unconditionally.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-brown-900">Non-Aryans (Roma & Black Germans)</td>
+                                <td class="p-3">385 Black Germans sterilized; marriage bans; 25,000 of 30,000 Roma Germans and 500,000 Roma total killed.</td>
+                                <td class="p-3">True Germans were Aryans; necessity of keeping the master race pure.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Persecution of Jewish People Timeline & Impact -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('Jewish Nuremberg Laws Kristallnacht Wannsee Final Solution Ghetto')">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-timeline text-beige-300"></i>
+                        <span>Timeline & Impact: Persecution of Jewish People</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Section 7</span>
+                </div>
+                <div class="p-6 space-y-6 text-xs">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">1933: Boycotts & Bans</strong>
+                            <p class="text-brown-800">Shops boycotted, banned from state jobs, and children segregated in schools.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">1935: Nuremberg Laws</strong>
+                            <p class="text-brown-800">Intermarriage banned, stripped of German citizenship, voting rights denied.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">1936: Berlin Olympics</strong>
+                            <p class="text-brown-800">Outward signs of persecution temporarily removed in Berlin for PR.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">1938: Total Exclusion</strong>
+                            <p class="text-brown-800">Banned from radios, bikes, businesses, cinemas, and state schools.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Nov 1938: Kristallnacht</strong>
+                            <p class="text-brown-800">Violent pogrom destroying synagogues and homes. 91+ killed, thousands sent to camps.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">1939: Poland Invasion</strong>
+                            <p class="text-brown-800">3.5m more Jews under control, confined to overcrowded Polish ghettos.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">1941: USSR Invasion</strong>
+                            <p class="text-brown-800">Einsatzgruppen death squads executed Jews by shooting.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200 space-y-1">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Jan 1942: Wannsee</strong>
+                            <p class="text-brown-800">Planned the "Final Solution", establishing death camps where 6m Jews were murdered.</p>
+                        </div>
+                    </div>
+
+                    <!-- Impact Summary Table -->
+                    <div class="border-t border-beige-200 pt-4">
+                        <h4 class="font-bold text-brown-900 mb-2"><i class="fa-solid fa-chart-pie mr-1 text-accent-burgundy"></i> Impact of Persecution on Jewish People</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200">
+                                <strong class="text-brown-900 block font-bold mb-1">Work</strong>
+                                <p class="text-brown-800">Boycotted and attacked; struggled to make money, leading to poverty and exclusion.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200">
+                                <strong class="text-brown-900 block font-bold mb-1">Leisure</strong>
+                                <p class="text-brown-800">Denied cinemas, radios, bikes, etc., completely excluded from society.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200">
+                                <strong class="text-brown-900 block font-bold mb-1">Education</strong>
+                                <p class="text-brown-800">Barred from state schools and universities, severely limiting future jobs.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200">
+                                <strong class="text-brown-900 block font-bold mb-1">Citizenship</strong>
+                                <p class="text-brown-800">Citizenship removed, losing access to state provisions and benefits.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200">
+                                <strong class="text-brown-900 block font-bold mb-1">Safety</strong>
+                                <p class="text-brown-800">Regularly attacked and placed in constant physical danger.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Fear, Repression & Police State -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('Himmler SS SD Gestapo police terror concentration camps')">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-handcuffs text-beige-300"></i>
+                        <span>Fear and Repression — The Police State</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full">Section 8</span>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <p class="text-xs text-brown-800">The Nazis needed to bring the country under control through fear. Originally, they kept concentration camps secret due to unpopularity, but eventually, everyone knew, acting as a powerful deterrent against rebellion.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Concentration Camps</strong>
+                            <p class="text-brown-800">Political opponents and resisters were imprisoned in brutal conditions.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Heinrich Himmler & SS</strong>
+                            <p class="text-brown-800">Himmler controlled all police forces with absolute loyalty. SS (1925) evolved from bodyguards to a feared violent force; the SD could arrest anyone, including Nazi members.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Police</strong>
+                            <p class="text-brown-800">Ignored crimes committed by Nazis; top police jobs were held by Nazis.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">The Gestapo</strong>
+                            <p class="text-brown-800">Secret police that spied on citizens and could arrest anyone for any reason without trial.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= PROPAGANDA & CULTURE SECTION (Tab: culture or all) ================= -->
+        <div x-show="currentTab === 'all' || currentTab === 'culture'" class="space-y-6" x-cloak>
+            
+            <!-- Winning People Over / Propaganda -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('Goebbels propaganda newspapers rallies books theatre radio')">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-bullhorn text-beige-300"></i>
+                        <span>"Winning People Over" — Propaganda and Control</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Section 9</span>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <p class="text-xs text-brown-800">The flip side of fear was using propaganda to persuade the German people of Nazi party policies.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Joseph Goebbels</strong>
+                            <p class="text-brown-800">Made Minister of Enlightenment and Propaganda, coordinating all media and public messaging.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Newspapers</strong>
+                            <p class="text-brown-800">Published only positive stories about Nazis and negative stories about Jewish people.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Mass Rallies</strong>
+                            <p class="text-brown-800">Spectacular annual events celebrating Hitler's greatness in specially built arenas.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Radio Expansion</strong>
+                            <p class="text-brown-800">Controlled radio stations; loudspeakers installed in streets; increased radio ownership during the 1930s, surpassing American levels.</p>
+                        </div>
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5 md:col-span-2">
+                            <strong class="text-brown-900 font-bold block text-accent-burgundy">Books, Theatres & Music</strong>
+                            <p class="text-brown-800">Forced to produce content praising Hitler and Nazi ideology.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Effects on Art and Culture -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('cinema music theatre literature art degenerate book burning')">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-palette text-beige-300"></i>
+                        <span>Effects of the Nazis on Art and Culture</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Section 10</span>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block text-accent-burgundy">Cinema</strong>
+                        <p class="text-brown-800">Goebbels read and approved all film scripts. Nazi supporters like Hugenberg owned film studios, giving influence over production. Hitler newsreels shown before every film.</p>
+                    </div>
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block text-accent-burgundy">Music</strong>
+                        <p class="text-brown-800">Promoted German/Austrian classical music (Bach, Mozart, Wagner). Weimar era music, Jewish composers (Mahler, Mendelssohn), and jazz (due to black origins) were banned.</p>
+                    </div>
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block text-accent-burgundy">Theatre</strong>
+                        <p class="text-brown-800">The Militant League for German Culture protested modern plays. Kurt Weill's The Threepenny Opera targeted. Plays required to focus on German history.</p>
+                    </div>
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block text-accent-burgundy">Literature</strong>
+                        <p class="text-brown-800">Goebbels created a list of banned books. Mein Kampf became the best-seller. Remarque's 'All Quiet on the Western Front' banned.</p>
+                    </div>
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-1.5 md:col-span-2">
+                        <strong class="text-brown-900 font-bold block text-accent-burgundy">Art</strong>
+                        <p class="text-brown-800">Hitler hated modern art, deeming it degenerate. In 1936, the Nazis burned 5,000 paintings considered unacceptable.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= OPPOSITION SECTION (Tab: opposition or all) ================= -->
+        <div x-show="currentTab === 'all' || currentTab === 'opposition'" class="space-y-6" x-cloak>
+            
+            <!-- Opposition to the Nazis -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden" x-show="matchesSearch('opposition Army July Bomb Plot White Rose Edelweiss Pirates Church Swing Youth')">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-hand-fist text-beige-300"></i>
+                        <span>Opposition to the Nazis</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full">Section 11</span>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">The Army (July Bomb Plot)</strong>
+                        <p class="text-brown-800">Became critical in 1943 as war went badly (failed attempts in 1943). Count von Stauffenberg attempted to kill Hitler with a suitcase bomb in Operation Valkyrie, but the suitcase was moved. 4 killed, Hitler sustained minor injuries. Stauffenberg arrested, accomplice Beck committed suicide, 5,746 executed.</p>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">The White Rose</strong>
+                        <p class="text-brown-800">Student resistance led by Hans and Sophie Scholl and Professor Kurt Huber at Munich University. Spread anti-Nazi messages and opposed the war. Reported by a janitor to the Gestapo and hanged.</p>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Edelweiss Pirates</strong>
+                        <p class="text-brown-800">Working-class movement that beat up Hitler Youth members, met in mixed-gender groups, and distributed Allied leaflets during the war. Caught by the Gestapo and publicly hanged.</p>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">The Church</strong>
+                        <p class="text-brown-800">The only organization with its own ideology. Confessional Church (Martin Niemöller) refused Nazi allegiance (6,000 pastors by 1934). Bishop von Galen criticized racial policies and euthanasia (halting it temporarily). Dietrich Bonhoeffer opposed Nazism as anti-Christian, helped Jews escape, executed in 1945.</p>
+                    </div>
+
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2 md:col-span-2">
+                        <strong class="text-brown-900 font-bold block text-sm border-b border-beige-300 pb-1">Swing Youth</strong>
+                        <p class="text-brown-800">Middle-class teenagers who listened to jazz and went clubbing. Their activities threatened the regime, which shut down bars associated with them.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800">
+        <p>German History Revision Hub - Unit 3: Nazi Germany (Dictatorship in Action) • Designed for student exam success 📚</p>
+    </footer>
+
+    <script>
+        function unit3App() {
+            return {
+                currentTab: 'all',
+                searchQuery: '',
+
+                matchesSearch(text) {
+                    if (!this.searchQuery) return true;
+                    return text.toLowerCase().includes(this.searchQuery.toLowerCase());
+                }
+            }
+        }
+    </script>
+</body>
+</html>
