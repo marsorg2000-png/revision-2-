@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German History Revision - Unit 1: Kaiser & Weimar</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="unit1App()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-600">
+                    <i class="fa-solid fa-landmark text-beige-200 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">German History Revision Hub</h1>
+                    <p class="text-xs text-beige-300">Unit 1: Kaiser, Weimar Republic, Hyperinflation & Stresemann Era</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap justify-center gap-1 bg-brown-800 p-1.5 rounded-xl border border-brown-700 text-sm">
+                <button class="bg-brown-600 text-white shadow px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open"></i><span>Unit 1 Topics</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto">
+
+        <!-- ================= UNIT 1 TOPICS VIEW ================= -->
+        <div class="space-y-6">
+            
+            <!-- Filter Bar -->
+            <div class="bg-beige-200/80 p-4 rounded-2xl border border-beige-300 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+                <div class="flex items-center space-x-2 w-full md:w-auto">
+                    <i class="fa-solid fa-filter text-brown-700"></i>
+                    <span class="font-semibold text-sm text-brown-800">Filter Unit 1 Topic:</span>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
+                    <button @click="selectedTopicFilter = 'all'" :class="selectedTopicFilter === 'all' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">All Topics</button>
+                    <button @click="selectedTopicFilter = 'kaiser'" :class="selectedTopicFilter === 'kaiser' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">1. Kaiser & WW1</button>
+                    <button @click="selectedTopicFilter = 'weimar'" :class="selectedTopicFilter === 'weimar' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">2. Weimar Constitution & Rebellions</button>
+                    <button @click="selectedTopicFilter = 'hyperinflation'" :class="selectedTopicFilter === 'hyperinflation' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">3. Hyperinflation (1923)</button>
+                    <button @click="selectedTopicFilter = 'stresemann'" :class="selectedTopicFilter === 'stresemann' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">4. Stresemann Era & Culture</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- TOPIC 1: Kaiser's Aims -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'kaiser'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-crown text-beige-300"></i>
+                            <span>1. Kaiser’s Germany & World War 1 Effects</span>
+                        </h3>
+                        <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Topic 1</span>
+                    </div>
+                    <div class="p-6 space-y-4 flex-grow text-sm">
+                        <div>
+                            <h4 class="font-bold text-brown-800 mb-2 flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-brown-600"></span>
+                                <span>Kaiser's Aims & Factors</span>
+                            </h4>
+                            <ul class="list-disc pl-5 space-y-1.5 text-brown-900">
+                                <li><strong>Make Germany a World Power:</strong> German economy was growing rapidly (produced a third of electrical goods), German population increased massively from 49 to 65 million, German people followed the army and supported financially supporting them. <em><strong>Difficulties:</strong></em> Arguing with the chancellor, hated the Reichstag – he claimed that “there is only one ruler… and I am he”, other European powers like Britain and France were more powerful, industrial workers were creating trade unions leading to 3 million workers in trade unions by 1914.</li>
+                                <li><strong>Control the Political System:</strong> Prussia had a lot of influence and were heavily militaristic, Junkers (Prussian landowners) held a lot of power within politics and supported the building of an overseas empire.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-t border-beige-200 pt-3">
+                            <h4 class="font-bold text-brown-800 mb-2 flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                                <span>Effects of World War I on the German People</span>
+                            </h4>
+                            <ul class="list-disc pl-5 space-y-1.5 text-brown-900">
+                                <li><strong>Economy:</strong> The war had wrecked the economy so less money to spend on social issues eg unemployment benefits and pensions. Was only producing 2/3 of prewar levels meaning less money nad less tax revenue.</li>
+                                <li><strong>Society:</strong> British navy blockaded the ports which led to food shortages. Wages were kept low while owners were earning bonuses.</li>
+                                <li><strong>Political:</strong> Kaiser abdicated 9/11/1918 meaning there was a complete shift to a democracy.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-t border-beige-200 pt-3">
+                            <h4 class="font-bold text-brown-800 mb-2 flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                                <span>Treaty of Versailles</span>
+                            </h4>
+                            <ul class="list-disc pl-5 space-y-1.5 text-brown-900">
+                                <li><strong>Attitudes of the German people towards the Treaty of Versailles:</strong> The German people had been told that Germany was winning the war and Germany was never invaded so it came as a complete surprise when the armistice was signed. The government who signed it were named the "November Criminals" and the Treaty of Versailles was called a "stab in the back" and a "diktat".</li>
+                            </ul>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs mt-2">
+                                <div class="bg-beige-100 p-2.5 rounded-xl border border-beige-200">
+                                    <strong>Land:</strong> Lost 10% of land, 13% people, lots of natural resources (26% coal).
+                                </div>
+                                <div class="bg-beige-100 p-2.5 rounded-xl border border-beige-200">
+                                    <strong>Army:</strong> 100,000 men, 6 battleships, no tanks, submarines and airforce, conscription banned.
+                                </div>
+                                <div class="bg-beige-100 p-2.5 rounded-xl border border-beige-200">
+                                    <strong>Money:</strong> No fixed number at Treaty of Versailles, 1926 was fixed at 6.6bn.
+                                </div>
+                                <div class="bg-beige-100 p-2.5 rounded-xl border border-beige-200">
+                                    <strong>Blame:</strong> War guilt clause.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOPIC 2: Weimar Republic & Early Uprisings -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'weimar'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                    <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-scale-balanced text-beige-300"></i>
+                            <span>2. Weimar Constitution & Rebellions</span>
+                        </h3>
+                        <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Topic 2</span>
+                    </div>
+                    <div class="p-6 space-y-4 flex-grow text-sm">
+                        <div>
+                            <h4 class="font-bold text-brown-800 mb-2">Strengths and Weaknesses of the Weimar Republic</h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-green-50 border border-green-200 p-2.5 rounded-xl">
+                                    <strong class="text-green-900">Strengths:</strong>
+                                    <ul class="list-disc pl-4 mt-1 space-y-1 text-green-900">
+                                        <li>Proportional Representation - % of votes = % of seats. This meant that everyone felt that their vote mattered.</li>
+                                        <li>Universal suffrage - everyone over 20 could vote.</li>
+                                        <li>Term limits on the Chancellor and President stopped anyone taking control for too long.</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-red-50 border border-red-200 p-2.5 rounded-xl">
+                                    <strong class="text-red-900">Weaknesses:</strong>
+                                    <ul class="list-disc pl-4 mt-1 space-y-1 text-red-900">
+                                        <li>Proportional representation led to unstable coalitions.</li>
+                                        <li>Hard to make quick decisions due to multiple parties.</li>
+                                        <li>Article 48 emergency powers open to abuse by President.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-beige-200 pt-3">
+                            <h4 class="font-bold text-brown-800 mb-2">Support and Opposition to the Weimar Republic</h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-red-50/60 p-2.5 rounded-xl border border-red-200">
+                                    <strong class="text-red-900 block mb-1">Opposition:</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-red-900">
+                                        <li><strong>Communist party:</strong> country should run on behalf of workers.</li>
+                                        <li><strong>Nazi party:</strong> wanted one strong leader, ignore ToV.</li>
+                                        <li><strong>German National Party:</strong> wanted return to a Kaiser.</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-green-50/60 p-2.5 rounded-xl border border-green-200">
+                                    <strong class="text-green-900 block mb-1">Support:</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-red-900">
+                                        <li><strong>Social Democrats:</strong> main party in setting it up.</li>
+                                        <li><strong>Centre Party:</strong> protect Catholic Church.</li>
+                                        <li><strong>Democratic & People's Parties:</strong> middle class support.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rebellions placed BELOW the line -->
+                        <div class="border-t border-beige-200 pt-3 space-y-3">
+                            <h4 class="font-bold text-brown-800 mb-2">Early Rebellions & Uprisings (1919–1923)</h4>
+                            
+                            <!-- 1. Spartacist Uprising -->
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200 space-y-1.5 text-xs">
+                                <strong class="text-brown-900 font-bold block">1. The Spartacist Uprising (January 1919)</strong>
+                                <p class="text-brown-800"><strong>Who they were:</strong> A radical communist group led by Rosa Luxemburg and Karl Liebknecht. Mistrusted the new democratic government’s ability to help the working class.</p>
+                                <p class="text-brown-800"><strong>Goal:</strong> To spark a full-scale communist revolution in Germany, modeled after the 1917 Russian Revolution. Took over key newspaper headquarters in Berlin, expecting widespread public support that never materialized.</p>
+                                <p class="text-brown-800"><strong>Suppression & Outcome:</strong> The government used the Freikorps and the regular army to crush the revolt. Over 100 workers were killed. Badly planned with no backup; Luxemburg and Liebknecht were captured and murdered, crippling the movement.</p>
+                            </div>
+
+                            <!-- 2. Kapp Putsch -->
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200 space-y-1.5 text-xs">
+                                <strong class="text-brown-900 font-bold block">2. The Kapp Putsch (March 1920)</strong>
+                                <p class="text-brown-800"><strong>Who they were:</strong> Led by Wolfgang Kapp, a nationalist/monarchist, alongside disgruntled right-wing Freikorps units. Triggered when the Weimar Republic attempted to downsize the army and disband the Freikorps.</p>
+                                <p class="text-brown-800"><strong>The Uprising:</strong> Refused to disband; 12,000 armed Freikorps troops marched on Berlin to overthrow the democratic government and install a right-wing regime. The regular army refused to fire on fellow right-wing soldiers ("Reichswehr does not fire on Reichswehr"), forcing the government to flee to Stuttgart.</p>
+                                <p class="text-brown-800"><strong>Outcome:</strong> Defeated when the government called a general strike in Berlin. Services stopped completely, making it impossible for Kapp to govern; after four days Kapp fled and the Weimar government returned.</p>
+                            </div>
+
+                            <!-- 3. Munich Putsch -->
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-200 space-y-1.5 text-xs">
+                                <strong class="text-brown-900 font-bold block">3. The Munich Putsch (November 1923)</strong>
+                                <p class="text-brown-800"><strong>Goal:</strong> To overthrow Germany's "weak" democratic system and establish General Ludendorff as leader.</p>
+                                <p class="text-brown-800"><strong>Why they thought it would succeed:</strong> Nazi Party had grown to 55,000 members by 1923, Bavarian regional support, SA acting as private army, and presumed support from Kahr and Ludendorff.</p>
+                                <p class="text-brown-800"><strong>Reasons for Failure:</strong> Bad planning, mistakes of Hitler and Ludendorff, Kahr and Lossow withdrawing support at the critical moment, and swift action by the Weimar government and police.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOPIC 3: Hyperinflation (Dedicated Full-Width Square) -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'hyperinflation'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-money-bill-trend-up text-beige-300"></i>
+                            <span>3. Hyperinflation (1923)</span>
+                        </h3>
+                        <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full">Topic 3</span>
+                    </div>
+                    <div class="p-6 space-y-4 flex-grow text-sm">
+                        <!-- Hyperinflation Chain Diagram (Left to Right) -->
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 flex items-center space-x-2 text-xs">
+                                <i class="fa-solid fa-diagram-next text-accent-burgundy"></i>
+                                <span>The 4-Step Path to Hyperinflation (Left to Right)</span>
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs items-center">
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 shadow-sm h-full flex flex-col justify-between relative">
+                                    <div>
+                                        <span class="font-bold text-accent-burgundy block mb-1">1. Treaty of Versailles (1919)</span>
+                                        <p class="text-brown-800">$6.6bn in war reparations weakened the post-war German economy. The German government could not pay the reparation payments.</p>
+                                    </div>
+                                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-brown-600 z-10 bg-beige-200 rounded-full w-6 h-6 text-center leading-6 shadow-sm"><i class="fa-solid fa-arrow-right text-[10px]"></i></div>
+                                </div>
+
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 shadow-sm h-full flex flex-col justify-between relative">
+                                    <div>
+                                        <span class="font-bold text-accent-burgundy block mb-1">2. Ruhr Occupation (Jan 1923)</span>
+                                        <p class="text-brown-800">In response to the Germans not paying back reparations the France & Belgium occupy Ruhr valley because it was the industrial centre of Germany and was producing a lot of money. The government encouraged German workers to launch passive resistance strikes.</p>
+                                    </div>
+                                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-brown-600 z-10 bg-beige-200 rounded-full w-6 h-6 text-center leading-6 shadow-sm"><i class="fa-solid fa-arrow-right text-[10px]"></i></div>
+                                </div>
+
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 shadow-sm h-full flex flex-col justify-between relative">
+                                    <div>
+                                        <span class="font-bold text-accent-burgundy block mb-1">3. Excessive Money Printing</span>
+                                        <p class="text-brown-800">The government needed to pay the Ruhr workers who were on strike but had no money to do so as they weren't producing anything. The government then prints massive amounts of paper money to pay striking workers and state debts.</p>
+                                    </div>
+                                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-brown-600 z-10 bg-beige-200 rounded-full w-6 h-6 text-center leading-6 shadow-sm"><i class="fa-solid fa-arrow-right text-[10px]"></i></div>
+                                </div>
+
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 shadow-sm h-full flex flex-col justify-between">
+                                    <div>
+                                        <span class="font-bold text-accent-burgundy block mb-1">4. Hyperinflation (1923)</span>
+                                        <p class="text-brown-800">Currency loses all value; prices skyrocket daily & hourly (1 USD = 2bn marks). People turned to cigarettes as currency instead, stole wheel barrows rather than the cash inside it, burned money to keep warm.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-red-50 border border-red-200 p-3 rounded-xl space-y-1">
+                                <strong class="text-red-900 font-bold block mb-1">Impacts - Losers:</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-red-900">
+                                    <li><strong>Workers:</strong> wages didn't keep up with price rises / food shortages because farmers wouldn't sell for worthless money – led to starvation deaths.</li>
+                                    <li><strong>Older people:</strong> pensions worth less and they had no pay rises.</li>
+                                    <li><strong>Savers:</strong> savings that could have bought a house now barely bought a loaf of bread.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 border border-green-200 p-3 rounded-xl space-y-1">
+                                <strong class="text-green-900 font-bold block mb-1">Impacts - Winners:</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-red-900">
+                                    <li><strong>Upper classes:</strong> invested their money so not as badly affected.</li>
+                                    <li><strong>Debtors:</strong> loans worth less so easier to pay off.</li>
+                                    <li><strong>Business people:</strong> could pay back business loans, prices increased more than wages leading to profits.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOPIC 4: Stresemann and Weimar Culture -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'stresemann'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-forest text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-sun text-beige-300"></i>
+                            <span>4. Weimar Culture & Society</span>
+                        </h3>
+                        <span class="bg-green-900/60 border border-green-400/30 text-xs px-2.5 py-1 rounded-full">Topic 4</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <!-- First Instance of Weimar Culture 3 Boxes -->
+                        <div class="space-y-3">
+                            <h4 class="font-bold text-brown-900 flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                                <span>Stresemann's policies to fix Germany</span>
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                    <strong class="text-brown-900 font-bold block">Economic policies</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li><strong>End of passive resistance -</strong> told the workers from the Ruhr to go back to work which meant they were making money again. </li>
+                                        <li><strong>The Rentenmark created November 1923 - </strong>gave the currency value again and stopped hyperinflation. </li>
+                                        <li><strong>The Dawes Plan 1924 -</strong> Negotiated a deal with the USA where Germany received an 800 million gold mark loan to kickstart its economy. It also lowered annual reparations payments and stretched out the payment schedule.</li>
+                                        <li><strong>The Young Plan 1929 - </strong>Further reduced total reparations by roughly two-thirds and extended the timeline for final payment over 59 years.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                    <strong class="text-brown-900 font-bold block">Foreign Policy</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li><strong>The Locarno Pact (1925):</strong> Signed with France, Belgium, Britain, and Italy. Germany officially accepted its western borders (giving up claims to Alsace-Lorraine), which massively reduced tensions with France and brought European security.</li>
+                                        <li><strong>League of Nations Membership (1926):</strong>Germany was invited to join the League of Nations as a permanent member of the Council, effectively ending its status as a global outcast and restoring its "Great Power" status.</li>
+                                        <li><strong>The Kellogg-Briand Pact (1928):</strong>Germany joined 61 other nations in signing an agreement renouncing war as an instrument of national policy.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                    <strong class="text-brown-900 font-bold block">The Golden Twenties</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li><strong>Peace at Home:</strong>By stabilizing the currency and economy, extremist threats faded temporarily (including the failure of the Munich Putsch).</li>
+                                        <li><strong>Foreign Investment</strong>American loans poured into Germany, funding public works projects like modern housing, schools, hospitals, and transit, which lowered unemployment and raised living standards.In general this was fantastic for German regeneration but meant they were dangerously reliant on American loans and this later led to the significant impact of the Wall Street Crash and the Depression. </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Second Instance of Weimar Culture 3 Boxes -->
+                        <div class="border-t border-beige-200 pt-5 space-y-3">
+                            <h4 class="font-bold text-brown-900 flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-accent-navy"></span>
+                                <span>Weimar Culture</span>
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                    <strong class="text-brown-900 font-bold block">Open and Unrestricted</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li>Restrictions lifted; clubbing became popular.</li>
+                                        <li>Cabaret music openly criticized the government; sex was much more open.</li>
+                                        <li>Films like <em>Nosferatu</em> showed open and unrestricted topics.</li>
+                                        <li><em>Conservative backlash:</em> Wandervogel, Catholic and Protestant churches opposed this moral decline.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                    <strong class="text-brown-900 font-bold block">Strong Political Messages</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li><strong>Literature:</strong> Anti-war message in <em>All Quiet on the Western Front</em> by Remarque.</li>
+                                        <li><strong>Art:</strong> Otto Dix's paintings highlighted inequality between rich and poor (viewed as unpatriotic by Hitler).</li>
+                                        <li><strong>Theatre:</strong> Brecht's plays illustrated lives of ordinary people.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                    <strong class="text-brown-900 font-bold block">Challenging Traditional Values</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li>Shift in opinions on sex and social relationships.</li>
+                                        <li>Shift to move the artistic focus to normal everyday working people.</li>
+                                        <li>Strong opposition from traditionalists who saw it as moral decay.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800">
+        <p>German History Revision Hub - Unit 1 • Designed for student exam success 📚</p>
+    </footer>
+
+    <script>
+        function unit1App() {
+            return {
+                selectedTopicFilter: 'all'
+            }
+        }
+    </script>
+</body>
+</html>
