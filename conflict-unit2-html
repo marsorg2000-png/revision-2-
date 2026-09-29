@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict & Tension Revision Hub - Unit 2 (Crisis & Détente)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="conflictUnit2App()">
+
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+               <div class="bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-600">
+                   <i class="fa-solid fa-globe text-beige-200 text-xl"></i>
+               </div>
+               <div>
+                   <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Conflict & Tension Revision Hub</h1>
+                   <p class="text-xs text-beige-300">Unit 2: Cold War Crises, Conflicts & Détente</p>
+               </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap justify-center gap-1 bg-brown-800 p-1.5 rounded-xl border border-brown-700 text-sm">
+               <button class="bg-brown-600 text-white shadow px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2">
+                   <i class="fa-solid fa-book-open"></i><span>Unit 2 Topics Hub</span>
+               </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto">
+
+        <div class="space-y-6">
+            
+            <!-- Filter Bar -->
+            <div class="bg-beige-200/80 p-4 rounded-2xl border border-beige-300 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+                <div class="flex items-center space-x-2 w-full md:w-auto">
+                    <i class="fa-solid fa-filter text-brown-700"></i>
+                    <span class="font-semibold text-sm text-brown-800">Filter Unit 2 Topic:</span>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
+                    <button @click="selectedTopicFilter = 'all'" :class="selectedTopicFilter === 'all' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">All Topics</button>
+                    <button @click="selectedTopicFilter = 'vietnam'" :class="selectedTopicFilter === 'vietnam' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">1. Vietnam War</button>
+                    <button @click="selectedTopicFilter = 'tech'" :class="selectedTopicFilter === 'tech' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">2. Space & Arms Race / U2</button>
+                    <button @click="selectedTopicFilter = 'berlinwall'" :class="selectedTopicFilter === 'berlinwall' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">3. Berlin Wall (1961)</button>
+                    <button @click="selectedTopicFilter = 'hungary'" :class="selectedTopicFilter === 'hungary' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">4. Hungarian Crisis (1956)</button>
+                    <button @click="selectedTopicFilter = 'cuba'" :class="selectedTopicFilter === 'cuba' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">5. Cuban Missile Crisis</button>
+                    <button @click="selectedTopicFilter = 'prague'" :class="selectedTopicFilter === 'prague' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">6. Prague Spring (1968)</button>
+                    <button @click="selectedTopicFilter = 'detente'" :class="selectedTopicFilter === 'detente' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">7. Détente & SALT 1</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- TOPIC 1: Vietnam War -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'vietnam'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-shield-halved text-beige-300"></i>
+                            <span>1. The Vietnam War</span>
+                        </h3>
+                        <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 1</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">Background</h4>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-xs">
+                                <li>Vietnam had previously been ruled by France but had rebels like the Viet Minh, who were led by Ho Chi Minh.</li>
+                                <li><strong>1945:</strong> Rebels declared independence from France and the Democratic Republic of Vietnam was created.</li>
+                                <li>France resisted this rebellion but they withdrew in 1954. This meant that there was a power vacuum (no one was in charge) and this meant that the US were scared that Vietnam would turn to communism.</li>
+                                <li><strong>July 1954:</strong> Vietnam was split in two until elections were held to make a permanent government: the French left the North, and the Viet Minh left the South.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">Western Involvement</h4>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-xs">
+                                <li><strong>Domino Theory:</strong> Worried that if South Vietnam (led by Diem) fell to communism it would spread to other neighbouring countries.</li>
+                                <li><strong>President Eisenhower’s New Look Policy:</strong> Sent money, equipment and military and political experts to South Vietnam (Diem) to help the country become secure from the threat of communism.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">The Vietcong and Increasing US Involvement</h4>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-xs">
+                                <li>In December 1960, the Vietcong (NLF) was formed to overthrow Diem.</li>
+                                <li>The Ho Chi Minh trail was created to supply weapons to rebels from North Vietnam.</li>
+                                <li>In 1960, US President John F. Kennedy sent 16,000 advisors to South Vietnam.</li>
+                                <li>The US secretly supported the assassination of Diem on November 2, 1963, hoping for a better leader.</li>
+                                <li>Kennedy was assassinated a month later. His successor, Lyndon B. Johnson, escalated US military involvement in Vietnam, leading to a war lasting over a decade with heavy casualties.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOPIC 2: Space Race, Arms Race & U2 Crisis -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'tech'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-rocket text-beige-300"></i>
+                            <span>2. Space Race, Arms Race & The U2 Crisis</span>
+                        </h3>
+                        <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 2</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <!-- Space Race -->
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">Space Race</h4>
+                            <p class="text-xs text-brown-800"><strong>Reasons for:</strong> Propaganda (wanted to show they were superior) and weapons development (if they could launch rockets they could launch missiles and bomb countries).</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                                <div class="bg-beige-50 p-2.5 rounded-xl border border-beige-300">
+                                    <strong>4 October 1957:</strong> The USSR sends the first satellite to orbit Earth: Sputnik. Seen as a triumph for communism.
+                                </div>
+                                <div class="bg-beige-50 p-2.5 rounded-xl border border-beige-300">
+                                    <strong>3 November 1957:</strong> The USSR sends the first animal into space, a dog named Laika.
+                                </div>
+                                <div class="bg-beige-50 p-2.5 rounded-xl border border-beige-300">
+                                    <strong>12 April 1961:</strong> The USSR wins the race to send a human into space with cosmonaut Yuri Gagarin.
+                                </div>
+                                <div class="bg-beige-50 p-2.5 rounded-xl border border-beige-300">
+                                    <strong>20 July 1969:</strong> Neil Armstrong becomes the first human being to walk on the moon.
+                                </div>
+                                <div class="bg-beige-50 p-2.5 rounded-xl border border-beige-300 md:col-span-2">
+                                    <strong>15 July 1975:</strong> First joint space mission between the USA and the USSR: Apollo-Soyuz, symbolizing a new era of cooperation.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- U2 Crisis -->
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">U2 Crisis (1960)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                    <strong class="text-brown-900 block font-bold">Events</strong>
+                                    <p class="text-brown-800">U2 planes were spy planes flying at 23,000m trying to photograph weapons and learn about the Soviet Union. In May 1960, Gary Powers’ plane was shot down over the Soviet Union and he was captured, put on trial, and sentenced to 10 years in jail. Americans lied and claimed it was a weather plane rather than admitting to spying.</p>
+                                </div>
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                    <strong class="text-brown-900 block font-bold">Impact</strong>
+                                    <p class="text-brown-800">US government finally admitted it was a spy plane but Eisenhower refused to apologize. Khrushchev walked out of the Paris Peace Conference and called Eisenhower a "thief caught red-handed." Marked the end of Khrushchev's peaceful coexistence. Triggered increased fear of Russian spies in America (Joseph McCarthy’s anti-communist campaign and HUAC investigations).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- The Arms Race -->
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">The Arms Race & MAD</h4>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800 text-xs">
+                                <li><strong>Nuclear Development:</strong> Soviets developed the Atomic bomb (29 August 1949). Americans developed the H-bomb in 1952; Soviets developed the H-bomb in 1953.</li>
+                                <li><strong>Mutually Assured Destruction (MAD):</strong> If one dropped the bomb the other would follow suit, effectively committing suicide. This deterred direct nuclear strikes.</li>
+                                <li><strong>Brinkmanship:</strong> Pushing a situation to the edge of nuclear war to force the other side to back down or make concessions.</li>
+                                <li><strong>Impact:</strong> Schools taught "duck and cover" drills; Campaign for Nuclear Disarmament (CND) organized widespread marches; popular culture produced anti-war films like <em>Dr. Strangelove</em>.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOPIC 3: The Berlin Wall (1961) -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'berlinwall'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-forest text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-building-shield text-beige-300"></i>
+                            <span>3. The Berlin Wall (1961)</span>
+                        </h3>
+                        <span class="bg-green-900/60 border border-green-400/30 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 3</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Background & Causes</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>Berlin divided since 1945. USSR saw West Berlin as an embarrassment; West saw it as a symbolic capitalist outpost in communist territory.</li>
+                                    <li>Many East Berliners defected to the West by crossing the border as they could travel freely. By 1961, thousands crossed daily, causing a severe "brain drain" that Khrushchev needed to stop.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Vienna Summit & The Wall</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li><strong>Vienna Summit (June 1961):</strong> Khrushchev dominated young, inexperienced JFK.</li>
+                                    <li><strong>13 August 1961:</strong> Border closed suddenly with barbed wire and fences to stop defectors.</li>
+                                    <li><strong>October 1961 Tank Standoff:</strong> American diplomat denied entry, sparking a tense standoff where US and Soviet tanks faced off 5 meters apart before withdrawing.</li>
+                                    <li><strong>June 1963:</strong> JFK visited West Berlin, delivering his famous "Ich bin ein Berliner" speech.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Consequences</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>Ended the refugee crisis by physically sealing East Berliners in.</li>
+                                    <li>Became the ultimate symbol of the Cold War division between East and West.</li>
+                                    <li>Permanently stabilized East Germany's regime while heightening global tension.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOPIC 4: Hungarian Crisis (1956) -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'hungary'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-flag text-beige-300"></i>
+                            <span>4. The Hungarian Crisis (1956)</span>
+                        </h3>
+                        <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 4</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Background</strong>
+                                <p class="text-brown-800">Hungary was ruled by hardline Stalinist Mátyás Rákosi in 1949. His brutality and arrest of figures like Cardinal Mindszenty caused deep resentment. Hungarians demanded destalinization and flexibility in laws and policies.</p>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Events & Escalation</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li><strong>23 Oct 1956:</strong> Student protests demanded civil rights, Rákosi's removal, return of Imre Nagy, and Soviet troop withdrawal.</li>
+                                    <li><strong>31 Oct - 1 Nov:</strong> Khrushchev briefly withdrew troops; Nagy announced Hungary was neutral and leaving the Warsaw Pact.</li>
+                                    <li><strong>4 Nov 1956:</strong> Fearing a domino effect, Soviet tanks re-entered Budapest, crushing the uprising. Nagy was arrested and later executed, replaced by loyalist János Kádár.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Western Response & Impact</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>US containment policy did not trigger military intervention due to fear of direct conflict with Moscow. UN resolutions were easily vetoed by the USSR.</li>
+                                    <li>Showed Khrushchev was willing to use extreme violence despite talk of "peaceful coexistence."</li>
+                                    <li>Proved the USA would not interfere behind the Iron Curtain.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOPIC 5: Cuban Missile Crisis (1962) -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'cuba'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-atom text-beige-300"></i>
+                            <span>5. The Cuban Missile Crisis (1962)</span>
+                        </h3>
+                        <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 5</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">Background & Motivations</h4>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-xs">
+                                <li><strong>Soviet Retaliation:</strong> Khrushchev was anxious about U.S. nuclear missiles stationed in Turkey within strike range of the USSR, prompting him to place Soviet missiles in Cuba.</li>
+                                <li><strong>The Bay of Pigs (April 1961):</strong> A failed, U.S.-backed operation where trained Cuban exiles attempted to overthrow Fidel Castro. The humiliating failure drove Castro closer to the USSR.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">The 13 Days Timeline (October 1962)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                    <strong>October 14–23:</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li><strong>Oct 14:</strong> U.S. spy planes spot missile sites in Cuba; JFK reveals it to the public.</li>
+                                        <li><strong>Oct 21:</strong> JFK orders a naval quarantine of Cuba; US military placed on DEFCON 3.</li>
+                                        <li><strong>Oct 24:</strong> DEFCON raised to DEFCON 2. Soviet ships approach quarantine line.</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                    <strong>October 25–28 (Peak & Resolution):</strong>
+                                    <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                        <li><strong>Oct 27 (Black Saturday):</strong> Near-misses include a Soviet sub nearly firing a nuclear torpedo, a U-2 spy plane shot down, and a stray U.S. plane entering Soviet airspace.</li>
+                                        <li><strong>Oct 28:</strong> Khrushchev agrees to remove missiles in exchange for a public U.S. pledge not to invade Cuba and a secret agreement to remove U.S. missiles from Turkey.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-2xl border border-beige-300 space-y-3">
+                            <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wide">Long-Term Impact</h4>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-xs">
+                                <li><strong>Reduced Nuclear Brinkmanship:</strong> Pushed both superpowers toward arms control.</li>
+                                <li><strong>The Hotline:</strong> Established a direct communication link between Washington and Moscow to prevent accidental escalation.</li>
+                                <li><strong>Nuclear Test Ban Treaty (1963):</strong> Spurred early milestones in controlling nuclear weapons proliferation.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOPIC 6: Prague Spring & Czechoslovakia (1968) -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'prague'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-chess-board text-beige-300"></i>
+                            <span>6. The Prague Spring & Czechoslovakia (1968)</span>
+                        </h3>
+                        <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 6</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Background & Dubček's Reforms</strong>
+                                <p class="text-brown-800">By the 1960s, economic conditions worsened under unpopular leader Antonín Novotný. In January 1968, Alexander Dubček took over and introduced "socialism with a human face":</p>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>Removing state controls on industry for private businesses.</li>
+                                    <li>Ending press censorship and allowing free speech.</li>
+                                    <li>Granting Czechs the right to travel to non-communist countries.</li>
+                                    <li>Allowing independent trade unions.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Soviet Invasion & Brezhnev Doctrine</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li><strong>August 20, 1968:</strong> Warsaw Pact troops entered Czechoslovakia, seized Prague, and ended the Prague Spring. Around 100 protesters were killed.</li>
+                                    <li><strong>The Brezhnev Doctrine (Nov 1968):</strong> Brezhnev declared that any Warsaw Pact country attempting reforms similar to Czechoslovakia would face immediate military intervention.</li>
+                                    <li><strong>Western Reaction:</strong> Strongly condemned the invasion and cancelled a summit with Brezhnev, but took no direct military action due to détente and Vietnam commitments.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOPIC 7: Détente & SALT 1 -->
+                <div x-show="selectedTopicFilter === 'all' || selectedTopicFilter === 'detente'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="bg-accent-forest text-white px-6 py-4 flex justify-between items-center">
+                        <h3 class="font-bold text-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-handshake-angle text-beige-300"></i>
+                            <span>7. Détente & SALT 1</span>
+                        </h3>
+                        <span class="bg-green-900/60 border border-green-400/30 text-xs px-2.5 py-1 rounded-full">Unit 2 - Topic 7</span>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Détente Definition</strong>
+                                <p class="text-brown-800">A period of improved relations, reduced hostility, and a general relaxing of tensions between the USA and the USSR during the 1970s.</p>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">Reasons for Détente</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li><strong>Sino-Soviet Split:</strong> US capitalized on the fallout between China and the USSR; Nixon visited China in February 1972.</li>
+                                    <li><strong>Nuclear Threat:</strong> Fear of full-scale nuclear war after near-misses like the Cuban Missile Crisis.</li>
+                                    <li><strong>Economic Strain:</strong> Both nations spent billions on arms; the USSR faced potential bankruptcy. US experienced war weariness from Vietnam.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-200 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm">SALT 1 (1972)</strong>
+                                <p class="text-brown-800">Strategic Arms Limitation Talks began in 1969, banning new ballistic missile deployments. Led to official treaties signed by Brezhnev and Nixon in May 1972, marking a major milestone in arms control.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800">
+       <p>Conflict & Tension Revision Hub - Unit 2 (Crisis & Détente) • Designed for student exam success 📚</p>
+    </footer>
+
+    <script>
+        function conflictUnit2App() {
+            return {
+                selectedTopicFilter: 'all'
+            }
+        }
+    </script>
+</body>
+</html>
