@@ -122,17 +122,21 @@
                 <h2 class="text-3xl font-bold tracking-tight text-white">Guides, Glossaries & Timelines</h2>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Responsive grid updated to 5 cards (1-col on mobile, 2 on tablet, 3 on desktop, 5 on wide screens) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 <!-- Revision Guide Simple -->
                 <div class="bg-slate-800/50 hover:bg-slate-800 rounded-xl border border-slate-700/60 p-5 transition-all flex flex-col justify-between">
                     <div>
                         <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4">
                             <i class="fa-solid fa-book-bookmark"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">Revision Guide (Simple)</h3>
+                        <h3 class="text-lg font-semibold text-white mb-2">Revision Guide</h3>
                         <p class="text-slate-400 text-xs leading-relaxed mb-4">Concise summaries of major diplomatic shifts and treaty terms.</p>
                     </div>
-                    <span class="text-amber-400 font-medium text-xs flex items-center gap-1 cursor-pointer hover:underline">Access Guide <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    <a href="conflict-guide.html" class="text-amber-400 font-medium text-xs flex items-center gap-1 hover:underline">
+                        <span>Access Guide</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
 
                 <!-- Key Words -->
@@ -144,7 +148,25 @@
                         <h3 class="text-lg font-semibold text-white mb-2">Key Words & Glossary</h3>
                         <p class="text-slate-400 text-xs leading-relaxed mb-4">Master terms like Appeasement, Containment, Comintern, and Brinkmanship.</p>
                     </div>
-                    <span class="text-amber-400 font-medium text-xs flex items-center gap-1 cursor-pointer hover:underline">View Glossary <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    <a href="conflict-keywords.html" class="text-amber-400 font-medium text-xs flex items-center gap-1 hover:underline">
+                        <span>View Glossary</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- Flashcards -->
+                <div class="bg-slate-800/50 hover:bg-slate-800 rounded-xl border border-slate-700/60 p-5 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 mb-4">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Interactive Flashcards</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed mb-4">Active recall questions on key dates, doctrine definitions, and leaders.</p>
+                    </div>
+                    <a href="conflict-flashcards.html" class="text-amber-400 font-medium text-xs flex items-center gap-1 hover:underline">
+                        <span>Practice Cards</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
 
                 <!-- Timeline -->
@@ -156,7 +178,10 @@
                         <h3 class="text-lg font-semibold text-white mb-2">Chronological Timeline</h3>
                         <p class="text-slate-400 text-xs leading-relaxed mb-4">Step-by-step chronology tracking international crises from 1919 onwards.</p>
                     </div>
-                    <span class="text-amber-400 font-medium text-xs flex items-center gap-1 cursor-pointer hover:underline">Explore Timeline <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    <a href="conflict-timeline.html" class="text-amber-400 font-medium text-xs flex items-center gap-1 hover:underline">
+                        <span>Explore Timeline</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
 
                 <!-- Common Misconceptions -->
@@ -168,7 +193,10 @@
                         <h3 class="text-lg font-semibold text-white mb-2">Common Misconceptions</h3>
                         <p class="text-slate-400 text-xs leading-relaxed mb-4">Avoid mixing up treaty clauses and Cold War superpower doctrines.</p>
                     </div>
-                    <span class="text-amber-400 font-medium text-xs flex items-center gap-1 cursor-pointer hover:underline">Check Traps <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    <a href="conflict-misconceptions.html" class="text-amber-400 font-medium text-xs flex items-center gap-1 hover:underline">
+                        <span>Check Traps</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -191,7 +219,7 @@
                     </div>
                 </div>
                 <div>
-                    <a href="#exam-guides" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all shadow-lg shadow-amber-500/20 inline-flex items-center gap-2">
+                    <a href="conflict-exam.html" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all shadow-lg shadow-amber-500/20 inline-flex items-center gap-2">
                         <span>View Exam Guides</span>
                         <i class="fa-solid fa-arrow-right text-xs"></i>
                     </a>
