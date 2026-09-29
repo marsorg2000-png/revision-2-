@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Conflict & Tension Keywords Glossary</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .glossary-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glossary-card:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="conflictGlossaryApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-globe text-xl text-accent-forest bg-beige-200 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Conflict &amp; Tension Keywords</h1>
+                    <p class="text-xs text-beige-300">Cold War &amp; International Relations Revision Glossary</p>
+                </div>
+            </div>
+
+            <!-- Stats Badge -->
+            <div class="flex items-center gap-2 bg-brown-800/90 px-4 py-2 rounded-xl border border-brown-700 text-xs">
+                <span class="text-beige-300">Total terms:</span>
+                <span class="font-bold text-beige-50" x-text="conflictKeywords.length"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input 
+                    type="text" 
+                    x-model="searchQuery"
+                    placeholder="Search keywords or definitions (e.g. Truman, Warsaw, ICBM)..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                >
+                <button 
+                    x-show="searchQuery.length > 0" 
+                    @click="searchQuery = ''" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                    title="Clear search"
+                >
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                <button 
+                    @click="sortAscending = !sortAscending" 
+                    class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                >
+                    <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                    <span x-text="sortAscending ? 'A to Z' : 'Z to A'"></span>
+                </button>
+                <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800">
+                    <span x-text="filteredKeywords.length"></span> / <span x-text="conflictKeywords.length"></span> shown
+                </div>
+            </div>
+        </div>
+
+        <!-- Glossary Content List -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open text-brown-700"></i>
+                    <span>Conflict &amp; Tension Definitions</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredKeywords.length + ' term' + (filteredKeywords.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Definitions Container -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="item in filteredKeywords" :key="item.term">
+                    <div class="glossary-card p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <div class="md:w-1/3 flex items-center gap-2.5">
+                            <span class="w-2 h-2 rounded-full bg-accent-forest flex-shrink-0"></span>
+                            <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight" x-text="item.term"></span>
+                        </div>
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0">
+                            <p class="text-xs sm:text-sm text-brown-800 leading-relaxed" x-text="item.definition"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredKeywords.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No keywords found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any terms matching "<span class="font-semibold" x-text="searchQuery"></span>".
+                </p>
+                <button 
+                    @click="searchQuery = ''" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset Search
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History Keywords Glossary Hub &bull; Conflict &amp; Tension Revision Edition 🕊️</p>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        function conflictGlossaryApp() {
+            return {
+                searchQuery: '',
+                sortAscending: true,
+                conflictKeywords: [
+                    { term: "Soviet Union", definition: "A collection of countries such as Ukraine, Belarus, Kazakhstan, and other smaller countries. Under the control and direction of Moscow and Russia." },
+                    { term: "Ideology", definition: "An idea or belief, usually about how government and society should run and be governed." },
+                    { term: "Grand Alliance", definition: "Used to describe the USA, USSR and Britain in WW2 who united to fight the common enemy of Nazi Germany." },
+                    { term: "Capitalism", definition: "System associated with America where businesses are private, and wealth is extreme with some people being very rich and others being very poor." },
+                    { term: "Communism", definition: "The state controls all businesses and land which is then shared amongst people which means that everyone has what they need. Based on Karl Marx writings." },
+                    { term: "Democracy", definition: "A system where people vote for individuals or a Party to represent them in government. Parties rule for a set amount of years." },
+                    { term: "Domino Theory", definition: "The idea that if communism was in one country it would spread to neighbouring countries." },
+                    { term: "Satellite State", definition: "A country that is classed as being independent but is effectively under the watch and control of a stronger country. In the Cold War, they are countries usually under the influence of the USSR such as East Germany, Poland etc." },
+                    { term: "Peaceful coexistence", definition: "A theory, developed and applied by the Soviet Union 1956-1960 (under Khrushchev) when a Socialist Bloc (USSR) could peacefully coexist with the capitalist bloc (USA and allied states)." },
+                    { term: "Proxy war", definition: "Conflicts in which a third party (another country) intervenes in a pre-existing war in order to influence the strategic outcome in favour of its preferred side." },
+                    { term: "Veto", definition: "The ability to block a proposal when voting. Permanent members of the United Nations could stop resolutions being passed." },
+                    { term: "Isolationism", definition: "Keeping out of international affairs and conflicts. America followed this policy before WW2 but abandoned this after WW2 and became involved in European and World affairs." },
+                    { term: "Containment", definition: "Truman (USA’s President) attempt to stop the spread of Communism into Western Europe following the war." },
+                    { term: "ICBMs", definition: "Inter-continental ballistic missile, which could fire a nuclear war head. They were built and improved as the USSR and USA increased their stock in the nuclear arms race." },
+                    { term: "NATO", definition: "North Atlantic Treaty Organisation: Western countries (USA, Britain, France and 8 other countries had military defence pact against the USSR)." },
+                    { term: "Warsaw Pact", definition: "USSR’s response to NATO where countries would be expected to provide troops and fight if a member of the Eastern Bloc was attacked." },
+                    { term: "Bizonia / Trizonia", definition: "Bizonia was USA and Britain combined their controlled zones of Germany in 1947, March 1948 France joined them to create Trizonia. This would later become West Germany." },
+                    { term: "Marshall Aid", definition: "17 billion dollars provided by America to European countries to help them to rebuild their economy after WW2: Stalin accused the USA of buying allies and threatening Communism." },
+                    { term: "MAD (Mutually Assured Destruction)", definition: "The term used for acknowledging that if one country fired a nuclear weapon then the other would respond and cause both countries and population to be destroyed." },
+                    { term: "Free City", definition: "A city ran like its own country. This was suggested for Berlin as neither side was prepared to let the other control it." },
+                    { term: "Brinkmanship", definition: "Pushing your opposition to the brink of war. Both the USA and USSR tested each other to see how close they go before backing down." },
+                    { term: "Blockade", definition: "Stopping goods from entering a country, this was usually materials that build nuclear weapons such as Cuba." },
+                    { term: "Socialism", definition: "A less extreme version of Communism but still a belief that the state should support the population and industry." },
+                    { term: "Doctrine", definition: "A belief or philosophy." },
+                    { term: "Détente", definition: "A period of peace between two sides that were previously hostile towards each other." },
+                    { term: "Economic sanctions", definition: "Measures to punish a country, usually ban from trading items with them such as oil which can damage their economy." },
+                    { term: "SALT 1", definition: "Strategic Arms Limitation Treaty 1: This aimed at reducing the number of nuclear weapons each country had, to try and reduce spending and the risk of nuclear war. Followed by SALT 2 which banned testing on new ICBMs." }
+                ],
+                get filteredKeywords() {
+                    let results = [...this.conflictKeywords];
+
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(k => 
+                            k.term.toLowerCase().includes(q) || 
+                            k.definition.toLowerCase().includes(q)
+                        );
+                    }
+
+                    results.sort((a, b) => {
+                        const comp = a.term.localeCompare(b.term);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
