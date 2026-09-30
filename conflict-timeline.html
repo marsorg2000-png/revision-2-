@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Conflict &amp; Tension Timeline (1945–1972)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            cobalt: '#1e3a5f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search, era filtering, and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .timeline-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .timeline-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="conflictTimelineApp()">
+
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-globe text-xl text-accent-forest bg-beige-200 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Conflict &amp; Tension Timeline</h1>
+                    <p class="text-xs text-beige-300">Cold War &amp; International Relations 1945–1972</p>
+                </div>
+            </div>
+
+            <!-- Stats Badge -->
+            <div class="flex items-center gap-2 bg-brown-800/90 px-4 py-2 rounded-xl border border-brown-700 text-xs">
+                <span class="text-beige-300">Total events:</span>
+                <span class="font-bold text-beige-50" x-text="conflictTimelineEvents.length"></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, Era Filter & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- View Mode Switcher -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-beige-300/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-brown-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[12px] text-brown-700"></i> Mode:
+                    </span>
+                    <div class="inline-flex bg-beige-50 p-1 rounded-xl border border-beige-300 shadow-inner text-xs font-semibold">
+                        <button 
+                            @click="viewMode = 'timeline'"
+                            :class="viewMode === 'timeline' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Timeline View</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'detailed'"
+                            :class="viewMode === 'detailed' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                            <span>Detailed Study Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Toggle All Descriptions button -->
+                <div class="flex items-center gap-2 text-xs">
+                    <button 
+                        @click="toggleAllDescriptions()"
+                        class="px-3 py-1.5 rounded-xl bg-beige-50 hover:bg-beige-300/50 border border-beige-300 text-brown-800 font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid" :class="allExpanded ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="allExpanded ? 'Collapse All Notes' : 'Expand All Notes'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search events, dates, or keywords (e.g. 1948, Berlin Blockade, Cuban Missile, NATO, SALT)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-1-9' : 'fa-arrow-up-9-1'"></i>
+                        <span x-text="sortAscending ? 'Earliest First' : 'Latest First'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredEvents.length"></span> / <span x-text="conflictTimelineEvents.length"></span> shown
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-beige-300/80">
+                <span class="text-xs font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Era:
+                </span>
+                <button 
+                    @click="selectedEra = 'all'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    All Eras
+                </button>
+                <button 
+                    @click="selectedEra = 'early'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'early' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Post-War &amp; Division (1945–1949)
+                </button>
+                <button 
+                    @click="selectedEra = 'escalation'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'escalation' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Crises &amp; Arms Race (1950–1962)
+                </button>
+                <button 
+                    @click="selectedEra = 'detente'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'detente' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Vietnam, Thaw &amp; Détente (1963–1972)
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-timeline text-brown-700"></i>
+                    <span>Cold War Chronology</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredEvents.length + ' event' + (filteredEvents.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Timeline Cards -->
+            <div class="space-y-3">
+                <template x-for="(event, index) in filteredEvents" :key="index + '-' + event.date + '-' + event.event">
+                    <div class="timeline-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        
+                        <!-- Left: Date & Era Pill -->
+                        <div class="md:w-1/4 flex-shrink-0 flex items-center md:items-start justify-between md:flex-col gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                      :class="{
+                                          'bg-accent-ruby': event.era === 'early',
+                                          'bg-accent-gold': event.era === 'escalation',
+                                          'bg-accent-forest': event.era === 'detente'
+                                      }"></span>
+                                <span class="font-extrabold text-brown-900 text-sm sm:text-base tracking-tight font-mono" x-text="event.date"></span>
+                            </div>
+                            <span class="text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md border text-brown-700 bg-beige-200/70 border-beige-300"
+                                  x-text="getEraLabel(event.era)">
+                            </span>
+                        </div>
+
+                        <!-- Right: Event Headline & Note -->
+                        <div class="md:w-3/4 pl-0 md:pl-4 border-t md:border-t-0 md:border-l-2 border-beige-200 pt-3 md:pt-0 space-y-2">
+                            <div class="flex items-start justify-between gap-3">
+                                <p class="text-xs sm:text-sm text-brown-900 leading-relaxed font-bold" x-text="event.event"></p>
+                                <button 
+                                    @click="toggleEvent(event)"
+                                    class="text-brown-700 hover:text-brown-900 text-xs px-2 py-1 rounded-lg bg-beige-200/60 hover:bg-beige-300/60 border border-beige-300 flex-shrink-0 flex items-center gap-1 transition"
+                                    :title="isExpanded(event) ? 'Hide details' : 'Show details'">
+                                    <span class="text-[11px] hidden sm:inline" x-text="isExpanded(event) ? 'Hide Note' : 'Brief Note'"></span>
+                                    <i class="fa-solid text-[10px]" :class="isExpanded(event) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                </button>
+                            </div>
+
+                            <!-- Expandable Brief Revision Description -->
+                            <div x-show="isExpanded(event)" x-collapse.duration.200ms class="pt-2 text-xs sm:text-sm text-brown-800 bg-beige-100/90 p-3.5 rounded-xl border border-beige-300/80 leading-relaxed whitespace-pre-line">
+                                <div class="flex items-center gap-1.5 text-brown-700 font-semibold text-[11px] uppercase tracking-wider mb-1">
+                                    <i class="fa-solid fa-circle-info text-accent-forest"></i>
+                                    <span>GCSE Revision Summary</span>
+                                </div>
+                                <p x-text="event.description"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredEvents.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-calendar-xmark text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No timeline events found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any events matching "<span class="font-semibold" x-text="searchQuery"></span>" in the selected era.
+                </p>
+                <div class="flex justify-center gap-3">
+                    <button 
+                        @click="searchQuery = ''; selectedEra = 'all'" 
+                        class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                    >
+                        Reset All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History Revision Hub &bull; Conflict &amp; Tension (Cold War 1945–1972) Edition 🕊️</p>
+    </footer>
+
+    <script>
+        function conflictTimelineApp() {
+            return {
+                searchQuery: '',
+                sortAscending: true,
+                selectedEra: 'all',
+                viewMode: 'timeline',
+                expandedEvents: {},
+                allExpanded: false,
+
+                toggleEvent(event) {
+                    const key = event.date + '-' + event.order;
+                    this.expandedEvents[key] = !this.isExpanded(event);
+                },
+
+                isExpanded(event) {
+                    if (this.viewMode === 'detailed') return true;
+                    const key = event.date + '-' + event.order;
+                    return !!this.expandedEvents[key];
+                },
+
+                toggleAllDescriptions() {
+                    this.allExpanded = !this.allExpanded;
+                    if (this.allExpanded) {
+                        this.viewMode = 'detailed';
+                    } else {
+                        this.viewMode = 'timeline';
+                        this.expandedEvents = {};
+                    }
+                },
+
+                conflictTimelineEvents: [
+                    {
+                        date: "February 1945",
+                        event: "Yalta Conference",
+                        description: "Agreed: Germany split into 4 zones; Germany to pay $20 million to USSR; Europe to have democratic elections; UN to be set up. Tensions over Poland's Soviet influence.",
+                        era: "early",
+                        order: 1945.02
+                    },
+                    {
+                        date: "July 1945",
+                        event: "Potsdam Conference",
+                        description: "Truman, Attlee, and Stalin meet. Agreed on post-war Europe; tensions rise over atomic bomb and no common enemy anymore.",
+                        era: "early",
+                        order: 1945.07
+                    },
+                    {
+                        date: "6th August 1945",
+                        event: "Hiroshima Bombing",
+                        description: "\"Little Boy\" bomb dropped on Hiroshima, killing 70,000 instantly. On 9th August, \"Fat Man\" bomb dropped on Nagasaki, killing 50,000. Japan surrendered on 14th August.",
+                        era: "early",
+                        order: 1945.08
+                    },
+                    {
+                        date: "1945–1949",
+                        event: "Gradual Takeover of Eastern Europe",
+                        description: "Albania (1945) – the Communists took power after the war without opposition.\nBulgaria (1945) – a left-wing coalition gained power in 1945; the Communists then executed the leaders of all the other parties.\nPoland (1947) – a coalition government took power in 1945, but the Communists forced the non-Communist leaders into exile.\nHungary (1947) – Hungary was invaded by the Russians, and in 1945 the allies agreed that Russian troops should stay there. Rákosi got control of the police, and started to arrest his opponents. He set up a sinister and brutal secret police unit, the AVH. Soon Rákosi had complete control over Hungary.\nRomania (1945–1947) – a left-wing coalition was elected in 1945; the Communists gradually took over control.\nCzechoslovakia (1945–48) – a left-wing coalition was elected in 1945. In 1948, the Communists banned all other parties and killed their leaders.\nEast Germany (1949) – the Russians turned their zone of Germany into the German Democratic Republic in 1949.",
+                        era: "early",
+                        order: 1945.10
+                    },
+                    {
+                        date: "5th March 1946",
+                        event: "Iron Curtain Speech",
+                        description: "Churchill delivers speech in Fulton, Missouri, declaring \"An iron curtain has descended across the continent.\" Stalin calls it a \"call to arms.\"",
+                        era: "early",
+                        order: 1946.03
+                    },
+                    {
+                        date: "1946",
+                        event: "Kennan’s Long Telegram",
+                        description: "U.S. analysis of Soviet foreign policy urging no compromises with the USSR, which led to the Truman Doctrine.",
+                        era: "early",
+                        order: 1946.05
+                    },
+                    {
+                        date: "1947",
+                        event: "Truman Doctrine",
+                        description: "Pledged $400 million to aid Greece and Turkey to prevent Communist expansion, marking the first active U.S. policy to contain Communism in Europe.",
+                        era: "early",
+                        order: 1947.03
+                    },
+                    {
+                        date: "1948",
+                        event: "Marshall Plan",
+                        description: "Over $13 billion pledged to help European countries stave off Communism and rebuild after WWII.",
+                        era: "early",
+                        order: 1948.04
+                    },
+                    {
+                        date: "1948",
+                        event: "Cominform",
+                        description: "USSR's reaction to the Truman Doctrine; an organization to coordinate Communist groups in Europe.",
+                        era: "early",
+                        order: 1948.05
+                    },
+                    {
+                        date: "1948–1949",
+                        event: "Berlin Blockade",
+                        description: "Stalin cuts off access to West Berlin, leading to an airlift of supplies by the Allies that lasts for 11 months, ending when Stalin lifts the blockade in May 1949.",
+                        era: "early",
+                        order: 1948.06
+                    },
+                    {
+                        date: "1949",
+                        event: "Comecon",
+                        description: "USSR’s economic aid plan to Eastern Europe in response to the Marshall Plan.",
+                        era: "early",
+                        order: 1949.01
+                    },
+                    {
+                        date: "1949",
+                        event: "East and West Germany",
+                        description: "Germany split; West Germany (FRG) formed in May and East Germany (GDR) in October.",
+                        era: "early",
+                        order: 1949.05
+                    },
+                    {
+                        date: "1949",
+                        event: "NATO",
+                        description: "Military alliance formed by Western countries in response to the growing Communist threat.",
+                        era: "early",
+                        order: 1949.04
+                    },
+                    {
+                        date: "1949",
+                        event: "Fall of China",
+                        description: "Communist forces, led by Mao Zedong, win the Chinese Civil War, significantly boosting Soviet influence in Asia.",
+                        era: "early",
+                        order: 1949.10
+                    },
+                    {
+                        date: "1949",
+                        event: "USSR Gets the A-Bomb",
+                        description: "USSR tests its first atomic bomb, shifting the balance of power in the Cold War. Start of nuclear arms race.",
+                        era: "early",
+                        order: 1949.08
+                    },
+                    {
+                        date: "1950",
+                        event: "Sino-Soviet Treaty of Friendship",
+                        description: "China and USSR sign the treaty; China receives economic aid, and USSR gains support for the Korean War. This treaty favours USSR more than China.",
+                        era: "escalation",
+                        order: 1950.02
+                    },
+                    {
+                        date: "1950",
+                        event: "McCarthyism",
+                        description: "Joseph McCarthy leads a hunt for Communists in the U.S., leading to mass hysteria, blacklists, and the execution of suspected spies.",
+                        era: "escalation",
+                        order: 1950.03
+                    },
+                    {
+                        date: "1950",
+                        event: "NSC-68",
+                        description: "U.S. policy shift to rollback Communism, preparing for more aggressive foreign policy against Soviet influence.",
+                        era: "escalation",
+                        order: 1950.04
+                    },
+                    {
+                        date: "1950–1953",
+                        event: "Korean War",
+                        description: "U.S. intervenes after North Korea invades South Korea. War ends in a stalemate with a demarcation line near the 38th parallel.",
+                        era: "escalation",
+                        order: 1950.06
+                    },
+                    {
+                        date: "1952",
+                        event: "USA Detonates H-Bomb",
+                        description: "U.S. tests its hydrogen bomb, far more powerful than the atomic bomb, escalating the arms race.",
+                        era: "escalation",
+                        order: 1952.11
+                    },
+                    {
+                        date: "1953",
+                        event: "Death of Stalin",
+                        description: "Stalin dies, leading to a shift in Soviet leadership and a potential thaw in Cold War tensions.",
+                        era: "escalation",
+                        order: 1953.03
+                    },
+                    {
+                        date: "1953",
+                        event: "USSR Detonates H-Bomb",
+                        description: "USSR tests its own hydrogen bomb, catching up with the U.S. in nuclear capabilities.",
+                        era: "escalation",
+                        order: 1953.08
+                    },
+                    {
+                        date: "1953",
+                        event: "End of the Korean War",
+                        description: "The Korean War ends with an armistice, essentially a draw, and both sides agree to a ceasefire.",
+                        era: "escalation",
+                        order: 1953.07
+                    },
+                    {
+                        date: "1954",
+                        event: "Dien Bien Phu",
+                        description: "French forces are defeated in Vietnam, leading to the division of Vietnam at the Geneva Conference.",
+                        era: "escalation",
+                        order: 1954.05
+                    },
+                    {
+                        date: "1955",
+                        event: "Warsaw Pact",
+                        description: "The USSR forms the Warsaw Pact, a military alliance with Eastern Bloc countries, as a response to NATO.",
+                        era: "escalation",
+                        order: 1955.05
+                    },
+                    {
+                        date: "1955",
+                        event: "Geneva Summit",
+                        description: "A meeting between Eisenhower and Khrushchev where little agreement is made, but the summit opens doors for future discussions.",
+                        era: "escalation",
+                        order: 1955.07
+                    },
+                    {
+                        date: "1956",
+                        event: "Khrushchev’s Secret Speech",
+                        description: "Khrushchev denounces Stalin and the cult of personality, causing optimism for change in the Soviet Union.",
+                        era: "escalation",
+                        order: 1956.02
+                    },
+                    {
+                        date: "1956",
+                        event: "Hungarian Uprising",
+                        description: "Protests in Hungary against Soviet control result in a brutal crackdown by Soviet forces, with 3,000 Hungarians killed.",
+                        era: "escalation",
+                        order: 1956.10
+                    },
+                    {
+                        date: "1957",
+                        event: "Launch of Sputnik",
+                        description: "USSR launches Sputnik, the first artificial satellite, marking a significant victory in the space race.",
+                        era: "escalation",
+                        order: 1957.10
+                    },
+                    {
+                        date: "1958",
+                        event: "Khrushchev Visits USA",
+                        description: "Khrushchev visits the U.S., marking a moment of peaceful co-existence, but also showcasing tensions.",
+                        era: "escalation",
+                        order: 1958.09
+                    },
+                    {
+                        date: "1959",
+                        event: "Cuban Revolution",
+                        description: "Fidel Castro overthrows the Batista regime, establishing a Communist government and reducing U.S. influence in Cuba.",
+                        era: "escalation",
+                        order: 1959.01
+                    },
+                    {
+                        date: "1960",
+                        event: "U2 Spy Plane Shot Down",
+                        description: "A U.S. spy plane is shot down over the USSR, causing a diplomatic crisis and halting peace talks between the U.S. and USSR.",
+                        era: "escalation",
+                        order: 1960.05
+                    },
+                    {
+                        date: "1960",
+                        event: "Paris Summit",
+                        description: "A summit that fails to achieve any agreements due to the U2 spy plane incident and Khrushchev's anger over the U.S. actions.",
+                        era: "escalation",
+                        order: 1960.055
+                    },
+                    {
+                        date: "1961",
+                        event: "Bay of Pigs Fiasco",
+                        description: "A failed U.S.-backed invasion of Cuba aimed at overthrowing Castro, leading to embarrassment for the U.S.",
+                        era: "escalation",
+                        order: 1961.04
+                    },
+                    {
+                        date: "1961",
+                        event: "Berlin Wall",
+                        description: "USSR builds a wall dividing Berlin to prevent East Germans from fleeing to the West, solidifying the division of the city.",
+                        era: "escalation",
+                        order: 1961.08
+                    },
+                    {
+                        date: "1961",
+                        event: "Superpower Tension",
+                        description: "Tensions increase due to space and arms races, U.S. support for anti-Communists, the Berlin Wall, and the failed Vienna Summit.",
+                        era: "escalation",
+                        order: 1961.09
+                    },
+                    {
+                        date: "1961",
+                        event: "Tsar Bomba",
+                        description: "USSR tests the largest nuclear bomb, the Tsar Bomba, which is thousands of times more powerful than the Hiroshima bomb.",
+                        era: "escalation",
+                        order: 1961.10
+                    },
+                    {
+                        date: "1962",
+                        event: "Nuclear Weapons Testing",
+                        description: "138 nuclear tests conducted, including over 90 by the U.S. and more than 30 by the USSR.",
+                        era: "escalation",
+                        order: 1962.05
+                    },
+                    {
+                        date: "1962",
+                        event: "Cuban Missile Crisis",
+                        description: "Tensions reach a peak when the USSR places nuclear missiles in Cuba, leading to a 13-day confrontation. Averted by a U.S.-USSR agreement.",
+                        era: "escalation",
+                        order: 1962.10
+                    },
+                    {
+                        date: "1963",
+                        event: "\"Ich Bin Ein Berliner!\"",
+                        description: "Kennedy delivers a famous speech in West Berlin, showing U.S. support for the city.",
+                        era: "detente",
+                        order: 1963.06
+                    },
+                    {
+                        date: "1963",
+                        event: "Vietnam Coup",
+                        description: "South Vietnamese leader Diem is overthrown in a coup, deepening Vietnam's political crisis.",
+                        era: "detente",
+                        order: 1963.111
+                    },
+                    {
+                        date: "1963",
+                        event: "JFK Assassinated",
+                        description: "President John F. Kennedy is assassinated in Dallas, leading to the ascension of Lyndon Johnson to the presidency.",
+                        era: "detente",
+                        order: 1963.112
+                    },
+                    {
+                        date: "1963",
+                        event: "Limited Test Ban Treaty",
+                        description: "The U.S., USSR, and Great Britain sign the treaty to ban atmospheric nuclear tests, aiming to reduce fallout and slow the arms race.",
+                        era: "detente",
+                        order: 1963.08
+                    },
+                    {
+                        date: "1964",
+                        event: "Gulf of Tonkin Resolution",
+                        description: "U.S. Congress passes a resolution authorizing military action in Vietnam, escalating U.S. involvement in the war.",
+                        era: "detente",
+                        order: 1964.08
+                    },
+                    {
+                        date: "1964",
+                        event: "Chinese Atomic Bomb",
+                        description: "China tests its first atomic bomb, adding to the global nuclear tension and shifting the balance of power in Asia.",
+                        era: "detente",
+                        order: 1964.10
+                    },
+                    {
+                        date: "1965",
+                        event: "Leonid Brezhnev Rules",
+                        description: "Leonid Brezhnev replaces Nikita Khrushchev as First Secretary of the Communist Party. Brezhnev will rule the Soviet Union until 1982.",
+                        era: "detente",
+                        order: 1965.01
+                    },
+                    {
+                        date: "1965",
+                        event: "USSR Tries to Isolate China",
+                        description: "The USSR develops its policy of trying to isolate China by strengthening its ties with Mongolia, North Korea, and North Vietnam.",
+                        era: "detente",
+                        order: 1965.06
+                    },
+                    {
+                        date: "1968",
+                        event: "Crushing of Prague Spring",
+                        description: "Soviet and Warsaw Pact troops invade Czechoslovakia to halt political liberalization, killing 72 and injuring many more. An estimated 300,000 fled.",
+                        era: "detente",
+                        order: 1968.08
+                    },
+                    {
+                        date: "1968",
+                        event: "Nixon Elected President",
+                        description: "Nixon is elected President in November 1968, committing to end the Vietnam War through “Vietnamisation” and “Peace with Honour.”",
+                        era: "detente",
+                        order: 1968.11
+                    },
+                    {
+                        date: "1971",
+                        event: "Kissinger Visits China",
+                        description: "Henry Kissinger, US Secretary of State, visits China, paving the way for President Nixon's visit the following year.",
+                        era: "detente",
+                        order: 1971.07
+                    },
+                    {
+                        date: "1972",
+                        event: "SALT I Treaty Signed",
+                        description: "The US and USSR sign the ABM Treaty and Interim Agreement on strategic offensive arms after two and a half years of negotiation.",
+                        era: "detente",
+                        order: 1972.05
+                    },
+                    {
+                        date: "1972",
+                        event: "Nixon Visits China",
+                        description: "Nixon visits China in February 1972, opening a new chapter in US-China diplomacy despite no major agreements being reached.",
+                        era: "detente",
+                        order: 1972.02
+                    },
+                    {
+                        date: "1972",
+                        event: "Basic Treaty",
+                        description: "West and East Germany sign the Basic Treaty, recognizing each other as separate states and joining the UN in 1973.",
+                        era: "detente",
+                        order: 1972.12
+                    }
+                ],
+
+                getEraLabel(era) {
+                    switch(era) {
+                        case 'early': return 'Post-War (1945–49)';
+                        case 'escalation': return 'Crises (1950–62)';
+                        case 'detente': return 'Détente (1963–72)';
+                        default: return era;
+                    }
+                },
+
+                get filteredEvents() {
+                    let results = [...this.conflictTimelineEvents];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(e => e.era === this.selectedEra);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(e => 
+                            e.date.toLowerCase().includes(q) || 
+                            e.event.toLowerCase().includes(q) ||
+                            e.description.toLowerCase().includes(q) ||
+                            this.getEraLabel(e.era).toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort chronologically
+                    results.sort((a, b) => {
+                        return this.sortAscending ? a.order - b.order : b.order - a.order;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
