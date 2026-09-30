@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Detailed Revision for Factors | Health &amp; the People</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            wine: '#782329',
+                            cobalt: '#1e3a5f',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive state, filters, searches, and view modes -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .factor-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .factor-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="healthFactorsApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="health-revision-hub.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Health Hub">
+                    <i class="fa-solid fa-network-wired text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Detailed Revision for Factors</h1>
+                    <p class="text-xs text-beige-300">Drivers of Change &amp; Continuity &bull; Health and the People (c1000–Present)</p>
+                </div>
+            </div>
+
+            <!-- Stats & Quick Hub Link -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-scale-balanced text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Target:</span>
+                    <span class="font-bold text-beige-50">16-Mark Judgement Essay</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Core Factors:</span>
+                    <span class="font-bold text-accent-gold" x-text="factorsData.length"></span>
+                </div>
+                <a href="health-revision-hub.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span>Hub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, Mode Switcher, and Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- Top Controls Row: View Mode Switcher & Global Analysis Toggle -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-beige-300/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-brown-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[12px] text-brown-700"></i> Mode:
+                    </span>
+                    <div class="inline-flex bg-beige-50 p-1 rounded-xl border border-beige-300 shadow-inner text-xs font-semibold">
+                        <button 
+                            @click="viewMode = 'by-factor'"
+                            :class="viewMode === 'by-factor' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>By Factor</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'by-era'"
+                            :class="viewMode === 'by-era' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-timeline"></i>
+                            <span>By Historical Era</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'essay-matrix'"
+                            :class="viewMode === 'essay-matrix' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-pen-fancy"></i>
+                            <span>16-Mark Essay Matrix</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Full Analysis / Compact Summary Toggle -->
+                <div class="flex items-center gap-2 text-xs">
+                    <button 
+                        @click="toggleAllCards()"
+                        class="px-3 py-1.5 rounded-xl bg-beige-50 hover:bg-beige-300/50 border border-beige-300 text-brown-800 font-semibold transition flex items-center gap-1.5 shadow-sm"
+                        :title="showFullAnalysis ? 'Collapse eras to brief highlights' : 'Expand all periods in full detail'">
+                        <i class="fa-solid" :class="showFullAnalysis ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="showFullAnalysis ? 'Switch All to Quick View' : 'Show All Full Analysis'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar & Reset Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search factors, wars, individuals, government acts, science, printing press (e.g. Paré, Fleming, NHS, Great Stink, Church)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                        <span x-text="sortAscending ? 'Factor Order (A-Z)' : 'Reverse (Z-A)'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredFactors.length"></span> / <span x-text="factorsData.length"></span> factors shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Factor Filter Pills -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-beige-300/80">
+                <span class="text-xs font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Factor:
+                </span>
+                <button 
+                    @click="selectedFactor = 'all'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedFactor === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    All Factors (7)
+                </button>
+                <template x-for="factor in factorsData" :key="'pill-' + factor.id">
+                    <button 
+                        @click="selectedFactor = factor.id" 
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5"
+                        :class="selectedFactor === factor.id ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                    >
+                        <i :class="factor.icon"></i>
+                        <span x-text="factor.title"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+
+        <!-- VIEW 1: FACTOR MATRIX VIEW (Default) -->
+        <div x-show="viewMode === 'by-factor'" class="space-y-6">
+            <template x-for="factor in filteredFactors" :key="factor.id">
+                <article class="factor-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden transition">
+                    
+                    <!-- Factor Card Header -->
+                    <div class="p-4 sm:p-5 bg-beige-50 border-b border-beige-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-inner"
+                                 :class="factor.colorClass">
+                                <i :class="factor.icon"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold text-brown-900 tracking-tight" x-text="factor.title"></h3>
+                                <p class="text-xs text-brown-700 font-medium" x-text="factor.tagline"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 self-end sm:self-center">
+                            <button 
+                                @click="toggleCardMode(factor.id)" 
+                                class="text-xs px-3 py-1.5 rounded-lg border font-semibold transition flex items-center gap-1.5 shadow-xs"
+                                :class="isFullAnalysis(factor.id) 
+                                    ? 'bg-beige-200/90 hover:bg-beige-300 border-beige-300 text-brown-800' 
+                                    : 'bg-brown-800 hover:bg-brown-700 border-brown-700 text-beige-50'">
+                                <span x-text="isFullAnalysis(factor.id) ? 'Quick View' : 'Full Analysis'"></span>
+                                <i class="fa-solid text-[10px]" :class="isFullAnalysis(factor.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Factor Summary Callout -->
+                    <div class="p-4 sm:p-5 space-y-4">
+                        <div class="bg-beige-100/90 p-3.5 rounded-xl border border-beige-200 text-xs sm:text-sm text-brown-900 leading-relaxed">
+                            <div class="flex items-center gap-1.5 text-accent-forest font-bold text-[11px] uppercase tracking-wider mb-1.5">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Exam Significance &amp; Impact Overview</span>
+                            </div>
+                            <p class="text-brown-800" x-text="factor.examSignificance"></p>
+                        </div>
+
+                        <!-- 4-Era Grid (Visible by default in Full Analysis mode) -->
+                        <div x-show="isFullAnalysis(factor.id)" x-collapse.duration.250ms class="space-y-4 pt-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+                                
+                                <!-- Medieval -->
+                                <div class="p-3.5 bg-beige-100/60 rounded-xl border border-amber-200/70 space-y-2 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center gap-1.5 text-amber-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-amber-200">
+                                            <span class="w-2 h-2 rounded-full bg-accent-gold"></span>
+                                            <span>Medieval (c1000–c1450)</span>
+                                        </div>
+                                        <div class="text-brown-800 leading-relaxed whitespace-pre-line mt-2 space-y-1.5" x-html="factor.medieval"></div>
+                                    </div>
+                                    <div class="mt-3 pt-2 border-t border-amber-200/50 text-[10px] text-brown-700 italic font-medium">
+                                        <strong class="text-brown-900 font-semibold">Key Outcome:</strong> <span x-text="factor.medievalOutcome"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Renaissance -->
+                                <div class="p-3.5 bg-beige-100/60 rounded-xl border border-blue-200/70 space-y-2 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center gap-1.5 text-blue-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-blue-200">
+                                            <span class="w-2 h-2 rounded-full bg-accent-cobalt"></span>
+                                            <span>Renaissance (c1450–c1750)</span>
+                                        </div>
+                                        <div class="text-brown-800 leading-relaxed whitespace-pre-line mt-2 space-y-1.5" x-html="factor.renaissance"></div>
+                                    </div>
+                                    <div class="mt-3 pt-2 border-t border-blue-200/50 text-[10px] text-brown-700 italic font-medium">
+                                        <strong class="text-brown-900 font-semibold">Key Outcome:</strong> <span x-text="factor.renaissanceOutcome"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Industrial -->
+                                <div class="p-3.5 bg-beige-100/60 rounded-xl border border-rose-200/70 space-y-2 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center gap-1.5 text-rose-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-rose-200">
+                                            <span class="w-2 h-2 rounded-full bg-accent-wine"></span>
+                                            <span>Industrial (c1750–c1900)</span>
+                                        </div>
+                                        <div class="text-brown-800 leading-relaxed whitespace-pre-line mt-2 space-y-1.5" x-html="factor.industrial"></div>
+                                    </div>
+                                    <div class="mt-3 pt-2 border-t border-rose-200/50 text-[10px] text-brown-700 italic font-medium">
+                                        <strong class="text-brown-900 font-semibold">Key Outcome:</strong> <span x-text="factor.industrialOutcome"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Modern -->
+                                <div class="p-3.5 bg-beige-100/60 rounded-xl border border-emerald-200/70 space-y-2 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center gap-1.5 text-emerald-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-emerald-200">
+                                            <span class="w-2 h-2 rounded-full bg-accent-forest"></span>
+                                            <span>Modern (c1900–Present)</span>
+                                        </div>
+                                        <div class="text-brown-800 leading-relaxed whitespace-pre-line mt-2 space-y-1.5" x-html="factor.modern"></div>
+                                    </div>
+                                    <div class="mt-3 pt-2 border-t border-emerald-200/50 text-[10px] text-brown-700 italic font-medium">
+                                        <strong class="text-brown-900 font-semibold">Key Outcome:</strong> <span x-text="factor.modernOutcome"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </article>
+            </template>
+        </div>
+
+        <!-- VIEW 2: BY HISTORICAL ERA (Cross-Factor Synthesis) -->
+        <div x-show="viewMode === 'by-era'" class="space-y-6">
+            <template x-for="era in erasSynthesis" :key="era.id">
+                <article class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden">
+                    <div class="p-4 sm:p-5 bg-beige-100 border-b border-beige-300 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3.5 h-3.5 rounded-full" :class="era.badgeColor"></span>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold text-brown-900" x-text="era.name"></h3>
+                                <p class="text-xs text-brown-700" x-text="era.timespan + ' &bull; Dominant Driver: ' + era.dominantFactor"></p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md border bg-beige-50 text-brown-800 border-beige-300" x-text="era.focus"></span>
+                    </div>
+
+                    <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                        <template x-for="item in era.factorHighlights" :key="item.factorName">
+                            <div class="p-3.5 bg-beige-100/70 rounded-xl border border-beige-200 space-y-1.5">
+                                <div class="font-bold text-brown-900 flex items-center gap-1.5">
+                                    <i :class="item.icon" class="text-accent-forest text-xs"></i>
+                                    <span x-text="item.factorName"></span>
+                                </div>
+                                <p class="text-brown-800 leading-relaxed" x-text="item.summary"></p>
+                            </div>
+                        </template>
+                    </div>
+                </article>
+            </template>
+        </div>
+
+        <!-- VIEW 3: 16-MARK ESSAY COMPARISON MATRIX -->
+        <div x-show="viewMode === 'essay-matrix'" class="space-y-6">
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent-gold/20 text-brown-900 border border-accent-gold/40 mb-1">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Exam Writing Framework</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-brown-900">How to Tackle the 16-Mark Factor Question</h2>
+                        <p class="text-xs text-brown-700 mt-1">"Has war been the most important factor in the development of medicine since c1000? Explain your answer with reference to war and other factors." (16 marks + 4 SPaG)</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs leading-relaxed">
+                    <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block flex items-center gap-1.5">
+                            <i class="fa-solid fa-1 text-accent-forest"></i> Named Factor Paragraphs
+                        </strong>
+                        <p class="text-brown-800">You <strong>must</strong> write in-depth about the factor named in the prompt across at least two distinct eras (e.g. Paré in 1537 and WWI Gillies / blood storage).</p>
+                    </div>
+                    <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block flex items-center gap-1.5">
+                            <i class="fa-solid fa-2 text-accent-forest"></i> Counter-Factor Paragraphs
+                        </strong>
+                        <p class="text-brown-800">Evaluate at least two other factors (e.g. <em>Government</em> through the 1875 Public Health Act &amp; 1948 NHS, or <em>Science &amp; Tech</em> via Germ Theory &amp; microscopes).</p>
+                    </div>
+                    <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-200 space-y-1.5">
+                        <strong class="text-brown-900 font-bold block flex items-center gap-1.5">
+                            <i class="fa-solid fa-3 text-accent-forest"></i> Sustained Judgement
+                        </strong>
+                        <p class="text-brown-800">Explain how factors <strong>interlink</strong>: e.g. War alone creates casualties, but without <em>Government funding</em> or <em>Science &amp; Tech</em> (penicillin, X-rays), war cannot cure disease.</p>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="overflow-x-auto pt-2">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-brown-900 text-beige-100">
+                                <th class="p-3 rounded-tl-xl">Factor</th>
+                                <th class="p-3">Primary Role</th>
+                                <th class="p-3">Best Turning-Point Evidence</th>
+                                <th class="p-3 rounded-tr-xl">Key Limitation / Counter-Argument</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-beige-300 bg-beige-100/50">
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">War</td>
+                                <td class="p-3">Accelerates surgical trauma treatments and logistics under crisis pressure.</td>
+                                <td class="p-3">Paré’s 1537 wound ointment; WWI plastic surgery (Gillies) &amp; sodium citrate blood storage; WWII mass penicillin.</td>
+                                <td class="p-3">Disrupts long-term research, destroys universities/libraries, and only focuses on battlefield injury rather than disease prevention.</td>
+                            </tr>
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">Religion</td>
+                                <td class="p-3">Acted as an obstacle to anatomical dissection in the West, yet established compassion and preserved classical knowledge in Islamic hospitals.</td>
+                                <td class="p-3">Church enforced Galen for 1,400 years; Islamic Baghdad hospitals (805) &amp; Silk Road translations; monastic hospice care.</td>
+                                <td class="p-3">Discouraged searching for natural causes; opposed human dissection and early anaesthetics (childbirth pain as God's will).</td>
+                            </tr>
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">Government</td>
+                                <td class="p-3">Provides legal mandates, nationwide finance, and state infrastructure. Crucial for public health.</td>
+                                <td class="p-3">Compulsory 1875 Public Health Act; Bazalgette's £3m London sewers; Liberal reforms (1906–11); Bevan establishing the NHS (1948).</td>
+                                <td class="p-3">Bound by laissez-faire policy before 1875; politicians reluctant to raise taxes on wealthy ratepayers without cholera crises.</td>
+                            </tr>
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">Science &amp; Tech</td>
+                                <td class="p-3">Provides physical tools to see the invisible, disproving superstition and establishing evidence-based medicine.</td>
+                                <td class="p-3">Gutenberg printing press (c1450); achromatic microscopes proving Germ Theory (1861); carbolic spray (1867); Coolidge X-rays (1913).</td>
+                                <td class="p-3">Technology alone is useless without scientific method; early microscopes existed in 1670s but lacked magnification to prove microbes caused sickness.</td>
+                            </tr>
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">Communication</td>
+                                <td class="p-3">Spreads discoveries across international borders rapidly, preventing ideas dying with their discoverer.</td>
+                                <td class="p-3">The Crusades sharing Islamic scholarship; Geminus translating Vesalius; Lister bringing Pasteur to Britain; Beveridge Report (630k copies).</td>
+                                <td class="p-3">Without fast printing or literacy, communication in Medieval times took centuries through hand-copied monastic manuscripts.</td>
+                            </tr>
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">Chance / Luck</td>
+                                <td class="p-3">Accidental events that spark groundbreaking insights, but require prepared minds to recognise them.</td>
+                                <td class="p-3">Paré running out of boiling oil (1537); Simpson spilling chloroform (1847); Fleming’s open window mould (1928); 1858 Great Stink.</td>
+                                <td class="p-3">Chance alone creates nothing; Fleming could not purify penicillin; it required Florey, Chain, and US factory funding to save human lives.</td>
+                            </tr>
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900">Individual Genius</td>
+                                <td class="p-3">Visionaries who had the courage to question established dogmas and champion empirical observation.</td>
+                                <td class="p-3">Vesalius challenging Galen; Harvey's mechanical experiments; Jenner's cowpox trial; Snow's Broad Street pump map; Bevan's NHS determination.</td>
+                                <td class="p-3">Individuals are constrained by their era's technology; Harvey could not see capillaries; Snow could not see the cholera bacterium.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div x-show="filteredFactors.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No factors match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any factor evidence matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="searchQuery = ''; selectedFactor = 'all'" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-6 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>GCSE History Revision Hub &bull; Health and the People: Factors Affecting Medicine ⚖️</p>
+            <div class="flex items-center gap-4">
+                <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Back to Health Hub</a>
+                <a href="health-individuals.html" class="text-beige-200 hover:text-white underline">Key Figures</a>
+                <a href="health-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic & Complete Dataset from Health factors.docx -->
+    <script>
+        function healthFactorsApp() {
+            return {
+                searchQuery: '',
+                selectedFactor: 'all',
+                viewMode: 'by-factor', // 'by-factor', 'by-era', or 'essay-matrix'
+                sortAscending: true,
+                showFullAnalysis: true,
+                cardModes: {},
+
+                isFullAnalysis(id) {
+                    if (this.cardModes[id] !== undefined) {
+                        return this.cardModes[id] === 'full';
+                    }
+                    return this.showFullAnalysis;
+                },
+
+                toggleCardMode(id) {
+                    const current = this.isFullAnalysis(id);
+                    this.cardModes[id] = current ? 'quick' : 'full';
+                },
+
+                toggleAllCards() {
+                    this.showFullAnalysis = !this.showFullAnalysis;
+                    this.cardModes = {};
+                },
+
+                // Extracted strictly and faithfully from "Health factors.docx"
+                factorsData: [
+                    {
+                        id: "war",
+                        title: "War",
+                        tagline: "Crisis catalyst for battlefield trauma surgery, blood storage, and public health",
+                        icon: "fa-solid fa-shield-halved",
+                        colorClass: "bg-red-500/15 text-red-800 border border-red-500/30",
+                        examSignificance: "War creates an urgent need to treat mass casualties, forcing governments to fund experimental drugs and giving surgeons thousands of bodies to practice on. However, it often disrupts peacetime public health research and diverts resources.",
+                        medieval: "• <strong>Crusades &amp; European Feuds:</strong> Continuous wars provided surgeons with extensive practice on trauma wounds.\n• <strong>Hugh of Lucca:</strong> Observed during the Crusades that wine acted as an effective natural antiseptic to clean wounds.\n• <strong>John of Arderne:</strong> The first major English surgeon; developed a soothing pain-killing ointment made from hemlock and opium on Hundred Years' War battlefields.\n• <strong>Islamic Contact:</strong> Contact between Christian and Islamic military doctors put Europeans in touch with Ibn Sina (Avicenna) and advanced Arab surgery.",
+                        medievalOutcome: "Surgery advanced through wound dressings (wine and opium) and Islamic cross-cultural contact.",
+                        renaissance: "• <strong>Siege of Turin (1537):</strong> French army surgeon Ambroise Paré ran out of boiling elderberry oil to cauterise wounds.\n• Improvised a soothing ointment mixed from egg yolk, oil of roses, and turpentine; wounds healed rapidly without agonizing inflammation.\n• <strong>Silk Ligatures:</strong> Replaced burning hot cautery irons with silk threads to tie off severed arteries during amputations.\n• <strong>Prosthetics:</strong> Designed early mechanical artificial limbs for mutilated soldiers.",
+                        renaissanceOutcome: "Surgery shifted from brutal searing cautery to scientific, gentle wound treatment and prosthetics.",
+                        industrial: "• <strong>Crimean War (1853–1856):</strong> Horrific military hospital conditions at Scutari shed a harsh light on medical negligence.\n• Florence Nightingale transformed hospital hygiene, ventilation, and sanitation, slashing mortality from ~42% to 2%.\n• <strong>Franco-Prussian War (1870–1871):</strong> Intense national rivalry between Louis Pasteur (France) and Robert Koch (Germany) fueled a competitive scientific race to isolate disease bacteria and discover vaccines.\n• <strong>Boer War (1899):</strong> Army leaders discovered up to 40% of working-class volunteers were physically unfit for military service due to poverty-induced rickets and malnutrition.",
+                        industrialOutcome: "Hospital hygiene was revolutionized and Anglo-German scientific rivalry accelerated bacteriology.",
+                        modern: "• <strong>WWI &amp; WWII Spending:</strong> Governments were strongly incentivised to invest massive state budgets into medical breakthroughs.\n• <strong>Plastic Surgery:</strong> Harold Gillies established a dedicated facial reconstructive unit at Queen’s Hospital, Kent in 1917 (over 1,000 beds for disfigured troops).\n• <strong>Blood Storage:</strong> In 1914, doctors discovered sodium citrate stopped blood clotting, allowing refrigerated blood banks to be stockpiled before major offensives.\n• <strong>Mobile X-rays:</strong> William Coolidge invented reliable glass X-ray tubes (1913), and Marie Curie equipped 20 mobile radiology vehicles ('petites Curies') on the Western Front in 1914.\n• <strong>Penicillin:</strong> Alexander Fleming's wartime gangrene experience motivated his search for antibiotics; Florey and Chain's mass production was financed directly by the US and British governments for D-Day casualties (1944).\n• <strong>Postwar Social Reconstruction:</strong> Boer War unfitness and WWII evacuations revealed urban poverty to wealthy families; Lloyd George promised 'homes fit for heroes' (1919), and WWII bomb destruction prompted the building of new garden cities (Stevenage, Welwyn Garden City) and the 1948 founding of the NHS.",
+                        modernOutcome: "Created modern plastic surgery, mobile X-rays, blood banks, mass penicillin, and the British welfare state."
+                    },
+                    {
+                        id: "religion",
+                        title: "Religion & Beliefs",
+                        tagline: "Both an institutional brake on scientific inquiry and an engine of compassionate care",
+                        icon: "fa-solid fa-church",
+                        colorClass: "bg-purple-500/15 text-purple-800 border border-purple-500/30",
+                        examSignificance: "For over 1,400 years, the Christian Church upheld Galen's single-Creator doctrine as absolute truth, banning human dissections and punishing dissenters. Conversely, religious duty funded the earliest hospitals and Islamic scholars preserved ancient Greek knowledge.",
+                        medieval: "• <strong>Christian Church &amp; Galen:</strong> The Church preserved classical texts from Rome and strictly controlled universities. It enforced Galen because his teleological writings supported a divine Creator. Roger Bacon was imprisoned merely for arguing that doctors should conduct empirical research.\n• <strong>Supernatural Beliefs:</strong> Sickness was viewed as punishment from God for sins; without incentive to search for biological cures, treatments relied on prayer, fasting, pilgrimages, and flagellation.\n• <strong>Medieval Care Hospitals:</strong> Christianity motivated compassionate care; nuns and monks provided rest, food, warmth, and prayer in nearly 500 English hospitals by 1400 (e.g. St Bartholomew's; Bedlam established in 1247 for psychiatric patients).\n• <strong>Islamic Medicine:</strong> The Quran encouraged hygiene, diet, and physical care. The first Islamic hospital opened in Baghdad in 805; by 1100 every major Muslim city had hospitals open to all regardless of wealth. Baghdad's Silk Road scholars translated Hippocratic and Galenic texts into Arabic, which later returned to Europe via Latin translations.",
+                        medievalOutcome: "Enforced Galen and banned human dissection, but established the first monastic and Islamic hospitals.",
+                        renaissance: "• <strong>The Great Plague (1665):</strong> Many still stubbornly believed the pestilence was God's punishment; days of public prayer and fasting were declared.\n• <strong>Dissolution of the Monasteries:</strong> King Henry VIII closed down Catholic monasteries in the late 1530s, inadvertently shutting down scores of hospital charities and infirmaries across England.\n• <strong>The Royal Touch:</strong> Widespread public belief persisted that being touched by the King or Queen could cure scrofula ('the King's Evil') because monarchs were appointed by God.",
+                        renaissanceOutcome: "Monastic hospitals were dismantled by Henry VIII while belief in divine monarchy healing endured.",
+                        industrial: "• <strong>Opposition to Anaesthetics:</strong> Some conservative clergymen fiercely opposed James Simpson's use of chloroform in childbirth, preaching that physical agony in labor was God's divine curse on Eve in Genesis.\n• <strong>Opposition to Smallpox Vaccination:</strong> Certain preachers condemned Jenner's cowpox vaccine as an unholy, bestial interference with God's will to inject animal disease into pure humans.",
+                        industrialOutcome: "Religious dogma resisted anaesthetics and vaccines until Queen Victoria openly endorsed chloroform.",
+                        modern: "• <strong>Ethical &amp; Religious Debates:</strong> Modern religious discourse engages heavily in bioethics: debating IVF (first test-tube baby Louise Brown, 1978), embryonic stem cell research, abortion laws, and organ transplantation criteria.\n• Religious moral compassion continues to drive hospices and international disaster relief charities.",
+                        modernOutcome: "Shifted from dogmatic medical gatekeeping into modern bioethical debates on genetic engineering and IVF."
+                    },
+                    {
+                        id: "government",
+                        title: "Government & Politics",
+                        tagline: "The transition from strict laissez-faire negligence to compulsory public health and the NHS",
+                        icon: "fa-solid fa-building-columns",
+                        colorClass: "bg-amber-500/15 text-amber-800 border border-amber-500/30",
+                        examSignificance: "Without government legislation and compulsory taxation, medical breakthroughs (like Chadwick's sewers, Jenner's vaccines, or Fleming's penicillin) remain isolated scientific curiosities. Government was the indispensable factor in universal public health.",
+                        medieval: "• <strong>Reluctance to Tax:</strong> Feudal kings and town mayors feared public backlash and rarely raised taxes for urban sanitation.\n• <strong>Local Street Laws:</strong> After devastating epidemics, London and York town councils passed bylaws fining residents for dumping butchery waste and dung in streets.\n• <strong>Quarantine:</strong> During the 1348 Black Death, local municipal councils ordered crude quarantines to restrict travel from infected areas.",
+                        medievalOutcome: "Minimal state intervention; public health remained localized and reactive during catastrophic plague years.",
+                        renaissance: "• <strong>College of Physicians (1518):</strong> Henry VIII established the Royal College of Physicians to examine and license legitimate doctors, clamping down on dangerous quacks.\n• <strong>Plague Orders:</strong> Municipal governments enforced strict quarantine: infected households were locked from the outside for 28 days with red crosses painted on doors and armed watchmen posted.",
+                        renaissanceOutcome: "Early state medical licensing and authoritarian municipal quarantines during the 1665 Great Plague.",
+                        industrial: "• <strong>Jenner Grants:</strong> Parliament recognized smallpox vaccination's value, awarding Jenner £10,000 in 1802 and £20,000 in 1807; Parliament made vaccination compulsory in 1853.\n• <strong>Laboratory Funding:</strong> France and Germany directly subsidized state laboratories and teams for Louis Pasteur and Robert Koch.\n• <strong>1848 Public Health Act:</strong> Passed after Chadwick's 1842 report; largely ineffective because it was permissive (councils refused to spend ratepayers' money).\n• <strong>The Great Stink (1858):</strong> The stench of raw sewage from the Thames overwhelmed Parliament, forcing MPs to fund Joseph Bazalgette with £3 million (£1bn today) to construct 1,100 miles of underground sewers.\n• <strong>1867 Working-Class Enfranchisement:</strong> Giving urban working men the vote forced political parties to compete for working-class votes by improving living conditions.\n• <strong>1875 Public Health Act:</strong> A landmark turning point that ended laissez-faire: made it legally compulsory for all local councils to appoint Medical Officers, pave streets, build covered sewers, collect garbage, and ensure clean water.",
+                        industrialOutcome: "Ended laissez-faire; enacted compulsory smallpox vaccination and the landmark 1875 Public Health Act.",
+                        modern: "• <strong>Liberal Welfare Reforms (1906–1911):</strong> Prompted by the rise of the Labour Party, the Liberal government passed Free School Meals (1906), Old Age Pensions (1908), and the National Insurance Act (1911) for sick pay.\n• <strong>Housing Acts:</strong> Governments built council houses in the 1920s/30s to replace squalid slums ('homes fit for heroes').\n• <strong>Wartime State Funding:</strong> The US and British governments poured millions into industrial fermentation plants to mass-produce penicillin for WWII.\n• <strong>Attlee’s Labour Government &amp; NHS (1948):</strong> Passed the 1946 National Insurance Act; Minister for Health Aneurin Bevan launched the NHS on 5 July 1948, providing universal free healthcare funded through taxation.\n• <strong>State Vaccination &amp; Town Planning:</strong> Government funded mass vaccination programs that eliminated tuberculosis (1948) and polio (1955), constructed 12 new towns (e.g. Stevenage, Welwyn), and built 280,000 council houses annually.",
+                        modernOutcome: "Created the modern Welfare State, subsidized antibiotic production, and launched the 1948 NHS."
+                    },
+                    {
+                        id: "science",
+                        title: "Science & Technology",
+                        tagline: "Inventing the instruments and empirical methods that shattered ancient medical dogma",
+                        icon: "fa-solid fa-microscope",
+                        colorClass: "bg-blue-500/15 text-blue-800 border border-blue-500/30",
+                        examSignificance: "Scientific instruments like the printing press, compound achromatic microscopes, and X-ray tubes allowed pioneers to observe previously invisible biological realities, transforming medicine from guesswork into an exact science.",
+                        medieval: "• <strong>Clinical Observation:</strong> Hippocrates introduced careful recording of patient symptoms rather than blaming gods.\n• <strong>Lack of Technology:</strong> Without magnifying lenses, thermometers, or dissection microscopes, doctors possessed no instruments to disprove the Four Humours or identify pathogens.",
+                        medievalOutcome: "Observation began, but absence of technology prevented disproving the Four Humours.",
+                        renaissance: "• <strong>Human Dissection:</strong> Andreas Vesalius dissected executed criminals, applying empirical scientific method to prove Galen made over 200 errors (e.g. human jawbone is one piece, not two).\n• <strong>Cardiovascular Experiments:</strong> William Harvey used mechanical water-pump principles, ligature tests, and quantitative measurements to prove blood circulates in a closed loop.\n• <strong>The Printing Press (c1450):</strong> Gutenberg's movable-type press mass-produced accurately illustrated anatomical textbooks, breaking the Church's monopoly.\n• <strong>Scientific Method:</strong> John Hunter championed comparative anatomy and clinical experimentation with 14,000 specimens.",
+                        renaissanceOutcome: "Direct human dissection, quantitative experiments, and anatomical printing revolutionized medicine.",
+                        industrial: "• <strong>Statistical Epidemiology:</strong> Dr John Snow mapped cholera deaths on his 1854 'Ghost Map', applying scientific deduction to trace the Broad Street water pump.\n• <strong>Swan-Neck Flasks &amp; Germ Theory (1861):</strong> Louis Pasteur designed controlled laboratory experiments disproving spontaneous generation.\n• <strong>High-Powered Microscopes:</strong> Achromatic compound microscopes enabled Robert Koch to view, chemically stain, and photograph individual bacteria (anthrax, TB, cholera).\n• <strong>Anaesthetics &amp; Antiseptics:</strong> Ether (1846) and Chloroform (1847) eradicated pain, allowing longer operations. Lister's carbolic acid spray (1867) attacked airborne microbes, reducing post-operative mortality from 45.7% to 15%.",
+                        industrialOutcome: "Microscopes proved Germ Theory, chemical anaesthetics conquered pain, and carbolic spray conquered infection.",
+                        modern: "• <strong>X-Rays &amp; Radiotherapy:</strong> William Coolidge's durable glass X-ray tubes (1913) and Curie's mobile units transformed diagnostic imaging; radiotherapy destroyed malignant cancer cells.\n• <strong>Chemical Purification:</strong> Florey, Chain, and Norman Heatley devised biochemically complex freeze-drying and solvent extraction to turn Fleming's raw mould into clinical penicillin.\n• <strong>Minimally Invasive Surgery:</strong> Laparoscopic keyhole surgery, robotic instruments, and laser surgery (1950s) corrected eye defects and eliminated large surgical incisions.\n• <strong>DNA &amp; Genetic Engineering:</strong> Watson, Crick, and Franklin’s 1953 discovery of the DNA double helix opened gene therapy, diagnostic genome sequencing, and biopharmaceuticals.",
+                        modernOutcome: "Produced antibiotics, X-rays, radiotherapy, laser and keyhole surgery, and the DNA genetic revolution."
+                    },
+                    {
+                        id: "communication",
+                        title: "Communication & Trade",
+                        tagline: "Sharing medical discoveries, translations, and global data across international borders",
+                        icon: "fa-solid fa-comments",
+                        colorClass: "bg-teal-500/15 text-teal-800 border border-teal-500/30",
+                        examSignificance: "Without effective international communication, revolutionary breakthroughs remain confined to local areas or die with their discoverers. Printing, translations, and scientific journals allowed British medicine to build upon global advances.",
+                        medieval: "• <strong>Crusades &amp; Silk Roads:</strong> Trade routes and military contact brought European doctors into direct dialogue with Islamic scholarship.\n• <strong>Canon of Medicine:</strong> Persian physician Ibn Sina (Avicenna) compiled a massive 14-volume medical encyclopedia that synthesized Greek, Indian, and Arab knowledge; translated into Latin, it became standard curriculum across European universities.",
+                        medievalOutcome: "Islamic medical encyclopedias and Greek texts were translated into Latin and transported across trade routes.",
+                        renaissance: "• <strong>Movable-Type Printing (1440s):</strong> Enabled mass printing of medical treatises without Church monastic scribes altering or censoring text.\n• <strong>Translations into English:</strong> Vesalius’s Latin masterpiece *Fabrica* was translated and pirated into English by Thomas Geminus in *Compendiosa*, accelerating anatomy education in Britain.\n• <strong>Herbal Access:</strong> Nicholas Culpeper translated Latin pharmacopeias into English (*The English Physician*, 1652), empowering ordinary families to read remedy instructions.",
+                        renaissanceOutcome: "Printing presses and English translations broke the Latin monopoly, spreading anatomical diagrams.",
+                        industrial: "• <strong>International Journals &amp; Press:</strong> Louis Pasteur’s French scientific papers were rapidly translated into English and published in *The Times*; Joseph Lister read them in Glasgow and applied them to surgical carbolic acid.\n• <strong>Epidemiological Dot-Maps:</strong> Dr John Snow’s famous 'Ghost Map' visually conveyed the cluster of cholera cases around the Broad Street pump, persuading local vestrymen to remove the handle.\n• <strong>Chadwick’s Sanitary Report (1842):</strong> Thousands of copies of Edwin Chadwick's statistical report were published, reviewed in national newspapers, and forced MPs to act.",
+                        industrialOutcome: "Mass newspapers, scientific translations, and visual disease maps pressured the British public and state.",
+                        modern: "• <strong>The Beveridge Report (1942):</strong> A domestic publishing sensation that sold over 100,000 copies in its first month and 630,000 copies overall, creating an irresistible popular mandate for the NHS.\n• <strong>Public Health Campaigns:</strong> Television, radio, and national print campaigns communicated public hygiene (e.g. anti-smoking, HIV/AIDS awareness, COVID-19).\n• <strong>Digital Health &amp; NHS 111:</strong> Modern internet algorithms, telemedicine, and NHS 111 provide instant online health triage, reducing emergency hospital burdens.",
+                        modernOutcome: "Mass public media created the NHS, and modern internet infrastructure enables instant global health triage."
+                    },
+                    {
+                        id: "chance",
+                        title: "Chance & Luck",
+                        tagline: "Accidental battlefield crises, weather anomalies, and unwashed petri dishes",
+                        icon: "fa-solid fa-dice",
+                        colorClass: "bg-yellow-500/15 text-yellow-800 border border-yellow-500/30",
+                        examSignificance: "Chance often sparks extraordinary breakthroughs, but as Louis Pasteur famously remarked, 'chance favours only the prepared mind.' Accidental events required trained scientific intellect to recognise and exploit their true value.",
+                        medieval: "• <strong>Wine as an Antiseptic:</strong> Battlefield surgeon Hugh of Lucca noticed by chance that pouring wine over gaping wounds prevented putrefaction and rot, long before microbes were discovered.",
+                        medievalOutcome: "Serendipitous discovery that wine cleans wounds and prevents deadly gangrene.",
+                        renaissance: "• <strong>Running Out of Boiling Oil (1537):</strong> During the French siege of Turin, Ambroise Paré completely ran out of boiling elderberry oil to cauterise gunshot wounds; forced by chance to improvise an ointment of egg yolk, rose oil, and turpentine, he discovered patients healed without agony.",
+                        renaissanceOutcome: "Running out of supplies accidentally triggered the greatest breakthrough in battlefield wound care.",
+                        industrial: "• <strong>The Great Stink (1858):</strong> An extraordinarily scorching summer caused the Thames sewage to ferment and produce an unbearable stench that breached Parliament's curtains; this chance weather anomaly forced politicians to instantly fund Bazalgette's vast subterranean sewer network.\n• <strong>Simpson's Dinner Party (1847):</strong> James Simpson and his medical colleagues were casually testing household chemicals after dinner; someone knocked over a bottle of chloroform, knocking them all unconscious and revealing its anaesthetic power.",
+                        industrialOutcome: "Freak hot weather forced London sewer construction; a spilt chemical revealed chloroform anaesthesia.",
+                        modern: "• <strong>Alexander Fleming’s Unwashed Petri Dish (1928):</strong> Fleming left staphylococcus culture dishes on his laboratory bench before going on holiday; a spore of *Penicillium notatum* blew through an open window from another lab, landed on the agar, and destroyed the surrounding bacteria, revealing penicillin.",
+                        modernOutcome: "A contaminated dish revealed penicillin, opening the entire global antibiotic era."
+                    },
+                    {
+                        id: "individual",
+                        title: "Individual Genius",
+                        tagline: "Courageous pioneers who defied medical authority, tested theories, and persisted",
+                        icon: "fa-solid fa-user-doctor",
+                        colorClass: "bg-emerald-500/15 text-emerald-800 border border-emerald-500/30",
+                        examSignificance: "Every major breakthrough required an individual with the intellectual curiosity to doubt accepted authority (like Vesalius or Harvey), the clinical skill to experiment (like Jenner or Lister), or the political willpower to fight vested interests (like Bevan).",
+                        medieval: "• <strong>Hippocrates:</strong> Established clinical observation, the Four Humours, and medical ethics (Hippocratic Oath).\n• <strong>Galen:</strong> Wrote over 350 medical treatises; proved arteries carry blood and brain controls speech; created the Theory of Opposites.\n• <strong>Ibn Sina (Avicenna):</strong> Compiled the *Canon of Medicine*, categorizing hundreds of drugs and diseases.",
+                        medievalOutcome: "Hippocrates and Galen set the framework that governed Western medicine for 1,500 years.",
+                        renaissance: "• <strong>Andreas Vesalius:</strong> Braved grave-robbing to dissect human cadavers, illustrating *Fabrica* (1543) and correcting over 200 of Galen’s anatomical errors.\n• <strong>Ambroise Paré:</strong> Barber-surgeon with the creative courage to abandon boiling oil cauterisation and invent silk ligatures and prosthetic limbs.\n• <strong>William Harvey:</strong> Defied university dogma to prove blood circulation using quantitative experiments and mechanical calculations (*De Motu Cordis*, 1628).\n• <strong>John Hunter:</strong> Dissected 14,000 comparative animal and human specimens, training a generation of pioneering British doctors including Jenner.\n• <strong>Edward Jenner:</strong> Observed milkmaid lore and conducted the famous 1796 James Phipps trial, proving cowpox prevented smallpox.",
+                        renaissanceOutcome: "Vesalius, Paré, Harvey, and Jenner laid the foundation of modern anatomy, surgery, and immunology.",
+                        industrial: "• <strong>James Simpson:</strong> Tirelessly experimented with chemical anaesthetics and championed chloroform against conservative doctors and religious critics.\n• <strong>John Snow:</strong> Formulated the waterborne cholera theory, tracked the Broad Street pump on his map, and invented a regulated chloroform inhaler.\n• <strong>Edwin Chadwick:</strong> Relentless social reformer whose statistical 1842 report forced Parliament to pass the 1848 Public Health Act.\n• <strong>Joseph Bazalgette:</strong> Master engineer who designed and oversaw London's monumental 1,100-mile subterranean sewer network.\n• <strong>Louis Pasteur &amp; Robert Koch:</strong> Brilliant microbiologists who proved Germ Theory and isolated specific pathogens for anthrax, TB, and cholera.\n• <strong>Joseph Lister:</strong> Applied Germ Theory to surgery, inventing carbolic acid sprays and antiseptic dressings.",
+                        industrialOutcome: "Simpson, Snow, Chadwick, Pasteur, Koch, and Lister transformed epidemiology, surgery, and public sanitation.",
+                        modern: "• <strong>Booth &amp; Rowntree:</strong> Pioneered sociological poverty mapping in London and York, providing the empirical evidence for the 1906–1911 Liberal reforms.\n• <strong>Harold Gillies:</strong> Innovated complex facial plastic surgery and tube pedicle skin grafts for mutilated WWI soldiers.\n• <strong>Alexander Fleming:</strong> Recognized the antibacterial significance of the mould ring on his 1928 petri dish.\n• <strong>Howard Florey, Ernst Chain &amp; Norman Heatley:</strong> Biochemists who purified penicillin, proved its efficacy on mice and humans, and secured US factory mass production.\n• <strong>William Beveridge:</strong> Wrote the landmark 1942 Beveridge Report targeting the 'Five Giant Evils'.\n• <strong>Aneurin Bevan:</strong> Minister for Health who overcame fierce British Medical Association (BMA) resistance to launch the NHS in 1948.",
+                        modernOutcome: "Visionaries produced antibiotics, modern plastic surgery, sociological welfare mapping, and the NHS."
+                    }
+                ],
+
+                // Era-based synthesis data for View 2
+                erasSynthesis: [
+                    {
+                        id: "era-medieval",
+                        name: "Medieval Medicine",
+                        timespan: "c1000–c1450",
+                        dominantFactor: "Religion & Superstition",
+                        badgeColor: "bg-accent-gold",
+                        focus: "Preservation & Stagnation",
+                        factorHighlights: [
+                            { factorName: "Religion & Church", icon: "fa-solid fa-church", summary: "Total control over education, universities, and medical books; enforced Galen as infallible and banned human dissection." },
+                            { factorName: "War", icon: "fa-solid fa-shield-halved", summary: "Continuous Crusades and feudal wars provided surgical practice; Hugh of Lucca used wine as an antiseptic; John of Arderne developed pain ointments." },
+                            { factorName: "Communication & Trade", icon: "fa-solid fa-comments", summary: "Islamic texts like Ibn Sina's Canon of Medicine reached Europe via Silk Road trade routes and Latin translations." },
+                            { factorName: "Government", icon: "fa-solid fa-building-columns", summary: "Strict laissez-faire attitude; kings feared raising taxes for sanitation, though London and York fined street polluters." },
+                            { factorName: "Science & Technology", icon: "fa-solid fa-microscope", summary: "Absence of magnifying lenses or microscopes meant doctors could not disprove the Four Humours." },
+                            { factorName: "Individual Genius", icon: "fa-solid fa-user-doctor", summary: "Hippocrates and Galen remained unquestioned authorities whose doctrines governed all clinical practice." }
+                        ]
+                    },
+                    {
+                        id: "era-renaissance",
+                        name: "The Renaissance",
+                        timespan: "c1450–c1750",
+                        dominantFactor: "Science & Technology / Individuals",
+                        badgeColor: "bg-accent-cobalt",
+                        focus: "Challenging Ancient Dogma",
+                        factorHighlights: [
+                            { factorName: "Science & Tech", icon: "fa-solid fa-microscope", summary: "Human cadaver dissections by Vesalius and mechanical heart pump experiments by Harvey; Gutenberg's printing press (c1450)." },
+                            { factorName: "Individual Genius", icon: "fa-solid fa-user-doctor", summary: "Vesalius corrected 200+ Galen errors; Paré invented ligatures; Harvey proved circulation; Jenner discovered vaccination (1796)." },
+                            { factorName: "Communication", icon: "fa-solid fa-comments", summary: "Geminus translated Vesalius into English; Culpeper published English herbal guides; medical societies shared findings." },
+                            { factorName: "Chance", icon: "fa-solid fa-dice", summary: "Paré ran out of boiling oil at the Siege of Turin (1537), forcing him to experiment with an improvised egg and rose oil ointment." },
+                            { factorName: "War", icon: "fa-solid fa-shield-halved", summary: "Gunpowder weapons created horrific shattered wounds, compelling Paré to design ligatures and prosthetics." },
+                            { factorName: "Government", icon: "fa-solid fa-building-columns", summary: "Henry VIII licensed doctors via the College of Physicians (1518) and quarantined plague houses with red crosses." }
+                        ]
+                    },
+                    {
+                        id: "era-industrial",
+                        name: "Industrial Revolution",
+                        timespan: "c1750–c1900",
+                        dominantFactor: "Science & Technology / Government",
+                        badgeColor: "bg-accent-wine",
+                        focus: "Microbes, Pain & Sanitation",
+                        factorHighlights: [
+                            { factorName: "Science & Tech", icon: "fa-solid fa-microscope", summary: "Microscopes proved Germ Theory (Pasteur 1861); Koch isolated specific microbes; Simpson used chloroform; Lister invented carbolic spray." },
+                            { factorName: "Government", icon: "fa-solid fa-building-columns", summary: "Compulsory 1853 smallpox vaccine; funded Bazalgette's £3m London sewers; passed the compulsory 1875 Public Health Act." },
+                            { factorName: "War", icon: "fa-solid fa-shield-halved", summary: "Crimean War catalyzed Florence Nightingale's hospital sanitation; Franco-Prussian War fueled Pasteur and Koch rivalry." },
+                            { factorName: "Chance", icon: "fa-solid fa-dice", summary: "The 1858 Great Stink forced MPs to fund London's sewer system; Simpson accidentally discovered chloroform at home." },
+                            { factorName: "Communication", icon: "fa-solid fa-comments", summary: "Pasteur's papers published in The Times; Snow's Broad Street dot map; Chadwick's 1842 Sanitary Report read across Britain." },
+                            { factorName: "Religion", icon: "fa-solid fa-church", summary: "Clergy resisted anaesthetics in childbirth and cowpox vaccines until Queen Victoria openly endorsed chloroform." }
+                        ]
+                    },
+                    {
+                        id: "era-modern",
+                        name: "Modern Era",
+                        timespan: "c1900–Present",
+                        dominantFactor: "Government / War / Technology",
+                        badgeColor: "bg-accent-forest",
+                        focus: "Antibiotics, Welfare & Genetics",
+                        factorHighlights: [
+                            { factorName: "Government", icon: "fa-solid fa-building-columns", summary: "Liberal reforms (1906–11); financed mass penicillin for WWII; Bevan established the NHS in 1948; subsidized free polio/TB vaccines." },
+                            { factorName: "War", icon: "fa-solid fa-shield-halved", summary: "WWI trench casualties sparked Harold Gillies' plastic surgery and sodium citrate blood storage; WWII D-Day drove penicillin mass production." },
+                            { factorName: "Science & Tech", icon: "fa-solid fa-microscope", summary: "Coolidge X-ray tubes (1913); keyhole laparoscopy; radiotherapy; Watson and Crick's DNA double helix (1953) enabling gene therapies." },
+                            { factorName: "Chance", icon: "fa-solid fa-dice", summary: "Fleming returned from holiday in 1928 to find an accidental Penicillium notatum spore had killed staph bacteria in an open petri dish." },
+                            { factorName: "Communication", icon: "fa-solid fa-comments", summary: "Beveridge Report sold 630,000 copies; modern NHS 111 and digital health platforms allow instant medical consultation." },
+                            { factorName: "Individual Genius", icon: "fa-solid fa-user-doctor", summary: "Booth and Rowntree's poverty maps; Fleming, Florey and Chain's penicillin; Bevan's political fight for the NHS." }
+                        ]
+                    }
+                ],
+
+                get filteredFactors() {
+                    let results = [...this.factorsData];
+
+                    if (this.selectedFactor !== 'all') {
+                        results = results.filter(f => f.id === this.selectedFactor);
+                    }
+
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(f => 
+                            f.title.toLowerCase().includes(q) ||
+                            f.tagline.toLowerCase().includes(q) ||
+                            f.examSignificance.toLowerCase().includes(q) ||
+                            f.medieval.toLowerCase().includes(q) ||
+                            f.renaissance.toLowerCase().includes(q) ||
+                            f.industrial.toLowerCase().includes(q) ||
+                            f.modern.toLowerCase().includes(q)
+                        );
+                    }
+
+                    results.sort((a, b) => {
+                        const comp = a.title.localeCompare(b.title);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
