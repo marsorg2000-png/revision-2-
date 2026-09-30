@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Public Health Through Time | Health & the People</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            wine: '#782329',
+                            teal: '#164e63',
+                            navy: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for reactive filtering and state management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .ph-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ph-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="publicHealthApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-faucet-droplet text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Public Health Through Time</h1>
+                    <p class="text-xs text-beige-300">AQA GCSE History &bull; Health and the People Revision Resource</p>
+                </div>
+            </div>
+
+            <!-- Stats & Navigation Badges -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-clock-rotate-left text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">4 Time Periods:</span>
+                    <span class="font-bold text-beige-50">c.1250 &ndash; Present</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Total Entries:</span>
+                    <span class="font-bold text-accent-gold" x-text="allEntries.length"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input 
+                    type="text" 
+                    x-model="searchQuery"
+                    placeholder="Search public health terms, reformers, acts (e.g. Chadwick, Bazalgette, Great Stink, NHS, Monasteries)..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                >
+                <button 
+                    x-show="searchQuery.length > 0" 
+                    @click="searchQuery = ''" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                    title="Clear search"
+                >
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- View & Sort Controls -->
+            <div class="flex items-center flex-wrap justify-between sm:justify-end gap-2 text-xs">
+                <!-- View Mode Toggle -->
+                <div class="inline-flex p-1 bg-beige-300/80 rounded-xl border border-beige-300">
+                    <button 
+                        @click="viewMode = 'eras'"
+                        :class="viewMode === 'eras' ? 'bg-beige-50 text-brown-900 font-bold shadow-xs' : 'text-brown-700 hover:text-brown-900'"
+                        class="px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Era View</span>
+                    </button>
+                    <button 
+                        @click="viewMode = 'cards'"
+                        :class="viewMode === 'cards' ? 'bg-beige-50 text-brown-900 font-bold shadow-xs' : 'text-brown-700 hover:text-brown-900'"
+                        class="px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ul"></i>
+                        <span>List View</span>
+                    </button>
+                </div>
+
+                <!-- Sort Direction -->
+                <button 
+                    @click="sortAscending = !sortAscending" 
+                    class="px-3 py-2 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-1.5 shadow-sm"
+                    title="Toggle alphabetical order"
+                >
+                    <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                    <span x-text="sortAscending ? 'A to Z' : 'Z to A'"></span>
+                </button>
+
+                <!-- Count Badge -->
+                <div class="bg-brown-800/10 px-3 py-2 rounded-xl border border-brown-800/10 font-medium text-brown-800">
+                    <span x-text="filteredEntries.length"></span> / <span x-text="allEntries.length"></span> items
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <!-- Era Selectors -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span class="text-brown-700 font-semibold whitespace-nowrap pl-1"><i class="fa-regular fa-calendar mr-1"></i>Period:</span>
+                <button 
+                    @click="selectedEra = 'all'"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-xl transition whitespace-nowrap">
+                    All Eras
+                </button>
+                <template x-for="era in eraList" :key="era.id">
+                    <button 
+                        @click="selectedEra = era.id"
+                        :class="selectedEra === era.id ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                        class="px-3 py-1.5 rounded-xl transition whitespace-nowrap flex items-center gap-1.5">
+                        <span x-text="era.name"></span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + era.date + ')'"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Category / Sub-Theme Selectors -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span class="text-brown-700 font-semibold whitespace-nowrap pl-1"><i class="fa-solid fa-filter mr-1"></i>Topic:</span>
+                <button 
+                    @click="selectedCategory = 'all'"
+                    :class="selectedCategory === 'all' ? 'bg-brown-700 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap">
+                    All Topics
+                </button>
+                <button 
+                    @click="selectedCategory = 'Living Conditions & Problems'"
+                    :class="selectedCategory === 'Living Conditions & Problems' ? 'bg-accent-wine text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-wine"></span>
+                    Living Conditions &amp; Problems
+                </button>
+                <button 
+                    @click="selectedCategory = 'Reforms & Reports'"
+                    :class="selectedCategory === 'Reforms & Reports' ? 'bg-accent-gold text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+                    Reforms &amp; Reports
+                </button>
+                <button 
+                    @click="selectedCategory = 'Interventions & Solutions'"
+                    :class="selectedCategory === 'Interventions & Solutions' ? 'bg-accent-forest text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-forest"></span>
+                    Interventions &amp; Solutions
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 1: ERA-BY-ERA TIMELINE PANELS -->
+        <div x-show="viewMode === 'eras'" class="space-y-6">
+            <template x-for="era in visibleEras" :key="era.id">
+                <section class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden">
+                    <!-- Era Header -->
+                    <div class="bg-brown-900 text-beige-100 px-5 py-3.5 flex flex-wrap justify-between items-center gap-2 border-b border-brown-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-accent-gold"></span>
+                            <h3 class="text-base sm:text-lg font-bold tracking-tight text-beige-50" x-text="era.name"></h3>
+                            <span class="text-xs bg-brown-800 text-beige-300 px-2.5 py-0.5 rounded-md font-mono" x-text="era.date"></span>
+                        </div>
+                        <span class="text-xs text-beige-300 hidden sm:inline" x-text="era.summary"></span>
+                    </div>
+
+                    <!-- 3-Column Era Grid: Problems, Reports, Interventions -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-beige-300">
+                        <!-- Column 1: Conditions & Problems -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Living Conditions & Problems'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-wine"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-wine">Conditions &amp; Problems</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Living Conditions & Problems')" :key="item.id">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-brown-900 mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-triangle-exclamation text-accent-wine mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div x-show="getEntriesForEra(era.id, 'Living Conditions & Problems').length === 0" class="text-[11px] text-brown-600/70 italic p-2">
+                                No entries match this category.
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Reports & Developments -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Reforms & Reports'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-gold"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-brown-800">Reports, Acts &amp; Pressures</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Reforms & Reports')" :key="item.id">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-brown-900 mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-file-invoice text-accent-gold mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div x-show="getEntriesForEra(era.id, 'Reforms & Reports').length === 0" class="text-[11px] text-brown-600/70 italic p-2">
+                                No entries match this category.
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Solutions & Interventions -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Interventions & Solutions'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-forest"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-forest">Interventions &amp; Solutions</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Interventions & Solutions')" :key="item.id">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-accent-forest mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-circle-check text-accent-forest mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div x-show="getEntriesForEra(era.id, 'Interventions & Solutions').length === 0" class="text-[11px] text-brown-600/70 italic p-2">
+                                No entries match this category.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </template>
+        </div>
+
+        <!-- VIEW 2: INTERACTIVE GLOSSARY LIST -->
+        <div x-show="viewMode === 'cards'" class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-list-check text-brown-700"></i>
+                    <span>Public Health Information Cards</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredEntries.length + ' item' + (filteredEntries.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Items Container -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="item in filteredEntries" :key="item.id">
+                    <div class="ph-card p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <!-- Left col: Era badge + title -->
+                        <div class="md:w-1/3 flex flex-col items-start gap-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full flex-shrink-0"
+                                      :class="{
+                                          'bg-accent-wine': item.category === 'Living Conditions & Problems',
+                                          'bg-accent-gold': item.category === 'Reforms & Reports',
+                                          'bg-accent-forest': item.category === 'Interventions & Solutions'
+                                      }">
+                                </span>
+                                <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight" x-text="item.title"></span>
+                            </div>
+
+                            <div class="flex items-center gap-1.5 flex-wrap pl-4">
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-medium border bg-beige-200/80 border-beige-300 text-brown-800" x-text="item.eraName"></span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-semibold border"
+                                      :class="{
+                                          'bg-accent-wine/10 border-accent-wine/20 text-accent-wine': item.category === 'Living Conditions & Problems',
+                                          'bg-accent-gold/20 border-accent-gold/30 text-brown-900': item.category === 'Reforms & Reports',
+                                          'bg-accent-forest/10 border-accent-forest/20 text-accent-forest': item.category === 'Interventions & Solutions'
+                                      }"
+                                      x-text="item.category">
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Right col: Detailed content -->
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0">
+                            <p class="text-xs sm:text-sm text-brown-800 leading-relaxed" x-text="item.text"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="filteredEntries.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No public health records found</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any information matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>" with the active filters.
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Revision Key Question / Exam Note Section -->
+        <section class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-brown-800"></i>
+                <h3 class="font-bold text-sm text-brown-900">Key GCSE Revision Takeaways: Factors Prompting Change</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-brown-800 leading-relaxed">
+                <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200">
+                    <strong class="text-brown-900 block mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-virus text-red-700"></i> Epidemics &amp; Crisis
+                    </strong>
+                    The Black Death (1348) and recurring Cholera outbreaks (1831, 1848, 1853, 1866) forced authorities into action. The Great Stink of 1858 directly affected politicians in Parliament, leading to funding for Bazalgette's London sewer system.
+                </div>
+                <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200">
+                    <strong class="text-brown-900 block mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-check-to-slot text-accent-gold"></i> The Vote &amp; Politics
+                    </strong>
+                    The 1867 Reform Act gave working-class men the vote. Politicians suddenly had to win working-class approval, prompting Disraeli's government to pass the <strong>compulsory</strong> 1875 Public Health Act and later the Liberal social reforms.
+                </div>
+                <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200">
+                    <strong class="text-brown-900 block mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-cat text-accent-forest"></i> National Security &amp; War
+                    </strong>
+                    During the 1899 Boer War, recruiting officers were alarmed to find 40% of volunteers physically unfit for service. This military fear, coupled with Booth and Rowntree's poverty reports, ended the era of laissez-faire once and for all.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>GCSE History Revision Hub &bull; Health and the People Unit (c.1000 &ndash; Present) 🏛️</p>
+            <p class="text-beige-400">Medieval &bull; Renaissance &bull; Industrial &bull; Modern</p>
+        </div>
+    </footer>
+
+    <script>
+        function publicHealthApp() {
+            return {
+                searchQuery: '',
+                selectedEra: 'all',
+                selectedCategory: 'all',
+                viewMode: 'eras', // 'eras' or 'cards'
+                sortAscending: true,
+
+                eraList: [
+                    { id: 'medieval', name: 'Medieval', date: 'c.1250–c.1500', summary: 'Open sewers and contaminated water contrasted with clean monastic plumbing and civic rakers.' },
+                    { id: 'renaissance', name: 'Renaissance', date: 'c.1500–c.1700', summary: 'Hospitals boom in London and Edinburgh, establishing specialized disease wards and free clinics.' },
+                    { id: 'industrial', name: 'Industrial', date: 'c.1700–c.1900', summary: 'Slums, cholera epidemics, Chadwick’s report, Bazalgette’s sewers, and the compulsory 1875 Act.' },
+                    { id: 'modern', name: 'Modern', date: 'c.1900–Present', summary: 'Booth and Rowntree’s poverty surveys, Boer War fitness shocks, Liberal reforms, and the 1948 NHS.' }
+                ],
+
+                // Full dataset faithfully sourced from Public health.docx
+                allEntries: [
+                    // --- MEDIEVAL (c.1250–c.1500) ---
+                    // Problems
+                    { id: 1, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Living Conditions & Problems', title: 'Contaminated Water Supplies', text: 'Water was collected directly from rivers or storage pits, where waste routinely drained.' },
+                    { id: 2, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Living Conditions & Problems', title: 'Cesspits Near Water Sources', text: 'Cesspits were frequently dug close to drinking water supplies, seeping through soil and infecting clean water.' },
+                    { id: 3, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Living Conditions & Problems', title: 'Street & Stream Waste Dumping', text: 'Inhabitants regularly dumped domestic rubbish, refuse, and offal directly into streets and running streams.' },
+                    { id: 4, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Living Conditions & Problems', title: 'Roaming Livestock', text: 'Cattle and sheep roamed through town streets, generating foul dung and spreading filthy conditions.' },
+                    { id: 5, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Living Conditions & Problems', title: 'Plague & Rapid Contagion', text: 'Lethal epidemic diseases like the Black Death were common and spread rapidly through densely packed populations.' },
+                    { id: 6, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Living Conditions & Problems', title: 'Open Street Sewers', text: 'Sewers ran freely down the center of open unpaved streets as uncovered drainage gutters.' },
+
+                    // Improvements & Monasteries
+                    { id: 7, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Night Carts & Gong-Farmers', text: 'Night carts regularly collected human waste from cesspits under cover of dark to prevent rotting stagnant water.' },
+                    { id: 8, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Town Rakers', text: 'Municipal rakers were employed and sent out by town councils to clear dung and trash from main streets.' },
+                    { id: 9, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Exeter Aqueducts', text: 'In Exeter, lead aqueducts and underground conduits were constructed to pipe fresh, clean spring water to the city.' },
+                    { id: 10, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Paved Streets in Newcastle', text: 'Newcastle paved its principal streets with stone so that dirt, mud, and manure were easier to clean away.' },
+                    { id: 11, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Reforms & Reports', title: 'Butchers & Waste Laws', text: 'Local bylaws were passed to fine and punish butchers and citizens for throwing offal or human waste into streets and waterways.' },
+                    { id: 12, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Wealth & Sanitation in Monasteries', text: 'Monasteries were wealthy institutions, enabling them to install elaborate lead piping, water filtering systems, and clean latrines.' },
+                    { id: 13, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Isolated Monastic Locations', text: 'Monasteries were intentionally situated close to fresh rivers in secluded rural areas, guaranteeing steady running water and separate drainage.' },
+                    { id: 14, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Interventions & Solutions', title: 'Monastic Cleanliness & Devotion', text: 'Monks followed strict routines of personal cleanliness, regular bathing, and hand-washing to demonstrate moral purity and devotion to God.' },
+
+                    // --- RENAISSANCE (c.1500–c.1700 / Early 18th Century) ---
+                    { id: 15, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Interventions & Solutions', title: 'Hospital Construction Boom', text: 'A massive wave of hospital building occurred: 50 new hospitals were founded across Britain by 1720, including 5 major institutions in London.' },
+                    { id: 16, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Interventions & Solutions', title: 'London Hospital Patient Volumes', text: 'By 1800, London hospitals were admitting and treating over 20,000 patients every single year.' },
+                    { id: 17, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Interventions & Solutions', title: 'Specialized Disease Wards', text: 'Hospitals began organizing specialized wards dedicated to treating specific conditions, improving cleanliness and patient containment.' },
+                    { id: 18, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Interventions & Solutions', title: 'Free Medical Treatment', text: 'Care and treatment within newly endowed charitable hospitals were provided free of charge to the impoverished.' },
+                    { id: 19, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Living Conditions & Problems', title: 'Reliance on the Four Humours', text: 'Despite architectural expansion, medical treatments inside hospitals were still primarily based on balancing the Four Humours (bleeding, purging, and diet).' },
+                    { id: 20, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Reforms & Reports', title: 'Secular Causes of Disease', text: 'The ancient belief that sickness was direct divine punishment from God weakened, sparking scientific curiosity to observe symptoms and discover rational treatments.' },
+                    { id: 21, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Interventions & Solutions', title: 'Free Hospital Pharmacies', text: 'Select hospitals, such as Edinburgh Infirmary in 1776, established on-site dispensaries providing free remedies and medications to outpatients.' },
+
+                    // --- INDUSTRIAL (c.1700–c.1900) ---
+                    { id: 22, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Living Conditions & Problems', title: 'Industrial Revolution Slum Horrors', text: 'Rapid urbanisation made city life worse for the poor: back-to-back slums, shared outdoor privies, sewage-polluted pumps, and zero rubbish collections.' },
+                    { id: 23, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Reforms & Reports', title: 'Edwin Chadwick’s Report (1842)', text: 'Published "The Sanitary Condition of the Labouring Population", directly proving for the first time that filth and dirty living conditions caused poverty and disease.' },
+                    { id: 24, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Interventions & Solutions', title: 'Clean Water & District Officers', text: 'Chadwick proposed providing clean water for everyone and appointing qualified Medical Officers of Health to oversee sanitation in each district.' },
+                    { id: 25, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Reforms & Reports', title: 'Economic Argument for Reform', text: 'Chadwick cleverly framed sanitation as a financial benefit to the wealthy: a healthier workforce would save taxpayers huge sums in poor relief.' },
+                    { id: 26, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Living Conditions & Problems', title: 'Laissez-Faire & Landlord MPs', text: 'Parliament initially refused to act on Chadwick’s recommendations due to laissez-faire ("leave alone") dogma and self-interested MPs who rented out profitable slum properties.' },
+                    { id: 27, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Reforms & Reports', title: '1848 Public Health Act', text: 'Prompted by the 1848 cholera epidemic. It allowed towns to set up local boards of health and inspect streets, but it was purely optional.' },
+                    { id: 28, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Living Conditions & Problems', title: '1848 Act Ineffectiveness', text: 'Because the 1848 Public Health Act was not compulsory, by 1853 only 103 towns across the entire country had bothered setting up local health boards.' },
+                    { id: 29, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Living Conditions & Problems', title: 'The Great Stink of London (1858)', text: 'During an extraordinarily hot summer, the heavily polluted River Thames baked outside the Houses of Parliament. The unbearable stench forced politicians to act.' },
+                    { id: 30, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Interventions & Solutions', title: 'Bazalgette’s London Sewer Network', text: 'Parliament granted Joseph Bazalgette funds to build an immense underground sewer network (completed by 1866: 83 miles of main brick sewers handling 420 million gallons of wastewater daily).' },
+                    { id: 31, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Reforms & Reports', title: '1867 Reform Act & Working Vote', text: 'Working-class urban men were given the right to vote in 1867, forcing political parties to compete for working-class support by improving living conditions.' },
+                    { id: 32, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Interventions & Solutions', title: '1875 Public Health Act (Compulsory)', text: 'Following further cholera outbreaks, this act made sanitation strictly compulsory: local councils were required to appoint medical officers, supply clean water, and install covered sewers.' },
+
+                    // --- MODERN (c.1900–PRESENT) ---
+                    { id: 33, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Living Conditions & Problems', title: 'Persistent 20th Century Poverty', text: 'Despite Britain being a wealthy global superpower, millions of working-class families remained trapped in crushing poverty at the turn of the century.' },
+                    { id: 34, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Reforms & Reports', title: 'Charles Booth’s London Survey', text: 'In "Life and Labour of the People in London", Booth uncovered that 30% of Londoners were living in extreme poverty, unable to afford sufficient daily food.' },
+                    { id: 35, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Reforms & Reports', title: 'Rowntree’s York Poverty Study', text: 'Seebohm Rowntree discovered that 28% of the population in York lived below the minimum subsistence wage required for basic health and nutrition.' },
+                    { id: 36, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Living Conditions & Problems', title: 'Boer War Recruitment Shock (1899)', text: 'During recruitment for the Boer War, medical inspections revealed that 40% of young volunteer soldiers were physically unfit, sparking panic over national security and industrial decline.' },
+                    { id: 37, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Interventions & Solutions', title: '1906 Free School Meals', text: 'The Liberal government allowed local authorities to provide free school lunches, ensuring malnourished children received at least one nutritious hot meal daily.' },
+                    { id: 38, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Interventions & Solutions', title: '1907 School Medical Service', text: 'Compulsory health inspections for schoolchildren were introduced to detect and treat rickets, lice, eye problems, and malnutrition early.' },
+                    { id: 39, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Interventions & Solutions', title: '1908 Old Age Pensions Act', text: 'Introduced non-contributory weekly state pensions (5 shillings/week) for poor individuals over the age of 70, keeping the elderly out of the workhouse.' },
+                    { id: 40, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Interventions & Solutions', title: '1909 Labour Exchanges', text: 'Established the first nationwide state job centres to help the unemployed find work and reduce prolonged periods of wage-less poverty.' },
+                    { id: 41, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Interventions & Solutions', title: '1911 National Insurance Act', text: 'Created a compulsory social insurance fund providing workers with statutory sick pay, free doctor consultations, and temporary unemployment benefit.' },
+                    { id: 42, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Reforms & Reports', title: 'Emergence of the Labour Party', text: 'The newly founded Labour Party gained support, placing intense political pressure on the Liberal government to appeal to the working class through welfare reforms.' },
+                    { id: 43, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Reforms & Reports', title: 'The Beveridge Report (1942)', text: 'William Beveridge declared all citizens had the right to be protected against the "Five Giants": Disease, Want, Ignorance, Squalor, and Idleness.' },
+                    { id: 44, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Interventions & Solutions', title: 'Cradle to Grave Social Security & NHS', text: 'Beveridge’s blueprint led directly to comprehensive state social security from "cradle to grave" and the foundation of the free National Health Service (NHS) in 1948.' }
+                ],
+
+                get visibleEras() {
+                    if (this.selectedEra === 'all') {
+                        return this.eraList;
+                    }
+                    return this.eraList.filter(e => e.id === this.selectedEra);
+                },
+
+                getEntriesForEra(eraId, category) {
+                    let items = this.allEntries.filter(e => e.eraId === eraId && e.category === category);
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        items = items.filter(i => 
+                            i.title.toLowerCase().includes(q) ||
+                            i.text.toLowerCase().includes(q)
+                        );
+                    }
+                    return items;
+                },
+
+                get filteredEntries() {
+                    let results = [...this.allEntries];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(i => i.eraId === this.selectedEra);
+                    }
+
+                    // Filter by category
+                    if (this.selectedCategory !== 'all') {
+                        results = results.filter(i => i.category === this.selectedCategory);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(i => 
+                            i.title.toLowerCase().includes(q) ||
+                            i.text.toLowerCase().includes(q) ||
+                            i.eraName.toLowerCase().includes(q) ||
+                            i.category.toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort
+                    results.sort((a, b) => {
+                        const strA = (a.title || a.text).toLowerCase();
+                        const strB = (b.title || b.text).toLowerCase();
+                        const comp = strA.localeCompare(strB);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                },
+
+                resetFilters() {
+                    this.searchQuery = '';
+                    this.selectedEra = 'all';
+                    this.selectedCategory = 'all';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
