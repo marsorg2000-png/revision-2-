@@ -1,1 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Surgery Through Time | Health & the People</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            wine: '#782329',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive filtering and view management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .surgery-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .surgery-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="surgeryStudyApp()">
 
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-notes-medical text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Surgery Through Time</h1>
+                    <p class="text-xs text-beige-300">AQA GCSE History &bull; Health and the People Revision Resource</p>
+                </div>
+            </div>
+
+            <!-- Stats & Navigation Badges -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-clock-rotate-left text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">4 Time Periods:</span>
+                    <span class="font-bold text-beige-50">c.1250 &ndash; Present</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Total Entries:</span>
+                    <span class="font-bold text-accent-gold" x-text="allEntries.length"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- GCSE Core Concept Callout: The Three Big Problems of Surgery -->
+        <section class="bg-beige-200/90 border border-beige-300 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brown-800/10 text-brown-800 mb-1">
+                        <i class="fa-solid fa-lightbulb text-accent-gold"></i>
+                        <span>Key GCSE Theme</span>
+                    </div>
+                    <h2 class="text-base sm:text-lg font-bold text-brown-900">The Three Greatest Obstacles in Surgical History</h2>
+                    <p class="text-xs text-brown-700 mt-0.5">Every major historical breakthrough was aimed at overcoming one of these critical barriers:</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 sm:gap-3 w-full md:w-auto">
+                    <div class="bg-beige-50 px-3 py-2 rounded-xl border border-beige-300 text-center shadow-xs">
+                        <i class="fa-solid fa-hand-holding-droplet text-red-700 text-sm mb-1 block"></i>
+                        <span class="font-bold text-xs text-brown-900 block">Bleeding</span>
+                        <span class="text-[10px] text-brown-600 block">Cautery &rarr; Ligatures</span>
+                    </div>
+                    <div class="bg-beige-50 px-3 py-2 rounded-xl border border-beige-300 text-center shadow-xs">
+                        <i class="fa-solid fa-face-grimace text-amber-700 text-sm mb-1 block"></i>
+                        <span class="font-bold text-xs text-brown-900 block">Pain</span>
+                        <span class="text-[10px] text-brown-600 block">None &rarr; Chloroform</span>
+                    </div>
+                    <div class="bg-beige-50 px-3 py-2 rounded-xl border border-beige-300 text-center shadow-xs">
+                        <i class="fa-solid fa-bacterium text-accent-forest text-sm mb-1 block"></i>
+                        <span class="font-bold text-xs text-brown-900 block">Infection</span>
+                        <span class="text-[10px] text-brown-600 block">Wine &rarr; Carbolic / Asepsis</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input 
+                    type="text" 
+                    x-model="searchQuery"
+                    placeholder="Search techniques, pioneers, or terms (e.g. Paré, Lister, Cauterisation, Chloroform)..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                >
+                <button 
+                    x-show="searchQuery.length > 0" 
+                    @click="searchQuery = ''" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                    title="Clear search"
+                >
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- View & Sort Controls -->
+            <div class="flex items-center flex-wrap justify-between sm:justify-end gap-2 text-xs">
+                <!-- View Mode Toggle -->
+                <div class="inline-flex p-1 bg-beige-300/80 rounded-xl border border-beige-300">
+                    <button 
+                        @click="viewMode = 'eras'"
+                        :class="viewMode === 'eras' ? 'bg-beige-50 text-brown-900 font-bold shadow-xs' : 'text-brown-700 hover:text-brown-900'"
+                        class="px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Era View</span>
+                    </button>
+                    <button 
+                        @click="viewMode = 'cards'"
+                        :class="viewMode === 'cards' ? 'bg-beige-50 text-brown-900 font-bold shadow-xs' : 'text-brown-700 hover:text-brown-900'"
+                        class="px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ul"></i>
+                        <span>List View</span>
+                    </button>
+                </div>
+
+                <!-- Sort Direction -->
+                <button 
+                    @click="sortAscending = !sortAscending" 
+                    class="px-3 py-2 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-1.5 shadow-sm"
+                    title="Toggle alphabetical order"
+                >
+                    <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                    <span x-text="sortAscending ? 'A &rarr; Z' : 'Z &rarr; A'"></span>
+                </button>
+
+                <!-- Count Badge -->
+                <div class="bg-brown-800/10 px-3 py-2 rounded-xl border border-brown-800/10 font-medium text-brown-800">
+                    <span x-text="filteredEntries.length"></span> / <span x-text="allEntries.length"></span> items
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Pill Tabs (Eras and Categories) -->
+        <div class="space-y-3">
+            <!-- Era Selectors -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span class="text-brown-700 font-semibold whitespace-nowrap pl-1"><i class="fa-regular fa-calendar mr-1"></i>Period:</span>
+                <button 
+                    @click="selectedEra = 'all'"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-xl transition whitespace-nowrap">
+                    All Eras
+                </button>
+                <template x-for="era in eraList" :key="era.id">
+                    <button 
+                        @click="selectedEra = era.id"
+                        :class="selectedEra === era.id ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                        class="px-3 py-1.5 rounded-xl transition whitespace-nowrap flex items-center gap-1.5">
+                        <span x-text="era.name"></span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + era.date + ')'"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Category Selectors -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span class="text-brown-700 font-semibold whitespace-nowrap pl-1"><i class="fa-solid fa-filter mr-1"></i>Topic:</span>
+                <button 
+                    @click="selectedCategory = 'all'"
+                    :class="selectedCategory === 'all' ? 'bg-brown-700 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap">
+                    All Topics
+                </button>
+                <button 
+                    @click="selectedCategory = 'Techniques'"
+                    :class="selectedCategory === 'Techniques' ? 'bg-accent-forest text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-forest"></span>
+                    Techniques
+                </button>
+                <button 
+                    @click="selectedCategory = 'Key Developments'"
+                    :class="selectedCategory === 'Key Developments' ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+                    Key Developments
+                </button>
+                <button 
+                    @click="selectedCategory = 'Limitations'"
+                    :class="selectedCategory === 'Limitations' ? 'bg-accent-wine text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-wine"></span>
+                    Limitations
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 1: ERA-BY-ERA TIMELINE PANELS -->
+        <div x-show="viewMode === 'eras'" class="space-y-6">
+            <template x-for="era in visibleEras" :key="era.id">
+                <section class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden">
+                    <!-- Era Header Header -->
+                    <div class="bg-brown-900 text-beige-100 px-5 py-3.5 flex flex-wrap justify-between items-center gap-2 border-b border-brown-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-accent-gold"></span>
+                            <h3 class="text-base sm:text-lg font-bold tracking-tight text-beige-50" x-text="era.name"></h3>
+                            <span class="text-xs bg-brown-800 text-beige-300 px-2.5 py-0.5 rounded-md font-mono" x-text="era.date"></span>
+                        </div>
+                        <span class="text-xs text-beige-300 hidden sm:inline" x-text="era.summary"></span>
+                    </div>
+
+                    <!-- 3-Column Era Grid: Techniques, Developments, Limitations -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-beige-300">
+                        <!-- Techniques Column -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Techniques'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-forest"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-forest">Surgical Techniques</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Techniques')" :key="item.text">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-brown-900 mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-scalpel text-accent-forest mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+
+                        <!-- Key Developments Column -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Key Developments'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-gold"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-brown-800">Key Developments</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Key Developments')" :key="item.text">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-brown-900 mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-star text-accent-gold mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+
+                        <!-- Limitations Column -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Limitations'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-wine"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-wine">Limitations &amp; Roadblocks</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Limitations')" :key="item.text">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-accent-wine mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-triangle-exclamation text-accent-wine mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </template>
+        </div>
+
+        <!-- VIEW 2: INTERACTIVE GLOSSARY LIST (Matched directly to your glossary style) -->
+        <div x-show="viewMode === 'cards'" class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-book-medical text-brown-700"></i>
+                    <span>Surgery Information Cards</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredEntries.length + ' item' + (filteredEntries.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Items Container -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="item in filteredEntries" :key="item.id">
+                    <div class="surgery-card p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <!-- Left col: Era badge + title -->
+                        <div class="md:w-1/3 flex flex-col items-start gap-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full flex-shrink-0"
+                                      :class="{
+                                          'bg-accent-forest': item.category === 'Techniques',
+                                          'bg-accent-gold': item.category === 'Key Developments',
+                                          'bg-accent-wine': item.category === 'Limitations'
+                                      }">
+                                </span>
+                                <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight" x-text="item.title || item.eraName"></span>
+                            </div>
+
+                            <div class="flex items-center gap-1.5 flex-wrap pl-4">
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-medium border bg-beige-200/80 border-beige-300 text-brown-800" x-text="item.eraName"></span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-semibold border"
+                                      :class="{
+                                          'bg-accent-forest/10 border-accent-forest/20 text-accent-forest': item.category === 'Techniques',
+                                          'bg-accent-gold/20 border-accent-gold/30 text-brown-900': item.category === 'Key Developments',
+                                          'bg-accent-wine/10 border-accent-wine/20 text-accent-wine': item.category === 'Limitations'
+                                      }"
+                                      x-text="item.category">
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Right col: Detailed content -->
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0">
+                            <p class="text-xs sm:text-sm text-brown-800 leading-relaxed" x-text="item.text"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="filteredEntries.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No surgical entries found</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any information matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>" with the active filters.
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Revision Key Question / Exam Note Section -->
+        <section class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-brown-800"></i>
+                <h3 class="font-bold text-sm text-brown-900">Key GCSE Revision Takeaway: Continuity vs Change</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-brown-800 leading-relaxed">
+                <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200">
+                    <strong class="text-brown-900 block mb-1">Amputations &amp; Instruments (Continuity):</strong>
+                    Throughout Medieval, Renaissance, and early Industrial times, amputations and trephination remained common resort procedures. True transformation required scientific understanding of germ theory (Pasteur/Lister) and blood types/circulation.
+                </div>
+                <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-200">
+                    <strong class="text-brown-900 block mb-1">The Anaesthetic &lsquo;Black Period&rsquo; (Change):</strong>
+                    When anaesthetics (chloroform/ether) arrived in the 1840s, surgeons could operate deeper and longer, but because antiseptics had not yet been introduced, death rates initially climbed due to gangrene and sepsis until Lister's carbolic spray in 1867.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>GCSE History Revision Hub &bull; Health and the People Unit (c.1000 &ndash; Present) 🩺</p>
+            <p class="text-beige-400">Techniques &bull; Key Developments &bull; Limitations</p>
+        </div>
+    </footer>
+
+    <!-- Application Logic & Dataset -->
+    <script>
+        function surgeryStudyApp() {
+            return {
+                searchQuery: '',
+                selectedEra: 'all',
+                selectedCategory: 'all',
+                viewMode: 'eras', // 'eras' or 'cards'
+                sortAscending: true,
+
+                eraList: [
+                    { id: 'medieval', name: 'Medieval', date: 'c.1250–c.1500', summary: 'Barber-surgeons, cauterisation, and trephination without anaesthetics.' },
+                    { id: 'renaissance', name: 'Renaissance', date: 'c.1500–c.1700', summary: 'Vesalius, Harvey, and Paré’s ligatures challenge ancient Galenic authority.' },
+                    { id: 'industrial', name: 'Industrial', date: 'c.1700–c.1900', summary: 'The breakthrough conquest of pain (chloroform) and infection (Lister’s carbolic acid).' },
+                    { id: 'modern', name: 'Modern', date: 'c.1900–Present', summary: 'High-tech keyhole surgery, robotic operations, organ transplants, and radiotherapy.' }
+                ],
+
+                // Complete data extracted strictly from Surgery.docx
+                allEntries: [
+                    // Medieval Techniques
+                    { id: 1, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Techniques', title: 'Basic External Surgery', text: 'Basic surgery focused on external injuries and simple operations like amputations.' },
+                    { id: 2, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Techniques', title: 'Cauterisation', text: 'Sealing wounds with hot iron to stop bleeding.' },
+                    { id: 3, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Techniques', title: 'Trephination', text: 'Drilling holes in the skull to treat head injuries or release evil spirits.' },
+
+                    // Medieval Key Developments
+                    { id: 4, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Key Developments', title: 'Barber-Surgeons', text: 'Barber-surgeons performed minor surgeries, pulling teeth, and setting bones.' },
+                    { id: 5, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Key Developments', title: 'Early Wound Care', text: 'Wound care: Treated with vinegar or wine to reduce infection (though knowledge of germs was nonexistent).' },
+                    { id: 6, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Key Developments', title: 'Settings for Surgery', text: 'Surgery was mostly performed in monasteries or battlefield environments.' },
+
+                    // Medieval Limitations
+                    { id: 7, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Limitations', title: 'Lack of Anaesthetics', text: 'Lack of anaesthetics – surgeries were extremely painful and risky.' },
+                    { id: 8, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Limitations', title: 'No Antiseptics', text: 'No antiseptics – high risk of infection and death from wounds.' },
+                    { id: 9, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Limitations', title: 'Limited Anatomy', text: 'Limited anatomical knowledge – dissections were rare due to religious and cultural restrictions.' },
+
+                    // Renaissance Techniques
+                    { id: 10, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Techniques', title: 'Tools & Cauterisation', text: 'Continued use of cauterisation and basic surgical tools.' },
+                    { id: 11, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Techniques', title: 'Paré’s Ligatures (1536)', text: 'Ligatures: Ambroise Paré introduced silk threads to tie blood vessels, reducing the need for cauterisation (1536).' },
+
+                    // Renaissance Key Developments
+                    { id: 12, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Key Developments', title: 'Andreas Vesalius (1543)', text: 'Published De Humani Corporis Fabrica, improving knowledge of human anatomy and disproving Galen.' },
+                    { id: 13, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Key Developments', title: 'William Harvey (1628)', text: 'Discovered circulation of blood, improving understanding of the cardiovascular system.' },
+                    { id: 14, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Key Developments', title: 'Refined Instruments', text: 'New surgical tools: Improved instruments for amputation and trephination.' },
+
+                    // Renaissance Limitations
+                    { id: 15, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Limitations', title: 'Pain Unsolved', text: 'Surgery still lacked anaesthetics, making complex operations impossible.' },
+                    { id: 16, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Limitations', title: 'Rampant Infection', text: 'Infection rates remained high due to lack of antiseptics and germ theory.' },
+                    { id: 17, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Limitations', title: 'Untrained Practitioners', text: 'Surgeons lacked formal training – barber-surgeons learned through apprenticeship rather than clinical universities.' },
+
+                    // Industrial Techniques
+                    { id: 18, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Techniques', title: 'Refined Procedures', text: 'Continued use of amputations and trephination, though techniques were refined.' },
+                    { id: 19, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Techniques', title: 'Internal Operations', text: 'Surgical procedures expanded to internal organs due to reduced pain.' },
+                    { id: 20, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Techniques', title: 'Aseptic Techniques', text: 'Introduction of aseptic techniques, including sterilised instruments and rubber gloves.' },
+
+                    // Industrial Key Developments
+                    { id: 21, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Key Developments', title: 'Anaesthetics', text: 'Nitrous Oxide (1800), ether (1846), and Chloroform (1847) allowed for painless surgery, leading to longer, more complex operations.' },
+                    { id: 22, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Key Developments', title: 'Antiseptics (Lister, 1867)', text: 'Joseph Lister introduced Carbolic Acid to sterilise surgical instruments and reduce infection.' },
+                    { id: 23, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Key Developments', title: 'Aseptic Surgery', text: 'Developed in late 19th century to prevent infection by eliminating microbes completely from operating environments.' },
+                    { id: 24, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Key Developments', title: 'Public Hospitals', text: 'More surgeries performed in cleaner, controlled environments compared to homes or makeshift setups.' },
+
+                    // Industrial Limitations
+                    { id: 25, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Limitations', title: 'Opposition to Anaesthetics', text: 'Religious objections and fears of unknown side effects slowed adoption.' },
+                    { id: 26, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Limitations', title: 'Early Surgical Failures', text: 'Early deep surgeries often failed due to limited understanding of internal anatomy and unrefined techniques.' },
+                    { id: 27, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Limitations', title: 'Unequal Access', text: 'Limited access to antiseptics and sterilisation in poorer regions or rural areas.' },
+                    { id: 28, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Limitations', title: 'Resistance to Germ Theory', text: 'Surgeons still faced resistance to new techniques, and Germ Theory was not universally accepted until late in the century.' },
+
+                    // Modern Techniques
+                    { id: 29, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Techniques', title: 'Keyhole Surgery', text: 'Minimally invasive techniques with small incisions, reducing recovery times and infection risks.' },
+                    { id: 30, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Techniques', title: 'Laser Surgery', text: 'Used for precision operations, such as eye surgery or removing delicate tumors.' },
+                    { id: 31, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Techniques', title: 'Microsurgery', text: 'Reconstructive techniques using microscopes, including reattaching tiny blood vessels and nerves.' },
+                    { id: 32, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Techniques', title: 'Robotic Surgery', text: 'Advanced computer-assisted precision surgeries allowing ultra-fine control.' },
+
+                    // Modern Key Developments
+                    { id: 33, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Key Developments', title: 'Organ Transplants', text: 'First kidney transplant in the UK (1960), followed by successful heart, liver, and lung transplants.' },
+                    { id: 34, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Key Developments', title: 'Open-Heart Surgery', text: 'First successful open-heart surgery performed in the 1950s using heart-lung bypass machines.' },
+                    { id: 35, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Key Developments', title: 'Radiotherapy', text: 'Used to shrink tumors and eliminate malignant cancer cells precisely.' },
+                    { id: 36, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Key Developments', title: 'Genetic & Stem Cells', text: 'Opened possibilities for regenerative medicine and growing biological replacement organs.' },
+
+                    // Modern Limitations
+                    { id: 37, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Limitations', title: 'High Costs & Inequality', text: 'High costs and resource-intensive nature – advanced surgery is not universally accessible globally.' },
+                    { id: 38, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Limitations', title: 'Organ Rejection', text: 'Organ rejection was widespread in early transplants before immunosuppressive drugs like cyclosporine (1970).' },
+                    { id: 39, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Limitations', title: 'Antimicrobial Resistance', text: 'Superbugs and antibiotic resistance complicate post-surgical infection control.' },
+                    { id: 40, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Limitations', title: 'Ethical Dilemmas', text: 'Ethical concerns surrounding advanced surgical technologies, organ allocation, and experimental treatments.' }
+                ],
+
+                get visibleEras() {
+                    if (this.selectedEra === 'all') {
+                        return this.eraList;
+                    }
+                    return this.eraList.filter(e => e.id === this.selectedEra);
+                },
+
+                getEntriesForEra(eraId, category) {
+                    let items = this.allEntries.filter(e => e.eraId === eraId && e.category === category);
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        items = items.filter(i => 
+                            (i.title && i.title.toLowerCase().includes(q)) ||
+                            i.text.toLowerCase().includes(q)
+                        );
+                    }
+                    return items;
+                },
+
+                get filteredEntries() {
+                    let results = [...this.allEntries];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(i => i.eraId === this.selectedEra);
+                    }
+
+                    // Filter by category
+                    if (this.selectedCategory !== 'all') {
+                        results = results.filter(i => i.category === this.selectedCategory);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(i => 
+                            (i.title && i.title.toLowerCase().includes(q)) ||
+                            i.text.toLowerCase().includes(q) ||
+                            i.eraName.toLowerCase().includes(q) ||
+                            i.category.toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort
+                    results.sort((a, b) => {
+                        const strA = (a.title || a.text).toLowerCase();
+                        const strB = (b.title || b.text).toLowerCase();
+                        const comp = strA.localeCompare(strB);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                },
+
+                resetFilters() {
+                    this.searchQuery = '';
+                    this.selectedEra = 'all';
+                    this.selectedCategory = 'all';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
