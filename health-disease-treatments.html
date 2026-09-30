@@ -1,1 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Causes, Treatments & Prevention Through Time | Health & the People</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            wine: '#782329',
+                            teal: '#0e7490',
+                            navy: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for dynamic search, filter, and view toggling -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .concept-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .concept-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="causesStudyApp()">
 
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-viruses text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Causes, Treatments &amp; Prevention</h1>
+                    <p class="text-xs text-beige-300">AQA GCSE History &bull; Health and the People Revision Resource</p>
+                </div>
+            </div>
+
+            <!-- Stats Badges -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-clock-rotate-left text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">4 Time Periods:</span>
+                    <span class="font-bold text-beige-50">c.1250 &ndash; Present</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Total Entries:</span>
+                    <span class="font-bold text-accent-gold" x-text="allEntries.length"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar & Controls (Starting directly at the top) -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input 
+                    type="text" 
+                    x-model="searchQuery"
+                    placeholder="Search causes, treatments, prevention (e.g. Miasma, Penicillin, Germ Theory, Jenner, Bleeding)..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                >
+                <button 
+                    x-show="searchQuery.length > 0" 
+                    @click="searchQuery = ''" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                    title="Clear search"
+                >
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- View & Sort Controls -->
+            <div class="flex items-center flex-wrap justify-between sm:justify-end gap-2 text-xs">
+                <!-- View Mode Toggle -->
+                <div class="inline-flex p-1 bg-beige-300/80 rounded-xl border border-beige-300">
+                    <button 
+                        @click="viewMode = 'eras'"
+                        :class="viewMode === 'eras' ? 'bg-beige-50 text-brown-900 font-bold shadow-xs' : 'text-brown-700 hover:text-brown-900'"
+                        class="px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Era View</span>
+                    </button>
+                    <button 
+                        @click="viewMode = 'cards'"
+                        :class="viewMode === 'cards' ? 'bg-beige-50 text-brown-900 font-bold shadow-xs' : 'text-brown-700 hover:text-brown-900'"
+                        class="px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ul"></i>
+                        <span>List View</span>
+                    </button>
+                </div>
+
+                <!-- Sort Direction -->
+                <button 
+                    @click="sortAscending = !sortAscending" 
+                    class="px-3 py-2 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-1.5 shadow-sm"
+                    title="Toggle alphabetical order"
+                >
+                    <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                    <span x-text="sortAscending ? 'A to Z' : 'Z to A'"></span>
+                </button>
+
+                <!-- Count Badge -->
+                <div class="bg-brown-800/10 px-3 py-2 rounded-xl border border-brown-800/10 font-medium text-brown-800">
+                    <span x-text="filteredEntries.length"></span> / <span x-text="allEntries.length"></span> items
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <!-- Era Selectors -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span class="text-brown-700 font-semibold whitespace-nowrap pl-1"><i class="fa-regular fa-calendar mr-1"></i>Period:</span>
+                <button 
+                    @click="selectedEra = 'all'"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-xl transition whitespace-nowrap">
+                    All Eras
+                </button>
+                <template x-for="era in eraList" :key="era.id">
+                    <button 
+                        @click="selectedEra = era.id"
+                        :class="selectedEra === era.id ? 'bg-brown-800 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                        class="px-3 py-1.5 rounded-xl transition whitespace-nowrap flex items-center gap-1.5">
+                        <span x-text="era.name"></span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + era.date + ')'"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Topic / Category Selectors -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                <span class="text-brown-700 font-semibold whitespace-nowrap pl-1"><i class="fa-solid fa-filter mr-1"></i>Topic:</span>
+                <button 
+                    @click="selectedCategory = 'all'"
+                    :class="selectedCategory === 'all' ? 'bg-brown-700 text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap">
+                    All Topics
+                </button>
+                <button 
+                    @click="selectedCategory = 'Causes'"
+                    :class="selectedCategory === 'Causes' ? 'bg-accent-wine text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-wine"></span>
+                    Causes of Disease
+                </button>
+                <button 
+                    @click="selectedCategory = 'Treatments'"
+                    :class="selectedCategory === 'Treatments' ? 'bg-accent-teal text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-teal"></span>
+                    Treatments &amp; Cures
+                </button>
+                <button 
+                    @click="selectedCategory = 'Prevention'"
+                    :class="selectedCategory === 'Prevention' ? 'bg-accent-forest text-beige-50 font-bold shadow-xs' : 'bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300'"
+                    class="px-3 py-1 rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-forest"></span>
+                    Prevention &amp; Public Measures
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 1: ERA-BY-ERA TIMELINE PANELS -->
+        <div x-show="viewMode === 'eras'" class="space-y-6">
+            <template x-for="era in visibleEras" :key="era.id">
+                <section class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden">
+                    <!-- Era Header -->
+                    <div class="bg-brown-900 text-beige-100 px-5 py-3.5 flex flex-wrap justify-between items-center gap-2 border-b border-brown-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-accent-gold"></span>
+                            <h3 class="text-base sm:text-lg font-bold tracking-tight text-beige-50" x-text="era.name"></h3>
+                            <span class="text-xs bg-brown-800 text-beige-300 px-2.5 py-0.5 rounded-md font-mono" x-text="era.date"></span>
+                        </div>
+                        <span class="text-xs text-beige-300 hidden sm:inline" x-text="era.summary"></span>
+                    </div>
+
+                    <!-- 3-Column Era Grid: Causes, Treatments, Prevention -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-beige-300">
+                        
+                        <!-- Column 1: Causes -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Causes'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-wine"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-wine">Causes of Disease</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Causes')" :key="item.id">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-brown-900 mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-circle-question text-accent-wine mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div x-show="getEntriesForEra(era.id, 'Causes').length === 0" class="text-[11px] text-brown-600/70 italic p-2">
+                                No entries match this category.
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Treatments -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Treatments'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-teal"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-teal">Treatments &amp; Cures</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Treatments')" :key="item.id">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-brown-900 mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-prescription-bottle-medical text-accent-teal mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div x-show="getEntriesForEra(era.id, 'Treatments').length === 0" class="text-[11px] text-brown-600/70 italic p-2">
+                                No entries match this category.
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Prevention -->
+                        <div class="p-5 space-y-3" x-show="selectedCategory === 'all' || selectedCategory === 'Prevention'">
+                            <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-forest"></span>
+                                <h4 class="font-bold text-xs uppercase tracking-wider text-accent-forest">Prevention &amp; Control</h4>
+                            </div>
+                            <ul class="space-y-2.5">
+                                <template x-for="item in getEntriesForEra(era.id, 'Prevention')" :key="item.id">
+                                    <li class="p-3 bg-beige-100/70 hover:bg-beige-100 rounded-xl border border-beige-200/80 transition text-xs text-brown-800 leading-relaxed shadow-2xs">
+                                        <div class="font-semibold text-accent-forest mb-0.5 flex items-start gap-1.5" x-show="item.title">
+                                            <i class="fa-solid fa-shield-virus text-accent-forest mt-0.5 text-[11px]"></i>
+                                            <span x-text="item.title"></span>
+                                        </div>
+                                        <p x-text="item.text"></p>
+                                    </li>
+                                </template>
+                            </ul>
+                            <div x-show="getEntriesForEra(era.id, 'Prevention').length === 0" class="text-[11px] text-brown-600/70 italic p-2">
+                                No entries match this category.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </template>
+        </div>
+
+        <!-- VIEW 2: INTERACTIVE GLOSSARY LIST -->
+        <div x-show="viewMode === 'cards'" class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-list-check text-brown-700"></i>
+                    <span>Causes, Treatments &amp; Prevention Cards</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredEntries.length + ' item' + (filteredEntries.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Items Container -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="item in filteredEntries" :key="item.id">
+                    <div class="concept-card p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <!-- Left col: Era badge + title -->
+                        <div class="md:w-1/3 flex flex-col items-start gap-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full flex-shrink-0"
+                                      :class="{
+                                          'bg-accent-wine': item.category === 'Causes',
+                                          'bg-accent-teal': item.category === 'Treatments',
+                                          'bg-accent-forest': item.category === 'Prevention'
+                                      }">
+                                </span>
+                                <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight" x-text="item.title"></span>
+                            </div>
+
+                            <div class="flex items-center gap-1.5 flex-wrap pl-4">
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-medium border bg-beige-200/80 border-beige-300 text-brown-800" x-text="item.eraName"></span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-semibold border"
+                                      :class="{
+                                          'bg-accent-wine/10 border-accent-wine/20 text-accent-wine': item.category === 'Causes',
+                                          'bg-accent-teal/10 border-accent-teal/20 text-accent-teal': item.category === 'Treatments',
+                                          'bg-accent-forest/10 border-accent-forest/20 text-accent-forest': item.category === 'Prevention'
+                                      }"
+                                      x-text="item.category">
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Right col: Detailed content -->
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0">
+                            <p class="text-xs sm:text-sm text-brown-800 leading-relaxed" x-text="item.text"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="filteredEntries.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No medical entries found</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any information matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>" with the active filters.
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>GCSE History Revision Hub &bull; Health and the People Unit (c.1000 &ndash; Present) 🔬</p>
+            <p class="text-beige-400">Causes &bull; Treatments &bull; Prevention</p>
+        </div>
+    </footer>
+
+    <script>
+        function causesStudyApp() {
+            return {
+                searchQuery: '',
+                selectedEra: 'all',
+                selectedCategory: 'all',
+                viewMode: 'eras', // 'eras' or 'cards'
+                sortAscending: true,
+
+                eraList: [
+                    { id: 'medieval', name: 'Medieval', date: 'c.1250–c.1500', summary: 'Divine punishment, astrology, miasma, the Four Humours, bleeding, herbals, and 40-day quarantine.' },
+                    { id: 'renaissance', name: 'Renaissance', date: 'c.1500–c.1700', summary: 'Continued miasma & humours, alchemy, scurvy discovered, opium, royal touch, and plague doctors.' },
+                    { id: 'industrial', name: 'Industrial', date: 'c.1700–c.1900', summary: 'Microscopes, spontaneous generation debate, Pasteur’s Germ Theory, anaesthetics, Lister’s antiseptics, Jenner & Snow.' },
+                    { id: 'modern', name: 'Modern', date: 'c.1900–Present', summary: 'Specific microbes, DNA & genetics, magic bullets, Fleming’s penicillin, mass vaccines, and screening.' }
+                ],
+
+                // Full dataset faithfully sourced from Causes.docx
+                allEntries: [
+                    // ================= MEDIEVAL =================
+                    // Causes
+                    { id: 1, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Causes', title: 'Divine Punishment from God', text: 'Illness was viewed as divine retribution for sin. Churchmen argued the Black Death was specifically sent to punish children who disobeyed their parents.' },
+                    { id: 2, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Causes', title: 'Astrology & Planetary Alignments', text: 'Movements and unusual alignments of the planets and stars were believed to corrupt the earth and cause widespread pestilence.' },
+                    { id: 3, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Causes', title: 'Miasma (Bad Air)', text: 'Bad smells and poisonous vapor rising from rotting street filth, cesspools, and stagnant water were blamed for spreading sickness, though physicians could not explain the exact biological link.' },
+                    { id: 4, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Causes', title: 'The Four Humours Imbalance', text: 'Illness was believed to stem from internal imbalance between the four bodily humours: blood, phlegm, yellow bile, and black bile.' },
+
+                    // Treatments
+                    { id: 5, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Treatments', title: 'Bloodletting (Phlebotomy)', text: 'Directly linked to restoring balance among the Four Humours, performed by leeches, cupping, or opening veins with a fleam.' },
+                    { id: 6, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Treatments', title: 'Herbal Remedies & Herbals', text: 'Plant-based mixtures known by heart by local wise women and documented in written books called "herbals". Prayers and incantations were frequently recited alongside application to increase spiritual potency.' },
+                    { id: 7, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Treatments', title: 'Zodiac Man Charts', text: 'Physicians consulted astrological "Zodiac Man" charts to determine the exact auspicious and dangerous days to treat, bleed, or avoid operating on specific parts of the body.' },
+                    { id: 8, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Treatments', title: 'Religious Prayer & Pilgrimages', text: 'Praying, paying for masses, touching holy relics, and visiting shrines were considered essential medical cures to appease God’s wrath.' },
+
+                    // Prevention
+                    { id: 9, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Prevention', title: 'Street Cleaning Orders (1348–1349)', text: 'During the Black Death, King Edward III issued royal orders commandingly instructing the Lord Mayor to clear accumulated filth and animal carcasses from London streets.' },
+                    { id: 10, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Prevention', title: 'Preventative Prayer & Fasting', text: 'Fast days, continuous church services, and collective penance were held to prevent God from visiting pestilence upon communities.' },
+                    { id: 11, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Prevention', title: 'Quarantine of Ships (40 Days)', text: 'Incoming ships from plague-infected ports were quarantined for 40 days (the word quarantine deriving from the Italian "quaranta") to prevent contamination.' },
+                    { id: 12, eraId: 'medieval', eraName: 'Medieval (c.1250–c.1500)', category: 'Prevention', title: 'Flagellation (The Flagellants)', text: 'Devout groups marched through towns publicly whipping themselves until bleeding, pleading for God’s divine mercy and forgiveness to stave off disease.' },
+
+                    // ================= RENAISSANCE =================
+                    // Causes
+                    { id: 13, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Causes', title: 'Persistence of Miasma & Humours', text: 'Continued adherence to ancient Galenic theories of unbalanced humours and foul miasmatic vapours as chief causes of epidemic disease.' },
+                    { id: 14, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Causes', title: 'Chemical Causes & Alchemy (Iatrochemistry)', text: 'Pioneered by Paracelsus, physicians began investigating mineral and chemical imbalances rather than strictly relying on biological humours.' },
+                    { id: 15, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Causes', title: 'Continued Astrological Beliefs', text: 'Astrology was still consulted by several prominent physicians and quack doctors when charting illnesses and epidemics.' },
+                    { id: 16, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Causes', title: 'Dietary Deficiencies (Scurvy)', text: 'Recognition began to emerge that certain diseases, such as scurvy among long-distance sailors, were directly caused by lack of specific foods.' },
+
+                    // Treatments
+                    { id: 17, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Treatments', title: 'Continued Bloodletting & Purging', text: 'Remained the standard orthodox medical treatment for fevers and acute conditions despite growing anatomical knowledge.' },
+                    { id: 18, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Treatments', title: 'Herbal Remedies & New World Herbs', text: 'Herbal concoctions expanded with newly imported botanicals from the Americas (such as tobacco, quinine, and ipecacuanha).' },
+                    { id: 19, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Treatments', title: 'Opium as an Anaesthetic & Analgesic', text: 'Laudanum and crude opium preparations were administered to dull severe pain and induce sleep during operations and illnesses.' },
+                    { id: 20, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Treatments', title: 'Lemons & Limes for Scurvy (John Woodall, 1617)', text: 'Surgeon General John Woodall published "The Surgions Mate", demonstrating that citrus juice (lemons and limes) successfully cured scurvy.' },
+                    { id: 21, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Treatments', title: 'The Royal Touch for Scrofula', text: 'Belief that the touch of the ruling monarch could cure the "King’s Evil" (scrofula/tuberculosis of the neck glands), widely practiced by Charles II.' },
+                    { id: 22, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Treatments', title: 'Alcohol as Pain Relief', text: 'Large quantities of strong alcohol and spirits were given to patients to numb sensation prior to undergoing painful procedures.' },
+
+                    // Prevention
+                    { id: 23, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Prevention', title: 'Enforced Quarantine & 1665 Great Plague', text: 'Watchmen guarded boarded-up houses marked with red crosses ("Lord have mercy upon us") for 28–40 days to stop the Great Plague from spreading.' },
+                    { id: 24, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Prevention', title: 'Plague Doctor Suits & Herb Masks', text: 'Plague doctors wore waxed protective leather robes, wide-brimmed hats, and beaked masks packed with fragrant herbs and spices to repel miasma.' },
+                    { id: 25, eraId: 'renaissance', eraName: 'Renaissance (c.1500–c.1700)', category: 'Prevention', title: 'Pest Houses', text: 'Dedicated isolation facilities located outside municipal boundaries specifically constructed to quarantine patients suffering from infectious diseases.' },
+
+                    // ================= INDUSTRIAL =================
+                    // Causes
+                    { id: 26, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Microscopic Observation vs Confusion', text: 'High-powered microscopes allowed scientists to observe microbes for the first time, but early observers mistakenly believed all microbes were identical.' },
+                    { id: 27, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Spontaneous Generation Theory', text: 'Widely held belief that rotting, decaying matter spontaneously generated microbes, meaning micro-organisms were the symptom rather than the cause of decay.' },
+                    { id: 28, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Contagionists vs Non-Contagionists', text: 'Contagionists argued that disease spread by physical contact (urging quarantine), whereas non-contagionists argued disease was caused by environmental filth (urging sanitation).' },
+                    { id: 29, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Thomas Wells (1864)', text: 'Proposed that wound infections were non-chemical in origin, steering investigation toward biological agents.' },
+                    { id: 30, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Anti-Contagionist Hospital Theories (James Simpson)', text: 'Sir James Simpson believed infections resided within the porous walls and atmosphere of hospitals, proposing older hospitals be demolished and rebuilt.' },
+                    { id: 31, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Germ Theory (Pasteur & Lister)', text: 'Louis Pasteur published his Germ Theory (1861), proving microbes caused souring. Joseph Lister publicised Pasteur’s findings in the UK, arguing germs caused wound decay and infection.' },
+                    { id: 32, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Opposition to Germ Theory (Charlton Bastian)', text: 'Sceptics believed microscopic organisms were far too tiny to harm human beings. Eminent physician Dr Charlton Bastian wrote influential articles in the 1860s defending spontaneous generation.' },
+                    { id: 33, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Cattle Plague Breakthrough (Lionel Beale, 1866)', text: 'Microscopist Lionel Beale proved a specific single microbe spread through physical contact among herds during the 1866 cattle plague outbreak.' },
+                    { id: 34, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'John Tyndall Champions Germ Theory', text: 'Renowned physicist John Tyndall delivered lectures defending Pasteur’s Germ Theory and disproving Bastian’s spontaneous generation experiments.' },
+                    { id: 35, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Causes', title: 'Robert Koch & Specific Germs (Typhoid)', text: 'Robert Koch identified the exact specific bacteria causing distinct diseases (including anthrax, tuberculosis, cholera, and typhoid).' },
+
+                    // Treatments
+                    { id: 36, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Treatments', title: 'Nitrous Oxide (Humphry Davy, 1800)', text: 'Discovered by Humphry Davy as "laughing gas"; initially ignored for medical surgery until Horace Wells used it in dentistry in 1844.' },
+                    { id: 37, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Treatments', title: 'Ether Anaesthetic (William Clark, 1842)', text: 'First effective general anaesthetic for dental extractions and surgery, though highly flammable and prone to irritating patient lungs.' },
+                    { id: 38, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Treatments', title: 'Chloroform (James Simpson, 1847)', text: 'Discovered by James Simpson during experiments with colleagues. Provided reliable surgical unconsciousness, enabling deeper and longer surgical procedures.' },
+                    { id: 39, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Treatments', title: 'Opposition to Anaesthetics Overcome', text: 'Resistance came from army surgeons (duty of soldiers to endure pain), fatal overdoses, and religious claims that childbirth pain was God’s will. Opposition fell when Queen Victoria accepted chloroform for Prince Leopold’s birth (1853).' },
+                    { id: 40, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Treatments', title: 'Carbolic Acid Antiseptic (Lister, 1867)', text: 'Applied directly to wounds and sprayed in operating theatres. Lister saved the badly crushed leg of 11-year-old Jamie Greenlees from amputation without infection occurring.' },
+                    { id: 41, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Treatments', title: 'Aseptic Surgery', text: 'Evolution beyond antiseptic surgery: completely excluding bacteria before operations begin via steam-sterilised instruments, boiled gowns, face masks, and rubber gloves.' },
+
+                    // Prevention
+                    { id: 42, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Prevention', title: 'Public Health Acts (1848 & 1875)', text: 'Town councils provided clean drinking water, built covered sewer infrastructure, and inspected dwellings, curbing waterborne epidemics.' },
+                    { id: 43, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Prevention', title: 'Smallpox Vaccination (Edward Jenner, 1796)', text: 'Jenner proved cowpox conferred immunity against deadly smallpox, leading to the world’s first scientific vaccine (made compulsory in Britain in 1853).' },
+                    { id: 44, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Prevention', title: 'Quarantine for Cholera Outbreaks', text: 'Ports and inland towns enforced rigorous isolation protocols and cordons sanitaires during the recurring cholera pandemics (1831, 1848, 1853, 1866).' },
+                    { id: 45, eraId: 'industrial', eraName: 'Industrial (c.1700–c.1900)', category: 'Prevention', title: 'Broad Street Cholera Mapping (John Snow, 1854)', text: 'Dr John Snow mapped cholera deaths in Soho and proved it was spread through contaminated water from the Broad Street pump, removing the handle and preventing new infections.' },
+
+                    // ================= MODERN =================
+                    // Causes
+                    { id: 46, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Causes', title: 'Universal Acceptance of Germ Theory', text: 'Specific pathogenic bacteria, viruses, fungi, and parasites were systematically mapped to the exact diseases they cause.' },
+                    { id: 47, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Causes', title: 'Discovery of DNA Structure (1953)', text: 'Watson, Crick, and Franklin discovered the double helix structure of DNA, opening modern genetics and understanding of inherited disorders.' },
+                    { id: 48, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Causes', title: 'Environmental Causes of Disease', text: 'Industrial pollution, asbestos exposure, radiation, and UV rays were conclusively linked to cancers, respiratory illness, and heart disease.' },
+                    { id: 49, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Causes', title: 'Lifestyle & Dietary Risk Factors', text: 'Conclusive epidemiological proof linking high-sugar/fat diets, smoking, and alcohol abuse to cardiovascular diseases, diabetes, and cancers.' },
+                    { id: 50, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Causes', title: 'Advanced Diagnostic Technologies', text: 'X-rays, CT scanners, MRI imaging, ultrasound, and genetic blood tests allow doctors to pinpoint the internal root causes of lung cancer and metabolic conditions.' },
+
+                    // Treatments
+                    { id: 51, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Magic Bullets (Salvarsan 606, 1909)', text: 'Paul Ehrlich and Sahachiro Hata developed Salvarsan 606, the first synthetic chemical cure designed to target and destroy the specific syphilis microbe without harming the patient.' },
+                    { id: 52, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Discovery of Penicillin (Fleming, 1928)', text: 'Alexander Fleming noticed penicillium mould killing staphylococcal bacteria on an unwashed culture plate; he published his findings but did not know how to purify or mass produce it as an antibiotic.' },
+                    { id: 53, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Mass Production of Penicillin (Florey & Chain, 1941–1945)', text: 'Howard Florey and Ernst Chain purified penicillin. Sponsored by the US government in 1941, over 250,000 soldiers were being treated by 1945; wounded soldier mortality plunged from 15% to under 1%.' },
+                    { id: 54, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Civilian Availability of Antibiotics', text: 'Following WWII, penicillin and newly discovered antibiotics became widely available to civilian populations, conquering previously fatal bacterial infections.' },
+                    { id: 55, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Organ Rejection Medication (1970)', text: 'Development of immunosuppressive pharmaceuticals (such as cyclosporine) enabled long-term survival for kidney, heart, and liver transplant recipients.' },
+                    { id: 56, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'In Vitro Fertilisation - IVF (1978)', text: 'Steptoe and Edwards successfully delivered Louise Brown, pioneering fertility medicine and reproductive treatments.' },
+                    { id: 57, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Stem Cells & Regenerative Medicine', text: 'Stem cell isolation opened radical possibilities for repairing nerve tissue, reversing paralysis, and bioengineering replacement human organs.' },
+                    { id: 58, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Treatments', title: 'Alternative & Complementary Therapies', text: 'Modern patients increasingly utilize complementary treatments alongside orthodox medicine, including acupuncture, homeopathy, and osteopathy.' },
+
+                    // Prevention
+                    { id: 59, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Prevention', title: 'Free Mass Vaccination (1946–1969)', text: 'Government rollouts of free nationwide vaccination programmes eradicated or controlled tuberculosis, diphtheria, whooping cough, tetanus, polio, measles, and rubella.' },
+                    { id: 60, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Prevention', title: 'Cyclosporine Transplant Preservation (1970)', text: 'Proactively prevents the immune system from identifying foreign transplanted tissues as threats and rejecting them.' },
+                    { id: 61, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Prevention', title: 'Government Health Initiatives', text: 'State-sponsored lifestyle education campaigns such as the "5 A Day" fruit and vegetable campaign, smoking cessation services, and plain tobacco packaging.' },
+                    { id: 62, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Prevention', title: 'Alternative Prevention Methods', text: 'Holistic approaches, dietary adjustments, and mindfulness practices adopted to preserve immunity and prevent chronic stress-induced illnesses.' },
+                    { id: 63, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Prevention', title: 'National Screening Programmes', text: 'Routine mammograms, cervical smear tests, bowel cancer screening kits, and diabetes blood checks allow clinicians to catch early warning signs before symptoms manifest.' },
+                    { id: 64, eraId: 'modern', eraName: 'Modern (c.1900–Present)', category: 'Prevention', title: 'Public Hygiene & Pandemic Awareness', text: 'Mass public awareness programmes promoting handwashing, respiratory hygiene, sanitisation, and protective measures during international outbreaks such as COVID-19.' }
+                ],
+
+                get visibleEras() {
+                    if (this.selectedEra === 'all') {
+                        return this.eraList;
+                    }
+                    return this.eraList.filter(e => e.id === this.selectedEra);
+                },
+
+                getEntriesForEra(eraId, category) {
+                    let items = this.allEntries.filter(e => e.eraId === eraId && e.category === category);
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        items = items.filter(i => 
+                            i.title.toLowerCase().includes(q) ||
+                            i.text.toLowerCase().includes(q)
+                        );
+                    }
+                    return items;
+                },
+
+                get filteredEntries() {
+                    let results = [...this.allEntries];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(i => i.eraId === this.selectedEra);
+                    }
+
+                    // Filter by category
+                    if (this.selectedCategory !== 'all') {
+                        results = results.filter(i => i.category === this.selectedCategory);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(i => 
+                            i.title.toLowerCase().includes(q) ||
+                            i.text.toLowerCase().includes(q) ||
+                            i.eraName.toLowerCase().includes(q) ||
+                            i.category.toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort
+                    results.sort((a, b) => {
+                        const strA = (a.title || a.text).toLowerCase();
+                        const strB = (b.title || b.text).toLowerCase();
+                        const comp = strA.localeCompare(strB);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                },
+
+                resetFilters() {
+                    this.searchQuery = '';
+                    this.selectedEra = 'all';
+                    this.selectedCategory = 'all';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
