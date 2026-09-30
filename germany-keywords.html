@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Germany 1890–1945 Keywords Glossary</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .glossary-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glossary-card:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="germanyGlossaryApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-landmark text-xl text-accent-forest bg-beige-200 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Germany 1890–1945 Keywords</h1>
+                    <p class="text-xs text-beige-300">Democracy and Dictatorship Revision Glossary</p>
+                </div>
+            </div>
+
+            <!-- Stats Badge -->
+            <div class="flex items-center gap-2 bg-brown-800/90 px-4 py-2 rounded-xl border border-brown-700 text-xs">
+                <span class="text-beige-300">Total terms:</span>
+                <span class="font-bold text-beige-50" x-text="germanyKeywords.length"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Search keywords or definitions (e.g. Reichstag, Putsch, Gestapo, Dawes)..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                >
+                <button 
+                    x-show="searchQuery.length > 0" 
+                    @click="searchQuery = ''" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                    title="Clear search"
+                >
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                <button 
+                    @click="sortAscending = !sortAscending" 
+                    class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                >
+                    <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                    <span x-text="sortAscending ? 'A to Z' : 'Z to A'"></span>
+                </button>
+                <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800">
+                    <span x-text="filteredKeywords.length"></span> / <span x-text="germanyKeywords.length"></span> shown
+                </div>
+            </div>
+        </div>
+
+        <!-- Glossary Content List -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open text-brown-700"></i>
+                    <span>Germany Definitions</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredKeywords.length + ' term' + (filteredKeywords.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Definitions Container -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="item in filteredKeywords" :key="item.term">
+                    <div class="glossary-card p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <div class="md:w-1/3 flex items-center gap-2.5">
+                            <span class="w-2 h-2 rounded-full bg-accent-forest flex-shrink-0"></span>
+                            <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight" x-text="item.term"></span>
+                        </div>
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0">
+                            <p class="text-xs sm:text-sm text-brown-800 leading-relaxed" x-text="item.definition"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredKeywords.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No keywords found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any terms matching "<span class="font-semibold" x-text="searchQuery"></span>".
+                </p>
+                <button 
+                    @click="searchQuery = ''" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset Search
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History Keywords Glossary Hub &bull; Germany: Democracy &amp; Dictatorship Revision Edition 🦅</p>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        function germanyGlossaryApp() {
+            return {
+                searchQuery: '',
+                sortAscending: true,
+                germanyKeywords: [
+                    { term: "Anti–Semitism", definition: "Hatred of the Jews." },
+                    { term: "Armistice", definition: "Agreement, or truce, to stop fighting." },
+                    { term: "Article 48", definition: "Part of the Weimar Constitution, giving the President special powers to rule in a crisis. Used by Chancellors to rule without a Reichstag majority, setting an undemocratic precedent for Hitler." },
+                    { term: "Aryan", definition: "Someone who belongs to the European race. To the Nazis, this especially meant non-Jewish people with characteristics like fair hair and blue eyes." },
+                    { term: "Autobahn", definition: "Motorway – showpieces of the Nazi job creation schemes." },
+                    { term: "Bartering", definition: "Buying goods with other goods rather than money (as happened during the inflation crisis of 1923)." },
+                    { term: "Bavaria", definition: "Large state in southern Germany; Hitler and the Nazis’ original base. Capital – Munich." },
+                    { term: "Beerhall Putsch", definition: "Failed attempt by Hitler to seize power in November 1923. Hitler was jailed for five years but released in December 1924." },
+                    { term: "Brown Shirts", definition: "The name given to the S.A." },
+                    { term: "Bundesrat", definition: "Group made up of German state representatives who supported the Kaiser (unlike the Reichstag, who were elected politicians who challenged the Kaiser)." },
+                    { term: "Centre Party", definition: "Party representing Roman Catholics, part of the Weimar coalition. Dissolved itself in July 1933." },
+                    { term: "Chancellor", definition: "Equivalent to a Prime Minister; the chief figure in the government." },
+                    { term: "Coalition", definition: "A government made up of multiple parties working together. All Weimar governments were coalitions, often viewed as weak." },
+                    { term: "Communism", definition: "Political system where all property is owned by the government, people are equal and they are paid by the government according to their needs." },
+                    { term: "Concentration camp", definition: "Camp in which people are held under harsh conditions without the freedoms of the rest of society." },
+                    { term: "Confessional Church", definition: "German Protestant group determined to have nothing to do with the Nazis or German Christians." },
+                    { term: "Conscription", definition: "Compulsory military service, introduced by Hitler in April 1935 to build Germany’s military strength, violating the Versailles Treaty." },
+                    { term: "Conservatives", definition: "Those who wanted to ‘conserve’ or resist change, often opposing the Weimar Republic in favor of Germany’s more ordered past." },
+                    { term: "Culture", definition: "The values, morals traditions and attitudes of a group or society." },
+                    { term: "DAF", definition: "“Deutsche Arbeitsfront” (German Labour Front). A Nazi organization replacing trade unions to control workers, led by Robert Ley." },
+                    { term: "Dawes Plan", definition: "1924 plan organized by Charles Dawes (USA) to help Weimar Germany with reparations through loans." },
+                    { term: "Demilitarised", definition: "No troops allowed in a specific area. Applied to the Rhineland under the Versailles Treaty, but overturned by Hitler in March 1936." },
+                    { term: "Democratic republic", definition: "System of running a country in which all adults have the right to vote for the government they want." },
+                    { term: "Depression", definition: "A time during the 1930s when many banks and businesses failed and millions lost their jobs." },
+                    { term: "Der Fuhrer", definition: "Supreme leader, title adopted by Hitler." },
+                    { term: "Dictator", definition: "Ruler with total control over how a country is governed." },
+                    { term: "Diktat", definition: "Nickname given by Germans to the hated Treaty of Versailles, meaning ‘dictated peace’." },
+                    { term: "Edelweiss Pirates", definition: "Rebel youth gang which went camping and sang songs making fun of Hitler; they even physically attacked Hitler Youth groups. The gang included boys and girls, including Jews." },
+                    { term: "Enabling Law", definition: "Passed in March 1933, allowing Hitler to rule without the Reichstag for four years." },
+                    { term: "Freikorps", definition: "Organization of ex-soldiers who helped crush the Spartacist uprising in 1919 and were involved in the failed Kapp Putsch in 1920." },
+                    { term: "Führer", definition: "‘Leader.’ Title taken by Hitler." },
+                    { term: "German Labour Front", definition: "Nazi organization set up in May 1933 to replace trade unions and control workers." },
+                    { term: "Gestapo", definition: "Secret police (Geheime Staatspolizei) under Himmler, maintaining absolute obedience to Nazi rule." },
+                    { term: "Gleichschaltung", definition: "‘Coordination’ – bringing all aspects of German life and organizations under Nazi control starting in 1933." },
+                    { term: "Hitler Youth", definition: "“Hitler Jugend” (HJ). Organization indoctrinating youth with Nazi ideas, led by Baldur von Schirach." },
+                    { term: "Infallibility", definition: "Someone or something that cannot fail and is always right. Refers to Hitler in this context." },
+                    { term: "Kapp Putsch", definition: "March 1920: Failed attempt by Freikorps and right-wingers to seize power from the Weimar government. Defeated by a general strike." },
+                    { term: "KDF", definition: "“Kraft Durch Freude” (Strength Through Joy). Part of the German Labour Front, organizing cheap recreation and holidays." },
+                    { term: "Kristallnacht", definition: "9–10 November 1938: Jewish shops looted, and synagogues burned in revenge for the shooting of a German diplomat in Paris." },
+                    { term: "Lebensraum", definition: "‘Living Space’ – land to the east declared necessary for Germans in Hitler’s Mein Kampf." },
+                    { term: "Left-wing", definition: "Belief in radical societal change, often to benefit the working classes, e.g., socialists." },
+                    { term: "Marxist", definition: "Supporter of Karl Marx’s theory of Communism." },
+                    { term: "Master Race", definition: "Idea promoted by Hitler, claiming Aryans as the ‘fittest’ race meant to dominate, while Slavs were to be enslaved and Jews eliminated." },
+                    { term: "Mein Kampf", definition: "Hitler’s book written in jail after the Munich Putsch, combining autobiography and Nazi ideology." },
+                    { term: "Middle Class", definition: "Professional people, small business owners, and farmers who turned to Nazis after suffering in the crises of the 1920s and 1930s." },
+                    { term: "Nationalist Party", definition: "Opposed the Weimar Constitution, favored a strong Germany, and formed alliances with Nazis after 1929." },
+                    { term: "Night of the Long Knives", definition: "30 June 1934: Hitler’s purge of rivals, especially the S.A. under Röhm." },
+                    { term: "November Criminals", definition: "Those accused of betraying Germany by signing the armistice in 1918." },
+                    { term: "NSDAP", definition: "National Socialist German Workers’ Party (Nazi Party), founded by Hitler in 1920." },
+                    { term: "Nuremberg Laws", definition: "1935 laws stripping Jews of many rights." },
+                    { term: "Propaganda", definition: "Spreading ideas or news to gain support for one’s ideas. Nazis were experts in propaganda." },
+                    { term: "Prussia", definition: "Largest state in Germany, capital – Berlin." },
+                    { term: "Putsch", definition: "Attempt to seize power by force, e.g., Kapp (1920) and Hitler (1923)." },
+                    { term: "Reichstag", definition: "The German Parliament." },
+                    { term: "Reichstag Fire", definition: "27 February 1933: Used by Nazis to suppress Communists and push through the Enabling Law." },
+                    { term: "Reparations", definition: "Payments required of Germany to repair WWI damage, fixed at $6.6 billion." },
+                    { term: "Rhineland", definition: "Area west of the Rhine River. Demilitarized under the Versailles Treaty but remilitarized by Hitler in 1936." },
+                    { term: "Right-wing", definition: "Advocates for order and authority, resisting societal change, e.g., Nationalists and Conservatives." },
+                    { term: "S.A.", definition: "Sturmabteilung (Storm Troops) – Nazi paramilitary force, also called Brownshirts." },
+                    { term: "S.S.", definition: "Schutzstaffel (Protection Squad) – Hitler’s bodyguard that became a key control tool under Himmler." },
+                    { term: "Slavs", definition: "Eastern European people considered inferior by Nazis." },
+                    { term: "Spartacists", definition: "Communist organization crushed after a failed uprising in 1919." },
+                    { term: "SPD", definition: "Socialist Party, part of most Weimar coalitions and largest party until 1932." },
+                    { term: "Stab in the Back", definition: "Nationalists’ accusation against politicians who signed the 1918 armistice." },
+                    { term: "Stormtroopers", definition: "See S.A." },
+                    { term: "Third Reich", definition: "“Third Empire,” indicating continuity with earlier German empires." },
+                    { term: "Totalitarian", definition: "A system where every aspect of life is controlled by the government, as under Fascism or Communism." },
+                    { term: "Trade Union", definition: "Organization advocating for workers’ rights." },
+                    { term: "Versailles Treaty", definition: "1919 treaty hated by Germans for the “War Guilt Clause,” reparations, and territorial losses." },
+                    { term: "Volk", definition: "‘People’ or ‘race.’ Central to Nazi ideology emphasizing national unity." },
+                    { term: "Wall Street Crash", definition: "1929 US stock market collapse that contributed to a global depression." },
+                    { term: "War Guilt Clause", definition: "Versailles Treaty clause blaming Germany for WWI, justifying reparations." },
+                    { term: "Weimar", definition: "City where Germany’s 1919 constitution was decided, giving its name to the Weimar Republic." },
+                    { term: "Young Plan", definition: "1929 plan by Owen Young to help Germany with reparations. Opposed by Nazis and Nationalists." }
+                ],
+                get filteredKeywords() {
+                    let results = [...this.germanyKeywords];
+
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(k => 
+                            k.term.toLowerCase().includes(q) || 
+                            k.definition.toLowerCase().includes(q)
+                        );
+                    }
+
+                    results.sort((a, b) => {
+                        const comp = a.term.localeCompare(b.term);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
