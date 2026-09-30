@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Germany 1871–1945 Timeline</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search, era filtering, and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .timeline-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .timeline-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="germanyTimelineApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-clock-rotate-left text-xl text-accent-forest bg-beige-200 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Germany 1871–1945 Timeline</h1>
+                    <p class="text-xs text-beige-300">Chronology of Democracy &amp; Dictatorship</p>
+                </div>
+            </div>
+
+            <!-- Stats Badge -->
+            <div class="flex items-center gap-2 bg-brown-800/90 px-4 py-2 rounded-xl border border-brown-700 text-xs">
+                <span class="text-beige-300">Total events:</span>
+                <span class="font-bold text-beige-50" x-text="germanyTimelineEvents.length"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, Era Filter & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- View Mode Switcher -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-beige-300/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-brown-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[12px] text-brown-700"></i> Mode:
+                    </span>
+                    <div class="inline-flex bg-beige-50 p-1 rounded-xl border border-beige-300 shadow-inner text-xs font-semibold">
+                        <button 
+                            @click="viewMode = 'timeline'"
+                            :class="viewMode === 'timeline' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Timeline View</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'detailed'"
+                            :class="viewMode === 'detailed' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                            <span>Detailed Study Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Toggle All Descriptions button -->
+                <div class="flex items-center gap-2 text-xs">
+                    <button 
+                        @click="toggleAllDescriptions()"
+                        class="px-3 py-1.5 rounded-xl bg-beige-50 hover:bg-beige-300/50 border border-beige-300 text-brown-800 font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid" :class="allExpanded ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="allExpanded ? 'Collapse All Notes' : 'Expand All Notes'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search & Order Controls Row -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search timeline events, years, or details (e.g. 1923, Kaiser, Reichstag Fire, Munich Putsch)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-1-9' : 'fa-arrow-up-9-1'"></i>
+                        <span x-text="sortAscending ? 'Earliest First' : 'Latest First'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredEvents.length"></span> / <span x-text="germanyTimelineEvents.length"></span> shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Era Category Filter Pills -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-beige-300/80">
+                <span class="text-xs font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Era:
+                </span>
+                <button 
+                    @click="selectedEra = 'all'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    All Eras
+                </button>
+                <button 
+                    @click="selectedEra = 'imperial'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'imperial' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Imperial Germany &amp; WWI (1871–1918)
+                </button>
+                <button 
+                    @click="selectedEra = 'weimar'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'weimar' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Weimar Republic (1919–1932)
+                </button>
+                <button 
+                    @click="selectedEra = 'nazi'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'nazi' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Nazi Rule &amp; WWII (1933–1945)
+                </button>
+            </div>
+        </div>
+
+        <!-- Timeline List Header -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-timeline text-brown-700"></i>
+                    <span>Chronological Events</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredEvents.length + ' event' + (filteredEvents.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Timeline Container -->
+            <div class="space-y-3">
+                <template x-for="(event, index) in filteredEvents" :key="index + '-' + event.year + '-' + event.event">
+                    <div class="timeline-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        
+                        <!-- Left: Date & Era Pill -->
+                        <div class="md:w-1/4 flex-shrink-0 flex items-center md:items-start justify-between md:flex-col gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                      :class="{
+                                          'bg-brown-600': event.era === 'imperial',
+                                          'bg-accent-gold': event.era === 'weimar',
+                                          'bg-accent-forest': event.era === 'nazi'
+                                      }"></span>
+                                <span class="font-extrabold text-brown-900 text-base sm:text-lg tracking-tight font-mono" x-text="event.year"></span>
+                            </div>
+                            <span class="text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md border text-brown-700 bg-beige-200/70 border-beige-300"
+                                  x-text="getEraLabel(event.era)">
+                            </span>
+                        </div>
+
+                        <!-- Right: Event Headline & Brief Description -->
+                        <div class="md:w-3/4 pl-0 md:pl-4 border-t md:border-t-0 md:border-l-2 border-beige-200 pt-3 md:pt-0 space-y-2">
+                            <div class="flex items-start justify-between gap-3">
+                                <p class="text-xs sm:text-sm text-brown-900 leading-relaxed font-bold" x-text="event.event"></p>
+                                <button 
+                                    @click="toggleEvent(event)"
+                                    class="text-brown-700 hover:text-brown-900 text-xs px-2 py-1 rounded-lg bg-beige-200/60 hover:bg-beige-300/60 border border-beige-300 flex-shrink-0 flex items-center gap-1 transition"
+                                    :title="isExpanded(event) ? 'Hide details' : 'Show details'">
+                                    <span class="text-[11px] hidden sm:inline" x-text="isExpanded(event) ? 'Hide Note' : 'Brief Note'"></span>
+                                    <i class="fa-solid text-[10px]" :class="isExpanded(event) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                </button>
+                            </div>
+
+                            <!-- Brief Description Section -->
+                            <div x-show="isExpanded(event)" x-collapse.duration.200ms class="pt-2 text-xs sm:text-sm text-brown-800 bg-beige-100/90 p-3.5 rounded-xl border border-beige-300/80 leading-relaxed">
+                                <div class="flex items-center gap-1.5 text-brown-700 font-semibold text-[11px] uppercase tracking-wider mb-1">
+                                    <i class="fa-solid fa-circle-info text-accent-forest"></i>
+                                    <span>GCSE Revision Summary</span>
+                                </div>
+                                <p x-text="event.description"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredEvents.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-calendar-xmark text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No timeline events found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any events matching "<span class="font-semibold" x-text="searchQuery"></span>" in the selected era.
+                </p>
+                <div class="flex justify-center gap-3">
+                    <button 
+                        @click="searchQuery = ''; selectedEra = 'all'" 
+                        class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                    >
+                        Reset All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History Germany Revision Hub &bull; Germany 1871–1945 Chronology Edition 🏛️</p>
+    </footer>
+
+    <script>
+        function germanyTimelineApp() {
+            return {
+                searchQuery: '',
+                sortAscending: true,
+                selectedEra: 'all',
+                viewMode: 'timeline', // 'timeline' or 'detailed'
+                expandedEvents: {},
+                allExpanded: false,
+
+                toggleEvent(event) {
+                    const key = event.year + '-' + event.order;
+                    this.expandedEvents[key] = !this.isExpanded(event);
+                },
+
+                isExpanded(event) {
+                    if (this.viewMode === 'detailed') return true;
+                    const key = event.year + '-' + event.order;
+                    return !!this.expandedEvents[key];
+                },
+
+                toggleAllDescriptions() {
+                    this.allExpanded = !this.allExpanded;
+                    if (this.allExpanded) {
+                        this.viewMode = 'detailed';
+                    } else {
+                        this.viewMode = 'timeline';
+                        this.expandedEvents = {};
+                    }
+                },
+
+                germanyTimelineEvents: [
+                    { 
+                        year: "1871", 
+                        event: "Unification of Germany under Kaiser Wilhelm I.", 
+                        description: "Prussia led the unification of 25 German states following victory in the Franco-Prussian War. King Wilhelm I was crowned Kaiser at Versailles. Otto von Bismarck served as Chancellor, creating an authoritarian empire dominated by the Prussian military and wealthy aristocratic landowners (Junkers).",
+                        era: "imperial", 
+                        order: 1871.0 
+                    },
+                    { 
+                        year: "1888", 
+                        event: "Kaiser Wilhelm II becomes Emperor: focus on building a German empire, strong navy, and strong economy.", 
+                        description: "Wilhelm II took the throne and soon dismissed Bismarck. He initiated 'Weltpolitik' (World Policy) to secure Germany's 'place in the sun' by creating a vast overseas empire and rapid industrialization.",
+                        era: "imperial", 
+                        order: 1888.0 
+                    },
+                    { 
+                        year: "1890", 
+                        event: "Growth of workers’ movement leads to founding of the Social Democratic Party (SPD).", 
+                        description: "Rapid industrial growth brought millions of factory workers into major cities. The socialist SPD demanded better wages, improved working conditions, and democratic reform, becoming a major challenge to the Kaiser's autocratic rule.",
+                        era: "imperial", 
+                        order: 1890.0 
+                    },
+                    { 
+                        year: "1898", 
+                        event: "First Naval Laws passed: added 7 battleships annually, totaling 19 battleships per year. Weltpolitik policy implemented.", 
+                        description: "Admiral von Tirpitz persuaded the Reichstag to finance a large navy to protect overseas colonies and challenge Britain's supremacy on the high seas, signalling the start of the naval rivalry.",
+                        era: "imperial", 
+                        order: 1898.0 
+                    },
+                    { 
+                        year: "1900", 
+                        event: "Second Naval Law: doubled battleships to 38 per year.", 
+                        description: "Doubled Germany's naval battle fleet, intensifying the Anglo-German naval arms race and prompting Britain to forge defensive alliances with France and Russia.",
+                        era: "imperial", 
+                        order: 1900.0 
+                    },
+                    { 
+                        year: "1906", 
+                        event: "Third Naval Law: added 6 cruiser-type ships to compete with Britain.", 
+                        description: "Passed right after Britain launched HMS Dreadnought (1906). It expanded dreadnought-class shipbuilding in Germany and widened the Kiel Canal to accommodate the giant ships.",
+                        era: "imperial", 
+                        order: 1906.0 
+                    },
+                    { 
+                        year: "1914", 
+                        event: "Outbreak of WWI.", 
+                        description: "Following the assassination of Archduke Franz Ferdinand, Germany offered Austria-Hungary unconditional support (the 'blank cheque'), precipitating war against Russia, France, and Britain.",
+                        era: "imperial", 
+                        order: 1914.1 
+                    },
+                    { 
+                        year: "1914", 
+                        event: "Germany enacts the Schlieffen Plan.", 
+                        description: "Germany's military strategy to avoid a two-front war by rapidly defeating France through neutral Belgium before pivoting east against Russia. Belgian resistance and British entry halted the plan at the Marne, establishing static trench warfare.",
+                        era: "imperial", 
+                        order: 1914.2 
+                    },
+                    { 
+                        year: "1914–1918", 
+                        event: "World War I.", 
+                        description: "Germany fought an exhausting war against Allied forces. The British naval blockade starved German civilians (over 750,000 deaths from starvation and hypothermia during the 1916–17 'Turnip Winter'), devastating public morale.",
+                        era: "imperial", 
+                        order: 1914.3 
+                    },
+                    { 
+                        year: "1918", 
+                        event: "Kaiser Wilhelm II abdicates.", 
+                        description: "With defeat inevitable, sailors mutinied at Kiel and workers' councils seized control of German cities. Military commanders told the Kaiser he had lost the support of the army; he fled to exile in the Netherlands on 9 November.",
+                        era: "imperial", 
+                        order: 1918.1 
+                    },
+                    { 
+                        year: "1918", 
+                        event: "November: Armistice signed, ending WWI.", 
+                        description: "Friedrich Ebert's provisional socialist-led government signed the ceasefire on 11 November. Right-wing generals and nationalists soon scapegoated these politicians as the 'November Criminals' who supposedly 'stabbed the army in the back'.",
+                        era: "imperial", 
+                        order: 1918.2 
+                    },
+                    { 
+                        year: "1919", 
+                        event: "Weimar Constitution established: democratic but weakened by proportional representation and Article 48.", 
+                        description: "Established a progressive republic with universal suffrage and civil liberties. However, proportional representation fostered fragmented coalitions, and Article 48 gave the President sweeping decree powers that undermined democracy.",
+                        era: "weimar", 
+                        order: 1919.1 
+                    },
+                    { 
+                        year: "1919", 
+                        event: "Spartacist Uprising.", 
+                        description: "A radical communist revolt in Berlin led by Rosa Luxemburg and Karl Liebknecht trying to spark a workers' revolution. Ebert relied on the right-wing Freikorps ex-soldiers to crush it; both leaders were executed.",
+                        era: "weimar", 
+                        order: 1919.2 
+                    },
+                    { 
+                        year: "1919", 
+                        event: "June 28th: Treaty of Versailles signed, humiliating Germany.", 
+                        description: "The peace treaty imposed Article 231 (War Guilt Clause), £6.6 billion reparations, military caps (100,000 men, no air force or tanks), and stripped 13% of German land including Alsace-Lorraine and the Polish Corridor. Hated as a 'Diktat'.",
+                        era: "weimar", 
+                        order: 1919.3 
+                    },
+                    { 
+                        year: "1920", 
+                        event: "February: Kapp Putsch (right-wing coup attempt).", 
+                        description: "Led by Wolfgang Kapp and Freikorps units angry about military cuts under Versailles. The army refused to fire on the rebels ('Troops do not fire on troops'), but Berlin workers organised a massive general strike that collapsed the coup in days.",
+                        era: "weimar", 
+                        order: 1920.0 
+                    },
+                    { 
+                        year: "1923", 
+                        event: "French and Belgian occupation of the Ruhr.", 
+                        description: "After Germany defaulted on timber and coal reparations, 60,000 French and Belgian troops occupied the Ruhr industrial basin. The Weimar government sponsored passive resistance, paying striking miners.",
+                        era: "weimar", 
+                        order: 1923.1 
+                    },
+                    { 
+                        year: "1923", 
+                        event: "Hyperinflation crisis devastates the German economy.", 
+                        description: "To finance passive resistance in the Ruhr, the government printed massive quantities of banknotes. Money became worthless; workers were paid twice daily in wheelbarrows, and middle-class life savings were completely wiped out.",
+                        era: "weimar", 
+                        order: 1923.2 
+                    },
+                    { 
+                        year: "1923", 
+                        event: "November: Munich Putsch; Hitler arrested and writes Mein Kampf.", 
+                        description: "Hitler and the SA attempted to seize the Bavarian government and march on Berlin. State police fired upon them, killing 16 Nazis. At trial, Hitler gained national fame and wrote 'Mein Kampf' in Landsberg prison, deciding to seek power democratically.",
+                        era: "weimar", 
+                        order: 1923.3 
+                    },
+                    { 
+                        year: "1924", 
+                        event: "Dawes Plan introduced to stabilize reparations and economy.", 
+                        description: "Formulated by Charles Dawes and Gustav Stresemann, it reorganized reparations into affordable annual instalments and arranged $200 million in US loans to kickstart German industrial production.",
+                        era: "weimar", 
+                        order: 1924.0 
+                    },
+                    { 
+                        year: "1925", 
+                        event: "Locarno Pact signed to promote European peace.", 
+                        description: "Pact between Germany, France, and Belgium promising never to alter western borders defined at Versailles. It re-established Germany as a respectable diplomatic partner.",
+                        era: "weimar", 
+                        order: 1925.0 
+                    },
+                    { 
+                        year: "1926", 
+                        event: "Germany joins the League of Nations.", 
+                        description: "Gustav Stresemann secured Germany's entry into the League of Nations as a permanent council member, restoring international prestige and ending post-war diplomatic isolation.",
+                        era: "weimar", 
+                        order: 1926.0 
+                    },
+                    { 
+                        year: "1928", 
+                        event: "May election: Nazi Party gains 2.6% of vote (12 seats in Reichstag).", 
+                        description: "Weimar's 'Golden Years' of cultural and economic recovery meant extremist parties received minimal support from satisfied voters; the Nazis remained an irrelevant fringe group.",
+                        era: "weimar", 
+                        order: 1928.0 
+                    },
+                    { 
+                        year: "1929", 
+                        event: "Wall Street Crash triggers the Great Depression, impacting Germany due to Dawes and Young Plan ties.", 
+                        description: "The US stock market crashed and American banks demanded the immediate repayment of short-term loans. German industry collapsed, factories shut, and unemployment spiralled to 6 million by 1932.",
+                        era: "weimar", 
+                        order: 1929.1 
+                    },
+                    { 
+                        year: "1929", 
+                        event: "Young Plan reduces reparations payments.", 
+                        description: "Negotiated by Owen Young, reducing Germany's total reparations burden to £1.85 billion spread over 59 years. Despite generous terms, nationalists like Hitler condemned any ongoing reparations as treason.",
+                        era: "weimar", 
+                        order: 1929.2 
+                    },
+                    { 
+                        year: "1930", 
+                        event: "Nazis gain 107 seats in Reichstag elections.", 
+                        description: "Capitalizing on the misery of the Depression, mass unemployment, and government deadlock under Chancellor Brüning, the Nazis surged to become the second largest party in parliament.",
+                        era: "weimar", 
+                        order: 1930.0 
+                    },
+                    { 
+                        year: "1932", 
+                        event: "November election: Nazis become largest party with 33.1% of vote (196 seats).", 
+                        description: "Although down from their peak of 230 seats in July 1932, the NSDAP remained by far the biggest party. The Reichstag was paralyzed, making normal coalition government impossible without them.",
+                        era: "weimar", 
+                        order: 1932.1 
+                    },
+                    { 
+                        year: "1932", 
+                        event: "Hitler loses the presidential election to Hindenburg.", 
+                        description: "Hitler ran against 84-year-old Field Marshal Paul von Hindenburg. While Hindenburg won re-election, Hitler polled over 13 million votes (36.8%), proving he had vast nationwide popularity.",
+                        era: "weimar", 
+                        order: 1932.2 
+                    },
+                    { 
+                        year: "1932", 
+                        event: "Hitler Youth created; membership compulsory by 1939, rising from 108,000 to 7.3 million.", 
+                        description: "The Hitler Jugend indoctrinated boys in racial superiority, physical fitness, and military readiness, while the BDM prepared girls for domestic motherhood. Compulsory membership began in 1939.",
+                        era: "weimar", 
+                        order: 1932.3 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "January: Hitler appointed Chancellor after deal with Von Papen and Hindenburg.", 
+                        description: "Conservative politicians Von Papen and Oskar von Hindenburg schemed to use Hitler's mass popular base, naively assuming they could keep him under control with only three Nazi ministers in cabinet.",
+                        era: "nazi", 
+                        order: 1933.1 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "February 27th: Reichstag fire used to target communists; Article 48 decrees used to govern.", 
+                        description: "The parliament building burned down, blamed on Dutch communist Marinus van der Lubbe. Hitler persuaded Hindenburg to sign the Reichstag Fire Decree, suspending civil rights, freedom of speech, and banning the KPD.",
+                        era: "nazi", 
+                        order: 1933.2 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "March: Enabling Act passed, giving Hitler dictatorial powers and ending Weimar democracy.", 
+                        description: "Passed via intimidation by the SA stormtroopers in the Kroll Opera House. It gave Hitler power to pass laws without the Reichstag or President for 4 years, ending German democracy.",
+                        era: "nazi", 
+                        order: 1933.3 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "Boycott of Jewish businesses organized by Nazis; Jews banned from government jobs.", 
+                        description: "On 1 April, SA guards intimidated shoppers outside Jewish stores and offices. Days later, the Civil Service Law dismissed non-Aryans from state and judicial jobs.",
+                        era: "nazi", 
+                        order: 1933.4 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "Establishment of the Gestapo (secret police).", 
+                        description: "Founded by Hermann Göring and later managed by Heinrich Himmler, the Gestapo arrested and tortured opponents of the regime without trials or warrants.",
+                        era: "nazi", 
+                        order: 1933.5 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "May: Trade unions banned.", 
+                        description: "SA units ransacked union headquarters and arrested leaders. Independent collective bargaining and strikes were outlawed, forcing all German workers into the Nazi-run DAF.",
+                        era: "nazi", 
+                        order: 1933.6 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "July 14th: Political parties except NSDAP made illegal.", 
+                        description: "The Law Against the Establishment of Parties made Germany a totalitarian one-party state. All opposition parties were forcibly dissolved or banned.",
+                        era: "nazi", 
+                        order: 1933.7 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "German Labour Front (DAF) and National Labour Service (RAD) created; public works programs initiated.", 
+                        description: "The DAF replaced free unions under Robert Ley. The RAD conscripted unemployed men into six months of state manual labour, building the Autobahnen and drainage systems.",
+                        era: "nazi", 
+                        order: 1933.8 
+                    },
+                    { 
+                        year: "1933", 
+                        event: "Hitler signs concordat with the Pope: non-interference agreement.", 
+                        description: "Pope Pius XI signed a mutual treaty: the Catholic Church agreed to keep priests out of politics in exchange for the Nazis guaranteeing religious freedom and Catholic schools (promises Hitler quickly violated).",
+                        era: "nazi", 
+                        order: 1933.9 
+                    },
+                    { 
+                        year: "1933–1936", 
+                        event: "Married women debarred from key professions; women encouraged to have children.", 
+                        description: "Nazi ideology promoted 'Kinder, Küche, Kirche' (Children, Kitchen, Church). Married women were dismissed from civil service, and interest-free marriage loans were granted to encourage motherhood.",
+                        era: "nazi", 
+                        order: 1933.95 
+                    },
+                    { 
+                        year: "1934", 
+                        event: "June 30-July 2: Night of the Long Knives secures Hitler’s control over the SA.", 
+                        description: "Hitler purged Ernst Röhm and radical SA leaders who wanted a 'second revolution' and control of the regular army. SS death squads murdered up to 200 political rivals, securing the German army's loyalty.",
+                        era: "nazi", 
+                        order: 1934.1 
+                    },
+                    { 
+                        year: "1934", 
+                        event: "August 2: President Hindenburg dies; Hitler declares himself Führer.", 
+                        description: "Following Hindenburg's death, Hitler merged the positions of President and Chancellor into one supreme title: 'Der Führer'. Every soldier in the armed forces swore a personal oath of allegiance to Hitler.",
+                        era: "nazi", 
+                        order: 1934.2 
+                    },
+                    { 
+                        year: "1934", 
+                        event: "Education centralized under the Reich Ministry of Education; Nazi ideas promoted.", 
+                        description: "Bernhard Rust placed all schooling under Berlin's direct control. Curricula emphasized racial hygiene, German military history, anti-Semitism, and heavy physical training.",
+                        era: "nazi", 
+                        order: 1934.3 
+                    },
+                    { 
+                        year: "1935", 
+                        event: "Nuremberg Laws strip Jews of citizenship and forbid marriage to \"Germans.\"", 
+                        description: "The Reich Citizenship Law stripped Jews of German citizenship and civil rights, while the Law for the Protection of German Blood and German Honour banned marriages and relationships between Jews and Aryans.",
+                        era: "nazi", 
+                        order: 1935.1 
+                    },
+                    { 
+                        year: "1935", 
+                        event: "Germany begins rearmament despite Treaty of Versailles; army reaches 900,000 by 1939.", 
+                        description: "Hitler openly announced military conscription and the existence of the Luftwaffe (air force) in defiance of the Versailles limits, growing the Wehrmacht to nearly a million men.",
+                        era: "nazi", 
+                        order: 1935.2 
+                    },
+                    { 
+                        year: "1936", 
+                        event: "Germany remilitarizes the Rhineland.", 
+                        description: "German troops marched back into the demilitarized Rhineland border zone. Britain and France took no action, convincing Hitler that the Western democracies would not fight to defend Versailles.",
+                        era: "nazi", 
+                        order: 1936.1 
+                    },
+                    { 
+                        year: "1936", 
+                        event: "Berlin Olympics used as propaganda for Nazi Germany.", 
+                        description: "Joseph Goebbels staged a massive propaganda showcase of German efficiency, power, and racial superiority, though African-American track star Jesse Owens won four gold medals.",
+                        era: "nazi", 
+                        order: 1936.2 
+                    },
+                    { 
+                        year: "1938", 
+                        event: "Anschluss (union) with Austria achieved.", 
+                        description: "German forces marched into Austria unopposed and announced political union (Anschluss), creating a Greater German Reich ('Grossdeutschland') in direct defiance of Versailles.",
+                        era: "nazi", 
+                        order: 1938.1 
+                    },
+                    { 
+                        year: "1938", 
+                        event: "November 9-10: Kristallnacht marks widespread violence against Jews; large-scale emigration begins.", 
+                        description: "State-sponsored pogrom ('Night of Broken Glass'): 1,000 synagogues burned, 7,000 businesses ransacked, 91 Jews killed, and 30,000 sent to camps. The Jewish community was fined 1 billion marks.",
+                        era: "nazi", 
+                        order: 1938.2 
+                    },
+                    { 
+                        year: "1939", 
+                        event: "Germany occupies Czechoslovakia.", 
+                        description: "Hitler broke the 1938 Munich Agreement and invaded the non-German areas of Bohemia and Moravia, ending Britain and France's policy of appeasement.",
+                        era: "nazi", 
+                        order: 1939.1 
+                    },
+                    { 
+                        year: "1939", 
+                        event: "September: Invasion of Poland begins World War II.", 
+                        description: "Using rapid Blitzkrieg tactics, German armies invaded Poland on 1 September. Honoring their alliance guarantees, Britain and France declared war on Germany on 3 September.",
+                        era: "nazi", 
+                        order: 1939.2 
+                    },
+                    { 
+                        year: "1939", 
+                        event: "Yellow Star of David mandated for Jews.", 
+                        description: "Jews were ordered to wear a yellow Star of David badge in public to identify, isolate, and publicly segregate them in German-occupied Poland and later throughout the Reich.",
+                        era: "nazi", 
+                        order: 1939.3 
+                    },
+                    { 
+                        year: "1940", 
+                        event: "Blitzkrieg tactics lead to rapid German victories in Europe.", 
+                        description: "Fast-moving tank divisions, mechanized infantry, and Stuka dive-bombers bypassed French fortresses, forcing the conquest and surrender of France, Belgium, the Netherlands, and Norway.",
+                        era: "nazi", 
+                        order: 1940.0 
+                    },
+                    { 
+                        year: "1941", 
+                        event: "Operation Barbarossa (invasion of the Soviet Union).", 
+                        description: "Hitler launched a surprise invasion of the USSR with 3 million troops seeking 'Lebensraum' (living space). Mobile SS Einsatzgruppen squads carried out mass shootings of Jewish populations.",
+                        era: "nazi", 
+                        order: 1941.1 
+                    },
+                    { 
+                        year: "1941", 
+                        event: "USA enters WWII following the attack on Pearl Harbor.", 
+                        description: "After Japan attacked Pearl Harbor, Hitler rashly declared war on the United States, bringing the immense economic and industrial power of America into the European war against Germany.",
+                        era: "nazi", 
+                        order: 1941.2 
+                    },
+                    { 
+                        year: "1942", 
+                        event: "Nazi officials plan the Final Solution: extermination of all European Jews.", 
+                        description: "At the Wannsee Conference in Berlin, senior Nazi officials chaired by Reinhard Heydrich organized the logistical machinery for the industrialized mass murder of 6 million European Jews in extermination camps.",
+                        era: "nazi", 
+                        order: 1942.1 
+                    },
+                    { 
+                        year: "1942", 
+                        event: "Battle of Stalingrad begins.", 
+                        description: "Epic battle on the Volga River. The German 6th Army was encircled and surrendered in February 1943, marking the major turning point of the war on the Eastern Front.",
+                        era: "nazi", 
+                        order: 1942.2 
+                    },
+                    { 
+                        year: "1944", 
+                        event: "July bomb plot to kill Hitler fails.", 
+                        description: "Colonel Claus von Stauffenberg planted a briefcase bomb inside Hitler's Prussian headquarters. Hitler survived with light injuries; thousands of suspects and army officers were executed in reprisals.",
+                        era: "nazi", 
+                        order: 1944.1 
+                    },
+                    { 
+                        year: "1944", 
+                        event: "D-Day landings in Normandy.", 
+                        description: "Allied amphibious landings on the French coast opened the Western Front, liberating France and forcing Nazi Germany to defend collapsing borders against two converging fronts.",
+                        era: "nazi", 
+                        order: 1944.2 
+                    },
+                    { 
+                        year: "1945", 
+                        event: "April: Hitler commits suicide.", 
+                        description: "With Soviet troops fighting through central Berlin just hundreds of meters away, Hitler and his newly wed wife Eva Braun committed suicide inside the underground Führerbunker.",
+                        era: "nazi", 
+                        order: 1945.1 
+                    },
+                    { 
+                        year: "1945", 
+                        event: "May: Soviet forces capture Berlin; Germany surrenders (VE Day); concentration camps liberated.", 
+                        description: "Soviet forces took the Reichstag building and Germany signed unconditional surrender on 8 May 1945. Allied armies liberated surviving prisoners from concentration and death camps across Europe.",
+                        era: "nazi", 
+                        order: 1945.2 
+                    }
+                ],
+                getEraLabel(era) {
+                    switch(era) {
+                        case 'imperial': return 'Imperial & WWI';
+                        case 'weimar': return 'Weimar Republic';
+                        case 'nazi': return 'Nazi Rule & WWII';
+                        default: return era;
+                    }
+                },
+                get filteredEvents() {
+                    let results = [...this.germanyTimelineEvents];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(e => e.era === this.selectedEra);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(e => 
+                            e.year.toLowerCase().includes(q) || 
+                            e.event.toLowerCase().includes(q) ||
+                            this.getEraLabel(e.era).toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort chronologically
+                    results.sort((a, b) => {
+                        return this.sortAscending ? a.order - b.order : b.order - a.order;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
