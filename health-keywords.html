@@ -1,1 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Health and the People Keywords Glossary</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            gold: '#b48b35',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search, filters, and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .glossary-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glossary-card:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="healthGlossaryApp()" x-cloak>
 
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200">
+                    <i class="fa-solid fa-notes-medical text-xl text-accent-forest bg-beige-200 p-1.5 rounded-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Health &amp; the People Keywords</h1>
+                    <p class="text-xs text-beige-300">Medicine Through Time c.1000 to the Present Day &bull; Verified Glossary</p>
+                </div>
+            </div>
+
+            <!-- Stats Badge & Quick Actions -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-brown-800/90 px-4 py-2 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Total terms:</span>
+                    <span class="font-bold text-beige-50 text-sm" x-text="healthKeywords.length"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, Filters & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            <!-- Search Input and Sorting Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search medical keywords or definitions (e.g. Miasma, Penicillin, Humours, Lister, NHS)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Sort & Counter -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                        <span x-text="sortAscending ? 'A to Z' : 'Z to A'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-semibold text-brown-800">
+                        <span x-text="filteredKeywords.length"></span> / <span x-text="healthKeywords.length"></span> shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category / Theme Filter Buttons -->
+            <div class="flex items-center flex-wrap gap-1.5 pt-2 border-t border-beige-300/70 text-xs">
+                <span class="font-bold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-brown-700"></i> Category:
+                </span>
+                <button 
+                    @click="selectedCategory = 'all'" 
+                    :class="selectedCategory === 'all' ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-lg font-semibold transition"
+                >All Themes</button>
+                <button 
+                    @click="selectedCategory = 'disease'" 
+                    :class="selectedCategory === 'disease' ? 'bg-accent-burgundy text-white shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-lg font-semibold transition"
+                >Disease &amp; Infection</button>
+                <button 
+                    @click="selectedCategory = 'surgery'" 
+                    :class="selectedCategory === 'surgery' ? 'bg-accent-navy text-white shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-lg font-semibold transition"
+                >Surgery &amp; Anatomy</button>
+                <button 
+                    @click="selectedCategory = 'treatment'" 
+                    :class="selectedCategory === 'treatment' ? 'bg-accent-forest text-white shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-lg font-semibold transition"
+                >Treatments &amp; Drugs</button>
+                <button 
+                    @click="selectedCategory = 'public_health'" 
+                    :class="selectedCategory === 'public_health' ? 'bg-brown-700 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-lg font-semibold transition"
+                >Public Health &amp; Society</button>
+                <button 
+                    @click="selectedCategory = 'beliefs'" 
+                    :class="selectedCategory === 'beliefs' ? 'bg-accent-gold text-brown-900 font-bold shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'"
+                    class="px-3 py-1.5 rounded-lg font-semibold transition"
+                >Beliefs &amp; Concepts</button>
+            </div>
+        </div>
+
+        <!-- Glossary Content List -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-book-medical text-brown-700"></i>
+                    <span>Health &amp; Medicine Definitions</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredKeywords.length + ' term' + (filteredKeywords.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Definitions Container -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="item in filteredKeywords" :key="item.term">
+                    <div class="glossary-card p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <div class="md:w-1/3 flex items-start gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0" :class="getCategoryDot(item.category)"></span>
+                            <div>
+                                <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight block" x-text="item.term"></span>
+                                <span class="text-[10px] uppercase font-semibold tracking-wider text-brown-600 block mt-0.5" x-text="getCategoryLabel(item.category)"></span>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0">
+                            <p class="text-xs sm:text-sm text-brown-800 leading-relaxed font-normal" x-text="item.definition"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredKeywords.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No keywords found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any terms matching "<span class="font-semibold" x-text="searchQuery"></span>" in this filter category.
+                </p>
+                <button 
+                    @click="searchQuery = ''; selectedCategory = 'all'" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset Search &amp; Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History Keywords Glossary Hub &bull; Health and the People: c.1000 to the Present Day &bull; 100% Derived from Document Notes 🩺</p>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        function healthGlossaryApp() {
+            return {
+                searchQuery: '',
+                sortAscending: true,
+                selectedCategory: 'all',
+
+                // ALL 77 KEYWORDS SOURCED 100% VERBATIM FROM KEY WORDS.DOCX (HEALTH TABLE)
+                healthKeywords: [
+                    { term: "Abscess", category: "disease", definition: "A collection of pus caused by infection." },
+                    { term: "AD", category: "beliefs", definition: "Anno Domini, used to describe dates after the birth of Christ." },
+                    { term: "Amputate", category: "surgery", definition: "To cut off a damaged arm, leg, hand or foot." },
+                    { term: "Anesthetic", category: "surgery", definition: "A drug given to patients to put them into a deep sleep so that they can feel no pain." },
+                    { term: "Anatomy", category: "surgery", definition: "The parts that make up the body." },
+                    { term: "Antibiotic", category: "treatment", definition: "A drug used to kill bacteria that causes infection. The first was penicillin." },
+                    { term: "Antibodies", category: "treatment", definition: "Proteins produced in the blood to fight harmful organisms." },
+                    { term: "Antiseptics", category: "treatment", definition: "Chemicals used to kill bacteria and prevent infection." },
+                    { term: "Apothecary", category: "treatment", definition: "A person who prepared and sold medicines and drugs." },
+                    { term: "Aqueduct", category: "public_health", definition: "A channel used to carry clean water to towns and cities (used by the Romans)." },
+                    { term: "Aseptic", category: "surgery", definition: "A germ-free state." },
+                    { term: "Bacteria", category: "disease", definition: "Germs that cause infection and disease." },
+                    { term: "BC", category: "beliefs", definition: "The time before the birth of Christ." },
+                    { term: "Bleeding/ bloodletting", category: "treatment", definition: "Releasing blood from a cut make in the patient’s body in order to restore the balance of the body’s humours." },
+                    { term: "Blood Group", category: "treatment", definition: "The particular type of blood a person has. The four most common groups are A, B, AB and O. A blood transfusion can only be successful if blood groups are compatible." },
+                    { term: "Blood Transfusion", category: "treatment", definition: "Giving fresh blood to a patient to replace lost blood through injury or operation." },
+                    { term: "Carbolic Spray", category: "treatment", definition: "Carbolic acid, used as a disinfectant and antiseptic." },
+                    { term: "Cauterise", category: "surgery", definition: "To burn a wound to prevent infection and stop bleeding." },
+                    { term: "Cell", category: "treatment", definition: "The smallest part of an organism that can function on its own." },
+                    { term: "Cesspool", category: "public_health", definition: "A place where sewage collects." },
+                    { term: "Charm", category: "beliefs", definition: "A lucky object believed to have magical powers." },
+                    { term: "Chemotherapy", category: "treatment", definition: "The treatment of disease, especially cancer, using drugs (chemicals) that are destructive to malignant cells and tissues." },
+                    { term: "Chloroform", category: "surgery", definition: "An early type of anesthetic." },
+                    { term: "Cholera", category: "disease", definition: "A disease carried in water that has been contaminated by sewage." },
+                    { term: "the Church", category: "beliefs", definition: "The Christian religion organised as an institution which was an important social, political and economic power." },
+                    { term: "Circulation", category: "surgery", definition: "The movement of blood around the body." },
+                    { term: "Contagionist", category: "beliefs", definition: "Someone who believed diseases could be spread through contact. Anti-contagionists believed diseases could be spread through miasma." },
+                    { term: "Culture", category: "treatment", definition: "Micro-organisms grown in the laboratory for use in experiments." },
+                    { term: "Delirious", category: "disease", definition: "Excited and confused because of a high fever." },
+                    { term: "Diagnosis", category: "beliefs", definition: "The doctor’s opinion about what is wrong with the patient." },
+                    { term: "Diaphragm", category: "surgery", definition: "The large sheet of muscle separating the chest from the abdomen." },
+                    { term: "Dissect", category: "surgery", definition: "To cut open a body and examine the insides." },
+                    { term: "DNA", category: "treatment", definition: "A substance that carries genetic information in the cells of plants and animals." },
+                    { term: "Embalming", category: "treatment", definition: "Removing internal organs and treating the skin of a dead body with certain chemicals to prevent it from decaying." },
+                    { term: "Epidemic", category: "disease", definition: "A disease that spreads quickly to many people." },
+                    { term: "Flagellation", category: "beliefs", definition: "Whipping the body to rid the person of sins and prevent them from catching the Black Death." },
+                    { term: "Gene", category: "treatment", definition: "A section of DNA that contains information about a particular characteristic. E.G. Hair colour." },
+                    { term: "Genetic Engineering", category: "treatment", definition: "Changing the way genes work in the body." },
+                    { term: "Germ", category: "disease", definition: "A microorganism that causes disease." },
+                    { term: "Humours", category: "beliefs", definition: "Four fluids that the Greeks believed were important for keeping the body healthy: Blood, Phlegm, Black Bile and Yellow Bile." },
+                    { term: "Immunise", category: "treatment", definition: "To protect against disease, usually by vaccination." },
+                    { term: "Immunity", category: "treatment", definition: "The ability of an organism to resist disease." },
+                    { term: "Inoculate", category: "treatment", definition: "To inject a person with a tiny amount of bacteria so that the body can develop immunity towards the disease it carries without side effects." },
+                    { term: "Laissez-faire", category: "public_health", definition: "‘Let it be’ – the belief that it was not the government’s job to get involved in people’s private lives eg. their standard of housing or cleanliness." },
+                    { term: "Life Expectancy", category: "public_health", definition: "The length of time a person is expected to live." },
+                    { term: "Ligature", category: "surgery", definition: "A thread used to tie off blood vessels to prevent excess bleeding." },
+                    { term: "Malaria", category: "disease", definition: "A disease carried by mosquitoes." },
+                    { term: "Medieval", category: "beliefs", definition: "The Middle Ages circa AD1000-1500." },
+                    { term: "Miasma", category: "beliefs", definition: "A poisonous atmosphere thought from Roman times to rise from swamps and putrid matter and cause disease." },
+                    { term: "Microbe", category: "disease", definition: "A microorganism, especially a bacterium, causing disease." },
+                    { term: "Midwife", category: "beliefs", definition: "Someone who is skilled in dealing with pregnancies and childbirth." },
+                    { term: "Monastery", category: "beliefs", definition: "A building in which monks live, eat, work and pray." },
+                    { term: "National Health Service (NHS)", category: "public_health", definition: "Health care funded by the government through taxes." },
+                    { term: "Observe", category: "beliefs", definition: "To watch carefully and record what is seen in a patient." },
+                    { term: "Pandemic", category: "disease", definition: "An outbreak of a disease that occurs over a wide geographic area and affects an exceptionally high proportion of the population." },
+                    { term: "Patent Medicines", category: "treatment", definition: "Herbal remedies that were sold in shops and were protected by a patent which meant no one else could copy them." },
+                    { term: "Penicillin", category: "treatment", definition: "An antibiotic produced naturally by certain blue moulds, the first antibiotic to be used by doctors." },
+                    { term: "Physician", category: "treatment", definition: "Doctor." },
+                    { term: "Plague", category: "disease", definition: "(Bubonic Plague) A serious disease passed to humans by the fleas carried on rats. (The word was also used in early times to mean any serious illness)." },
+                    { term: "Pneumonia", category: "disease", definition: "Inflammation of the lungs caused by an infection." },
+                    { term: "Poverty", category: "public_health", definition: "Being unable to provide the basics for survival: warmth, food, water, shelter." },
+                    { term: "Public Health", category: "public_health", definition: "The health of the general population. It also means measures taken to improve the health of the population such as providing clean water." },
+                    { term: "Purge", category: "treatment", definition: "To get rid of everything that has been eaten, a medicine is used to do this." },
+                    { term: "Quarantine", category: "public_health", definition: "Restricting the movement of people, animals and/or goods to prevent diseases from spreading." },
+                    { term: "Radiotherapy", category: "treatment", definition: "The treatment of disease, especially cancer, using X-rays or similar forms of radiation." },
+                    { term: "Rationing", category: "public_health", definition: "The system introduced during WW2 to make sure food was shared out fairly." },
+                    { term: "Remedy", category: "treatment", definition: "Something that cures sickness." },
+                    { term: "Revolution", category: "beliefs", definition: "A big change in the way people live and work, or in the way they are governed." },
+                    { term: "Skin Graft", category: "surgery", definition: "A piece of skin removed from one part of the body to repair an injury or burn somewhere else on the body." },
+                    { term: "Slums", category: "public_health", definition: "A very poor housing area with few or no services such as running water or toilets." },
+                    { term: "Smallpox", category: "disease", definition: "A serious disease which was a common killer until a vaccine was discovered in the late 18th century." },
+                    { term: "Spontaneous Generation", category: "beliefs", definition: "The theory that decay caused germs to develop – the opposite of Germ Theory." },
+                    { term: "Supernatural", category: "beliefs", definition: "Something not in the natural world ie to do with Gods/spirits/magic." },
+                    { term: "Surgeon", category: "surgery", definition: "A doctor who performs operations." },
+                    { term: "Surgery", category: "surgery", definition: "Treating a patient by performing an operation on them." },
+                    { term: "Vaccine", category: "treatment", definition: "Something that is injected into the body to make the body produce antibodies which will protect it against disease." },
+                    { term: "Virus", category: "disease", definition: "A particle living in the cells of animals that causes disease." }
+                ],
+
+                get filteredKeywords() {
+                    let results = [...this.healthKeywords];
+
+                    // Category filter
+                    if (this.selectedCategory !== 'all') {
+                        results = results.filter(k => k.category === this.selectedCategory);
+                    }
+
+                    // Text search filter
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(k => 
+                            k.term.toLowerCase().includes(q) || 
+                            k.definition.toLowerCase().includes(q)
+                        );
+                    }
+
+                    // A-Z / Z-A Sorting
+                    results.sort((a, b) => {
+                        const comp = a.term.localeCompare(b.term);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                },
+
+                getCategoryDot(category) {
+                    switch (category) {
+                        case 'disease': return 'bg-accent-burgundy';
+                        case 'surgery': return 'bg-accent-navy';
+                        case 'treatment': return 'bg-accent-forest';
+                        case 'public_health': return 'bg-brown-700';
+                        case 'beliefs': return 'bg-accent-gold';
+                        default: return 'bg-brown-600';
+                    }
+                },
+
+                getCategoryLabel(category) {
+                    switch (category) {
+                        case 'disease': return 'Disease & Infection';
+                        case 'surgery': return 'Surgery & Anatomy';
+                        case 'treatment': return 'Treatment & Drugs';
+                        case 'public_health': return 'Public Health & Society';
+                        case 'beliefs': return 'Beliefs & Concepts';
+                        default: return 'Medical Term';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
