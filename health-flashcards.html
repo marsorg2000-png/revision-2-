@@ -1,1 +1,923 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health & the People Revision Hub - 200 Question Flashcard Bank</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            teal: '#0e7490'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight state management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        [x-cloak] { display: none !important; }
 
+        /* 3D Flashcard Animation Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ede3d0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbb389;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c5c3e;
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="flashcardApp()" x-cloak>
+
+    <!-- Top Navigation Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-600 flex items-center justify-center">
+                    <i class="fa-solid fa-notes-medical text-accent-gold text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Health &amp; the People Revision Hub</h1>
+                        <span class="bg-accent-burgundy text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">200 Bank</span>
+                    </div>
+                    <p class="text-xs text-beige-300">c.1000 to Present • AQA GCSE Syllabus Recall, Key Figures &amp; Exam Diagnosis</p>
+                </div>
+            </div>
+            
+            <!-- Quick Actions Toolbar -->
+            <div class="flex flex-wrap items-center gap-2 justify-center">
+                <!-- Search All 200 Questions Drawer Toggle -->
+                <button 
+                    @click="showSearchModal = true"
+                    class="bg-brown-800 hover:bg-brown-700 text-beige-100 border border-brown-700 px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-magnifying-glass text-beige-300"></i>
+                    <span>Browse All 200 Qs</span>
+                </button>
+
+                <!-- Revisit Missed Cards Button / Indicator -->
+                <button 
+                    @click="toggleWrongOnlyMode()"
+                    :disabled="wrongCards.length === 0 && !isWrongOnlyMode"
+                    :class="isWrongOnlyMode 
+                        ? 'bg-accent-burgundy text-white ring-2 ring-red-400 font-bold shadow-md' 
+                        : (wrongCards.length > 0 ? 'bg-red-500/20 text-red-200 border border-red-500/40 hover:bg-red-500/30' : 'bg-brown-800 text-beige-400/40 border border-brown-700/50 cursor-not-allowed')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center space-x-2">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Review Missed Cards</span>
+                    <span 
+                        class="px-1.5 py-0.2 rounded-full text-[10px] font-bold"
+                        :class="wrongCards.length > 0 ? 'bg-red-600 text-white' : 'bg-brown-700 text-beige-400'"
+                        x-text="wrongCards.length">
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-start">
+        
+        <!-- Controls & Configuration Bar -->
+        <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 shadow-sm space-y-3 mb-6">
+            <!-- Filter by Topic -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                    <span class="font-bold text-brown-800 flex items-center mr-1">
+                        <i class="fa-solid fa-filter text-brown-700 mr-1.5"></i> Unit / Topic:
+                    </span>
+                    <select 
+                        x-model="selectedTopic" 
+                        @change="applyFilters()"
+                        class="bg-beige-50 border border-beige-300 text-brown-900 rounded-xl px-3 py-1.5 font-semibold focus:outline-none focus:ring-2 focus:ring-brown-600">
+                        <option value="all">All Topics (Full 200 Questions Bank)</option>
+                        <option value="medieval">Medieval: Beliefs, Monasteries &amp; Black Death (c.1000–c.1450)</option>
+                        <option value="renaissance">Renaissance: Pioneers &amp; Great Plague (c.1450–c.1800)</option>
+                        <option value="industrial">Industrial: Germ Theory, Jenner, Snow &amp; Chadwick (c.1800–c.1900)</option>
+                        <option value="modern">Modern: Penicillin, NHS &amp; Welfare State (c.1900–Present)</option>
+                        <option value="surgery">Surgery, Anaesthetics &amp; Antiseptics Through Time</option>
+                        <option value="factors">Factors: War, Religion, Government, Science &amp; Chance</option>
+                        <option value="figures">Key Figures, Discoveries &amp; Exam Technique</option>
+                    </select>
+                </div>
+
+                <!-- Session Length Selector -->
+                <div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                    <span class="font-bold text-brown-800 mr-1">Batch Size:</span>
+                    <button @click="setSessionLimit(15)" :class="sessionLimit === 15 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">15</button>
+                    <button @click="setSessionLimit(25)" :class="sessionLimit === 25 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">25</button>
+                    <button @click="setSessionLimit(50)" :class="sessionLimit === 50 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">50</button>
+                    <button @click="setSessionLimit(200)" :class="sessionLimit === 200 ? 'bg-brown-800 text-beige-50 shadow' : 'bg-beige-50 text-brown-800 hover:bg-beige-100 border border-beige-300'" class="px-2.5 py-1 rounded-lg font-semibold transition">All (200)</button>
+                </div>
+            </div>
+
+            <!-- Utility Controls (Shuffle, Jump, Reset) -->
+            <div class="flex flex-wrap items-center justify-between border-t border-beige-300/70 pt-2.5 text-xs gap-2">
+                <div class="flex items-center space-x-2">
+                    <button 
+                        @click="shuffleDeck()"
+                        class="bg-beige-50 hover:bg-beige-100 text-brown-800 border border-beige-300 px-3 py-1 rounded-xl font-medium transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-shuffle text-brown-600"></i>
+                        <span>Shuffle</span>
+                    </button>
+                    <button 
+                        @click="resetDeckProgress()"
+                        class="bg-beige-50 hover:bg-beige-100 text-brown-800 border border-beige-300 px-3 py-1 rounded-xl font-medium transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-rotate-left text-brown-600"></i>
+                        <span>Restart Session</span>
+                    </button>
+                </div>
+
+                <!-- Jump to Question Number -->
+                <div class="flex items-center space-x-1.5">
+                    <span class="text-brown-700">Jump to card:</span>
+                    <input 
+                        type="number" 
+                        min="1" 
+                        :max="activeDeck.length" 
+                        x-model.number="jumpInput" 
+                        @keydown.enter="jumpToCard()"
+                        placeholder="#"
+                        class="w-14 bg-beige-50 border border-beige-300 rounded-lg px-2 py-1 text-center font-bold text-brown-900 focus:outline-none focus:ring-1 focus:ring-brown-600">
+                    <button 
+                        @click="jumpToCard()" 
+                        class="bg-brown-800 text-beige-50 px-2 py-1 rounded-lg font-semibold hover:bg-brown-900 transition">Go</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Badges -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-6">
+            <div class="bg-beige-50 p-3 rounded-2xl border border-beige-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-brown-600 block">Deck Size</span>
+                    <span class="text-lg font-bold text-brown-900" x-text="activeDeck.length"></span>
+                </div>
+                <i class="fa-regular fa-clone text-brown-400 text-xl"></i>
+            </div>
+            <div class="bg-green-50 p-3 rounded-2xl border border-green-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-green-800 block">Recalled (Right)</span>
+                    <span class="text-lg font-bold text-green-900" x-text="correctCards.length"></span>
+                </div>
+                <i class="fa-regular fa-circle-check text-green-600 text-xl"></i>
+            </div>
+            <div class="bg-red-50 p-3 rounded-2xl border border-red-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-red-800 block">Needs Practice</span>
+                    <span class="text-lg font-bold text-red-900" x-text="wrongCards.length"></span>
+                </div>
+                <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+            </div>
+            <div class="bg-beige-50 p-3 rounded-2xl border border-beige-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-brown-600 block">Current Focus</span>
+                    <span class="text-xs font-bold truncate max-w-[110px]" :class="isWrongOnlyMode ? 'text-accent-burgundy' : 'text-brown-800'" x-text="isWrongOnlyMode ? 'Missed Cards' : getTopicLabel(selectedTopic)"></span>
+                </div>
+                <i class="fa-solid fa-bookmark text-brown-400 text-xl"></i>
+            </div>
+        </div>
+
+        <!-- Interactive 3D Card Display -->
+        <template x-if="activeDeck.length > 0 && !deckCompleted">
+            <div class="space-y-4">
+                <!-- Progress Indicators -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs text-brown-700 font-medium">
+                        <span>Card <span class="font-bold text-brown-900" x-text="currentIndex + 1"></span> of <span class="font-bold text-brown-900" x-text="activeDeck.length"></span></span>
+                        <span>Bank ID: #<span x-text="currentCard.id"></span> • Progress: <span class="font-bold text-brown-900" x-text="Math.round(((currentIndex) / activeDeck.length) * 100) + '%'"></span></span>
+                    </div>
+                    <div class="w-full bg-beige-200 rounded-full h-2.5 overflow-hidden border border-beige-300">
+                        <div class="bg-brown-700 h-2.5 rounded-full transition-all duration-300" :style="`width: ${((currentIndex) / activeDeck.length) * 100}%`"></div>
+                    </div>
+                </div>
+
+                <!-- 3D Flashcard Flip Container -->
+                <div class="perspective-1000 w-full min-h-[380px] sm:min-h-[410px] cursor-pointer select-none" @click="flipCard()">
+                    <div 
+                        class="relative w-full h-full min-h-[380px] sm:min-h-[410px] transition-transform duration-500 transform-style-3d rounded-3xl shadow-md border border-beige-300 bg-beige-50"
+                        :class="isFlipped ? 'rotate-y-180' : ''">
+                        
+                        <!-- CARD FRONT: The Question -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden p-6 sm:p-8 flex flex-col justify-between bg-beige-50 rounded-3xl">
+                            <!-- Card Header Info -->
+                            <div class="flex justify-between items-center border-b border-beige-200 pb-3">
+                                <span 
+                                    class="text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider text-white shadow-sm"
+                                    :class="getTopicColor(currentCard.topic)">
+                                    <i class="fa-solid fa-graduation-cap text-[10px] mr-1"></i>
+                                    <span x-text="currentCard.topicLabel"></span>
+                                </span>
+                                <div class="flex items-center space-x-2">
+                                    <template x-if="isCardInWrongList(currentCard.id)">
+                                        <span class="bg-red-100 text-red-800 border border-red-300 text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-exclamation text-red-600"></i> Marked for Revision
+                                        </span>
+                                    </template>
+                                    <span class="text-xs text-brown-600 font-semibold hidden sm:inline">Click or press Space to flip</span>
+                                </div>
+                            </div>
+
+                            <!-- Question Content -->
+                            <div class="py-6 flex flex-col justify-center items-center text-center">
+                                <span class="text-[11px] uppercase font-extrabold tracking-widest text-brown-600 mb-2">Question</span>
+                                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-brown-900 leading-snug max-w-3xl" x-text="currentCard.question"></h2>
+                                <p class="text-xs text-brown-600 mt-4 italic bg-beige-200/70 px-4 py-2 rounded-xl border border-beige-300">
+                                    <i class="fa-regular fa-lightbulb text-brown-700 mr-1.5"></i> Recall facts, dates and key historical factors from memory, then flip to check!
+                                </p>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="flex justify-between items-center text-xs text-brown-600 border-t border-beige-200 pt-3">
+                                <span>Question <span x-text="currentIndex + 1"></span> of <span x-text="activeDeck.length"></span></span>
+                                <span class="font-medium text-brown-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate text-brown-600"></i> Tap to Reveal Answer
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- CARD BACK: The Answer & Notes -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 p-6 sm:p-8 flex flex-col justify-between bg-white rounded-3xl border-2 border-brown-600/40">
+                            <!-- Card Header Info -->
+                            <div class="flex justify-between items-center border-b border-beige-200 pb-3">
+                                <span 
+                                    class="text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider text-white shadow-sm"
+                                    :class="getTopicColor(currentCard.topic)">
+                                    <i class="fa-solid fa-check-double text-[10px] mr-1"></i>
+                                    <span>Verified Answer</span>
+                                </span>
+                                <span class="text-xs text-brown-600 font-semibold">Tap anywhere to flip back</span>
+                            </div>
+
+                            <!-- Answer Body -->
+                            <div class="py-4 flex flex-col justify-center text-left space-y-3">
+                                <div>
+                                    <span class="text-[11px] uppercase font-bold tracking-wider text-accent-navy block mb-1">Key Revision Answer:</span>
+                                    <p class="text-base sm:text-lg md:text-xl font-bold text-brown-900 leading-snug" x-text="currentCard.answer"></p>
+                                </div>
+                                <div class="bg-beige-100 p-4 rounded-2xl border border-beige-200 text-xs sm:text-sm text-brown-800 leading-relaxed shadow-inner">
+                                    <span class="font-bold text-brown-900 block mb-1 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info text-brown-700"></i> Syllabus Context &amp; Details:
+                                    </span>
+                                    <p x-text="currentCard.details"></p>
+                                </div>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="flex justify-between items-center text-xs text-brown-600 border-t border-beige-200 pt-3">
+                                <span>Self-Check: Did you recall this accurately?</span>
+                                <span class="text-brown-700 font-semibold">Use controls below</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Bottom Testing Controls -->
+                <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 flex flex-col sm:flex-row justify-between items-center gap-3 shadow-sm">
+                    <!-- Navigation / Flip -->
+                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <button 
+                            @click="previousCard()" 
+                            :disabled="currentIndex === 0"
+                            :class="currentIndex === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-beige-300 active:scale-95'"
+                            class="bg-beige-100 text-brown-800 border border-beige-300 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span>Previous</span>
+                        </button>
+                        <button 
+                            @click="flipCard()" 
+                            class="bg-beige-100 text-brown-800 border border-beige-300 px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:bg-beige-300 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span x-text="isFlipped ? 'Show Question' : 'Show Answer'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Evaluation Buttons -->
+                    <div class="flex items-center space-x-2.5 w-full sm:w-auto justify-end">
+                        <button 
+                            @click="markCard(false)" 
+                            class="flex-1 sm:flex-initial bg-red-100 hover:bg-red-200 text-red-900 border border-red-300 px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-xmark text-red-600 text-base"></i>
+                            <span>Got it Wrong [←]</span>
+                        </button>
+                        <button 
+                            @click="markCard(true)" 
+                            class="flex-1 sm:flex-initial bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-check text-white text-base"></i>
+                            <span>Got it Right [→]</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Keyboard shortcuts reminder -->
+                <div class="text-center text-[11px] text-brown-600">
+                    Shortcuts: <kbd class="bg-beige-200 border border-beige-300 px-1.5 py-0.5 rounded text-[10px] font-mono">Space</kbd> Flip card • <kbd class="bg-beige-200 border border-beige-300 px-1.5 py-0.5 rounded text-[10px] font-mono">←</kbd> Got it Wrong • <kbd class="bg-beige-200 border border-beige-300 px-1.5 py-0.5 rounded text-[10px] font-mono">→</kbd> Got it Right
+                </div>
+            </div>
+        </template>
+
+        <!-- Session Complete View -->
+        <template x-if="deckCompleted">
+            <div class="max-w-2xl mx-auto w-full bg-beige-50 rounded-3xl border border-beige-300 shadow-md p-6 sm:p-8 text-center space-y-6">
+                <div class="w-16 h-16 mx-auto rounded-full bg-brown-800 text-beige-100 flex items-center justify-center text-2xl shadow-inner">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-brown-900">Session Complete!</h2>
+                    <p class="text-xs text-brown-700 mt-1">Here is your Health &amp; the People recall summary for this session:</p>
+                </div>
+
+                <!-- Performance Statistics Grid -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-beige-100 p-3.5 rounded-2xl border border-beige-200">
+                        <span class="text-xs text-brown-600 block">Tested</span>
+                        <span class="text-2xl font-bold text-brown-900" x-text="activeDeck.length"></span>
+                    </div>
+                    <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200">
+                        <span class="text-xs text-green-800 block">Recalled</span>
+                        <span class="text-2xl font-bold text-green-900" x-text="correctCards.length"></span>
+                    </div>
+                    <div class="bg-red-50 p-3.5 rounded-2xl border border-red-200">
+                        <span class="text-xs text-red-800 block">Need Revision</span>
+                        <span class="text-2xl font-bold text-red-900" x-text="wrongCards.length"></span>
+                    </div>
+                </div>
+
+                <!-- Mastery Status Banner -->
+                <div class="p-4 rounded-2xl border text-left space-y-2" :class="wrongCards.length > 0 ? 'bg-red-50/80 border-red-300' : 'bg-green-50 border-green-300'">
+                    <div class="flex items-center space-x-2">
+                        <i :class="wrongCards.length > 0 ? 'fa-solid fa-triangle-exclamation text-accent-burgundy text-lg' : 'fa-solid fa-circle-check text-green-700 text-lg'"></i>
+                        <h3 class="font-bold text-sm" :class="wrongCards.length > 0 ? 'text-accent-burgundy' : 'text-green-900'" x-text="wrongCards.length > 0 ? `You have ${wrongCards.length} question(s) marked for revision.` : 'Outstanding! You achieved 100% recall on all tested questions!'"></h3>
+                    </div>
+                    <p class="text-xs text-brown-800" x-text="wrongCards.length > 0 ? 'Re-testing questions that you got wrong activates spaced repetition and cements critical historical facts for your exam.' : 'You have mastered this selection! Choose another topic from the 200 question bank or reset to practice again.'"></p>
+                </div>
+
+                <!-- Primary Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <template x-if="wrongCards.length > 0">
+                        <button 
+                            @click="revisitWrongCards()" 
+                            class="bg-accent-burgundy hover:bg-red-900 text-white font-bold px-6 py-3 rounded-xl text-sm transition shadow flex items-center justify-center space-x-2 active:scale-95">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>Revisit The <span x-text="wrongCards.length"></span> Questions You Got Wrong</span>
+                        </button>
+                    </template>
+
+                    <button 
+                        @click="resetDeckProgress()" 
+                        class="bg-brown-800 hover:bg-brown-900 text-white font-semibold px-5 py-3 rounded-xl text-sm transition shadow flex items-center justify-center space-x-2 active:scale-95">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Restart Full Session</span>
+                    </button>
+                </div>
+
+                <!-- Scrollable Review List of Missed Cards -->
+                <template x-if="wrongCards.length > 0">
+                    <div class="border-t border-beige-300 pt-5 text-left space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check text-accent-burgundy"></i>
+                            <span>Quick Review of Missed Questions &amp; Answers:</span>
+                        </h4>
+                        <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                            <template x-for="item in wrongCards" :key="item.id">
+                                <div class="bg-white p-3.5 rounded-2xl border border-beige-300 text-xs space-y-1.5 shadow-sm">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <span class="font-bold text-brown-900 text-sm" x-text="item.question"></span>
+                                        <span class="text-[10px] text-accent-burgundy font-semibold uppercase bg-red-50 border border-red-200 px-1.5 py-0.5 rounded whitespace-nowrap" x-text="item.topicLabel"></span>
+                                    </div>
+                                    <p class="text-brown-800"><strong class="text-brown-900">Correct Answer:</strong> <span x-text="item.answer"></span></p>
+                                    <p class="text-[11px] text-brown-600 bg-beige-50 p-2.5 rounded-xl border border-beige-200" x-text="item.details"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template x-if="activeDeck.length === 0 && !deckCompleted">
+            <div class="max-w-md mx-auto bg-beige-50 p-8 rounded-3xl border border-beige-300 text-center space-y-4 shadow-sm my-auto">
+                <div class="w-12 h-12 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="font-bold text-brown-900 text-base">No Cards In This Filter!</h3>
+                <p class="text-xs text-brown-700">You currently have no missed questions recorded or the filter has no matches. Reset your filters to continue.</p>
+                <button @click="selectedTopic = 'all'; isWrongOnlyMode = false; applyFilters();" class="bg-brown-800 text-beige-50 text-xs font-semibold px-4 py-2.5 rounded-xl transition hover:bg-brown-900 shadow">
+                    Show All 200 Questions
+                </button>
+            </div>
+        </template>
+
+    </main>
+
+    <!-- Search Modal / Drawer for all 200 Questions -->
+    <div 
+        x-show="showSearchModal" 
+        class="fixed inset-0 z-50 bg-brown-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+        @keydown.escape.window="showSearchModal = false">
+        
+        <div 
+            class="bg-beige-50 rounded-3xl border border-beige-300 max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden"
+            @click.away="showSearchModal = false">
+            
+            <div class="p-4 bg-brown-900 text-beige-100 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-book-bookmark text-accent-gold"></i>
+                    <h3 class="font-bold text-sm text-beige-50">Browse All 200 Questions (Health &amp; the People Bank)</h3>
+                </div>
+                <button @click="showSearchModal = false" class="text-beige-300 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Search input bar -->
+            <div class="p-4 border-b border-beige-200 bg-beige-100 flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass text-brown-600"></i>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Search terms (e.g., Galen, Bazalgette, Chloroform, Penicillin, Broad Street, 1875)..." 
+                    class="w-full bg-beige-50 border border-beige-300 rounded-xl px-3 py-2 text-xs text-brown-900 focus:outline-none focus:ring-2 focus:ring-brown-600">
+            </div>
+
+            <!-- Search Results Scroll list -->
+            <div class="p-4 overflow-y-auto space-y-3 flex-grow text-xs">
+                <p class="text-brown-600 font-semibold" x-text="`Showing ${filteredBankList.length} of 200 questions`"></p>
+                <template x-for="item in filteredBankList" :key="item.id">
+                    <div class="bg-white p-3.5 rounded-2xl border border-beige-200 hover:border-brown-600 transition shadow-sm space-y-1">
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="font-bold text-brown-900 text-sm" x-text="`#${item.id}. ${item.question}`"></span>
+                            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded font-bold bg-beige-200 text-brown-800 whitespace-nowrap" x-text="item.topicLabel"></span>
+                        </div>
+                        <p class="text-brown-800"><strong class="text-brown-900">Answer:</strong> <span x-text="item.answer"></span></p>
+                        <p class="text-[11px] text-brown-600 bg-beige-50 p-2 rounded-lg" x-text="item.details"></p>
+                    </div>
+                </template>
+            </div>
+
+            <div class="p-3 bg-beige-200/80 border-t border-beige-300 text-right">
+                <button @click="showSearchModal = false" class="bg-brown-800 hover:bg-brown-900 text-beige-50 px-4 py-1.5 rounded-xl text-xs font-semibold transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-3 text-xs border-t border-brown-800">
+        <p>Health &amp; the People Revision Hub • 200 Questions 100% Derived from Course Document 🔬</p>
+    </footer>
+
+    <!-- Alpine.js Application Logic & Complete 200 Question Data Bank -->
+    <script>
+        function flashcardApp() {
+            return {
+                selectedTopic: 'all',
+                sessionLimit: 25,
+                isWrongOnlyMode: false,
+                jumpInput: null,
+                showSearchModal: false,
+                searchQuery: '',
+
+                activeDeck: [],
+                currentIndex: 0,
+                isFlipped: false,
+                deckCompleted: false,
+
+                correctCards: [],
+                wrongCards: [],
+
+                // FULL 200-QUESTION DATA BANK EXCLUSIVELY FROM HEALTH.DOCX
+                allCards: [
+                    // --- PART 1: MEDIEVAL BELIEFS, MONASTERIES & BLACK DEATH (Cards 1 to 25) ---
+                    { id: 1, topic: 'medieval', topicLabel: "Medieval Causes", question: "What did medieval churchmen claim was the divine cause of the Black Death?", answer: "Punishment from God (specifically to punish children who disobeyed their parents).", details: "Illness was interpreted as divine retribution for human sin and spiritual failing." },
+                    { id: 2, topic: 'medieval', topicLabel: "Medieval Causes", question: "What were the real biological causes of the Black Death (1348)?", answer: "Bacteria carried by fleas that fed on rat blood and passed the disease to humans.", details: "Yersinia pestis carried by Xenopsylla cheopis fleas, aggravated by severe malnutrition." },
+                    { id: 3, topic: 'medieval', topicLabel: "Medieval Causes", question: "Which minority group was falsely scapegoated for causing the Black Death?", answer: "Jewish communities, who were falsely accused of poisoning wells.", details: "Antisemitic scapegoating was widespread across Europe despite papal declarations." },
+                    { id: 4, topic: 'medieval', topicLabel: "Medieval Beliefs", question: "What was the Theory of the Four Humours?", answer: "The belief that health required a balance of blood, phlegm, yellow bile, and black bile.", details: "Originated by Hippocrates and expanded into orthodox medical teaching by Galen." },
+                    { id: 5, topic: 'medieval', topicLabel: "Medieval Beliefs", question: "What astrological chart did medieval doctors consult before bleeding or operating?", answer: "The Zodiac Man chart.", details: "Showed favorable and dangerous calendar days to treat each specific bodily organ." },
+                    { id: 6, topic: 'medieval', topicLabel: "Medieval Treatments", question: "Why was bloodletting (phlebotomy) the most common medieval treatment?", answer: "It directly restored balance among the Four Humours (removing excess blood).", details: "Performed using leeches, cupping glasses, or opening veins with a fleam." },
+                    { id: 7, topic: 'medieval', topicLabel: "Medieval Treatments", question: "What were 'herbals' in medieval medicine?", answer: "Written books documenting plant-based remedies, often recited alongside prayers.", details: "Wise women and monks memorised these remedies to treat common ailments." },
+                    { id: 8, topic: 'medieval', topicLabel: "Medieval Prevention", question: "What royal order did King Edward III issue during the Black Death (1348–1349)?", answer: "He ordered the Lord Mayor of London to clear accumulated filth and animal dung from the streets.", details: "Prompted by belief that miasma (poisonous rotting air) caused and spread the pestilence." },
+                    { id: 9, topic: 'medieval', topicLabel: "Medieval Prevention", question: "How long were ships isolated in quarantine during medieval plague outbreaks?", answer: "40 days (the word quarantine derives from the Italian 'quaranta').", details: "Enforced to ensure no infected sailors or contaminated cargo landed in port." },
+                    { id: 10, topic: 'medieval', topicLabel: "Medieval Prevention", question: "Who were the Flagellants and what was their response to the Black Death?", answer: "Religious zealots who publicly whipped themselves until bleeding to beg for God's forgiveness.", details: "They marched through towns seeking divine mercy to avert the plague." },
+                    { id: 11, topic: 'medieval', topicLabel: "Black Death Impact", question: "What was the political and social impact of the Black Death on the feudal system?", answer: "It weakened feudalism; labour shortages allowed surviving peasants to demand higher wages.", details: "Workers demanded cash wages and freedom of movement, leading to the 1381 Peasants' Revolt." },
+                    { id: 12, topic: 'medieval', topicLabel: "Black Death Impact", question: "What economic shift did landowners make following Black Death labour shortages?", answer: "They switched from arable farming to sheep farming.", details: "Sheep farming required far fewer agricultural labourers and wool fetched high profits." },
+                    { id: 13, topic: 'medieval', topicLabel: "Black Death Impact", question: "What was the religious impact of the Black Death on the Catholic Church?", answer: "Many experienced priests fled or died, damaging the Church's prestige and authority.", details: "The Church was forced to ordain inexperienced priests who could not explain the pestilence." },
+                    { id: 14, topic: 'medieval', topicLabel: "Medieval Spread", question: "Give three reasons why the Black Death spread so quickly through England.", answer: "Dirty streets where rats bred, unhygienic conditions, and complete ignorance of germs.", details: "Quickly buried shallow bodies were also frequently dug up by scavenging animals." },
+                    { id: 15, topic: 'medieval', topicLabel: "Medieval Public Health", question: "Where did ordinary medieval townsfolk get their everyday drinking water?", answer: "Collected directly from local rivers, streams, or contaminated storage pits.", details: "Waste and offal routinely drained into the very streams used for water supplies." },
+                    { id: 16, topic: 'medieval', topicLabel: "Medieval Public Health", question: "Why were cesspits a severe danger to public health in medieval towns?", answer: "They were dug near drinking wells, allowing liquid sewage to seep through the soil.", details: "Porous unlined cesspits infected water tables and triggered gastrointestinal epidemics." },
+                    { id: 17, topic: 'medieval', topicLabel: "Medieval Public Health", question: "What civic role did medieval 'town rakers' perform?", answer: "They were paid by town councils to clear dung and trash from main streets.", details: "Hired to sweep away refuse, offal, and animal waste from market thoroughfares." },
+                    { id: 18, topic: 'medieval', topicLabel: "Medieval Public Health", question: "What sanitation engineering achievement was constructed in medieval Exeter?", answer: "Lead aqueducts and underground conduits were built to bring clean spring water.", details: "Piped fresh water into civic fountains, bypassing polluted local rivers." },
+                    { id: 19, topic: 'medieval', topicLabel: "Medieval Public Health", question: "Why did Newcastle pave its principal streets with stone in the Middle Ages?", answer: "To make dirt, mud, and horse manure much easier to clean away.", details: "Paving prevented deep quagmires of animal excrement from building up." },
+                    { id: 20, topic: 'medieval', topicLabel: "Medieval Public Health", question: "Why were medieval monasteries far cleaner and healthier than towns?", answer: "They were wealthy, isolated near clean rivers, and had running water with lead pipes.", details: "Monasteries possessed elaborate water filtration and latrines flushing into downstream currents." },
+                    { id: 21, topic: 'medieval', topicLabel: "Medieval Public Health", question: "Why did medieval monks view personal cleanliness and washing as essential?", answer: "Cleanliness demonstrated moral purity and devotion to God ('cleanliness is next to godliness').", details: "Monks observed strict rules of regular hand-washing and periodic ritual bathing." },
+                    { id: 22, topic: 'medieval', topicLabel: "Medieval Hospitals", question: "What was the true nature and function of most medieval hospitals in England?", answer: "They were care homes run by monks and nuns focused on hospitality, warmth, and prayer.", details: "Treatments focused on rest, nourishment, and spiritual care rather than curing illnesses." },
+                    { id: 23, topic: 'medieval', topicLabel: "Medieval Hospitals", question: "How many hospitals existed in England by 1400, and what was their average size?", answer: "Nearly 500 hospitals, housing an average of only around 10 patients each.", details: "They accommodated elderly, destitute, or infirm travelers under monastic roof." },
+                    { id: 24, topic: 'medieval', topicLabel: "Medieval Hospitals", question: "What specialized psychiatric hospital was founded in London in 1247?", answer: "St Mary of Bethlehem (Bedlam).", details: "Originally founded by a bishop, it later specialized exclusively in caring for mental illness." },
+                    { id: 25, topic: 'medieval', topicLabel: "Medieval Thinkers", question: "Why was English friar Roger Bacon imprisoned by Church authorities in the 13th century?", answer: "For daring to advocate that doctors should conduct their own scientific research.", details: "The Church viewed challenging ancient authorities like Galen as heresy." },
+
+                    // --- PART 2: RENAISSANCE PIONEERS & THE GREAT PLAGUE (Cards 26 to 55) ---
+                    { id: 26, topic: 'renaissance', topicLabel: "Renaissance", question: "What does the word 'Renaissance' mean and where did the cultural movement begin?", answer: "It means 'rebirth of learning' and began in Florence, Italy.", details: "Promoted human inquiry, questioning authority, and studying original anatomical texts." },
+                    { id: 27, topic: 'renaissance', topicLabel: "Renaissance", question: "How did the invention of the printing press (c.1440) transform medical learning?", answer: "It allowed medical books and diagrams to be mass-produced accurately without Church censorship.", details: "Prevented copying errors, reduced book costs, and accelerated European scientific exchange." },
+                    { id: 28, topic: 'renaissance', topicLabel: "Renaissance", question: "How did gunpowder transform warfare and surgical learning in the Renaissance?", answer: "It produced novel, horrific gunshot wounds and shattered bones that doctors had never seen.", details: "Forced battlefield surgeons like Paré to abandon ancient Galenic methods." },
+                    { id: 29, topic: 'renaissance', topicLabel: "The Great Plague", question: "How many people died in London during the 1665 Great Plague?", answer: "100,000 people (approximately one quarter (1/4) of the city's entire population).", details: "The worst outbreak of bubonic plague in England since the 1348 Black Death." },
+                    { id: 30, topic: 'renaissance', topicLabel: "The Great Plague", question: "What actions did King Charles II and his royal court take during the 1665 Great Plague?", answer: "They fled London and moved to Oxford in the countryside to avoid contagion.", details: "Wealthy citizens evacuated, leaving the destitute trapped in quarantined parishes." },
+                    { id: 31, topic: 'renaissance', topicLabel: "The Great Plague", question: "How did public health quarantine become more organized in 1665 compared to 1348?", answer: "Infected houses were locked with red crosses and guarded night and day by armed watchmen.", details: "Houses were marked with 'Lord have mercy upon us' and isolated for 28 to 40 days." },
+                    { id: 32, topic: 'renaissance', topicLabel: "The Great Plague", question: "What civic prevention orders were enacted in London during the 1665 Great Plague?", answer: "Public gatherings were banned, trade was restricted, fires were lit, and mass graves used.", details: "Large bonfires were kept burning in streets to consume poisonous miasmatic air." },
+                    { id: 33, topic: 'renaissance', topicLabel: "Renaissance Beliefs", question: "What was the 'Royal Touch' widely practiced by King Charles II?", answer: "The belief that the touch of the ruling monarch could cure scrofula (the 'King’s Evil').", details: "Reflected the lingering supernatural belief in the divine right of kings to heal." },
+                    { id: 34, topic: 'renaissance', topicLabel: "Renaissance Hospitals", question: "How many new hospitals were founded across Britain between 1700 and 1720?", answer: "50 new hospitals were founded, including 5 brand-new major hospitals in London.", details: "Institutions like Westminster (1719), Guy's (1724), and St George's (1733)." },
+                    { id: 35, topic: 'renaissance', topicLabel: "Renaissance Hospitals", question: "By 1800, how many patients were treated annually in London's hospitals?", answer: "Over 20,000 patients every year.", details: "Charitable hospitals transformed into busy teaching and treatment centres." },
+                    { id: 36, topic: 'renaissance', topicLabel: "Renaissance Hospitals", question: "What major institutional innovation was established at Edinburgh Infirmary in 1776?", answer: "A free hospital pharmacy / dispensary providing medicines for outpatients.", details: "Allowed the impoverished to receive pharmaceutical remedies without admission fees." },
+                    { id: 37, topic: 'renaissance', topicLabel: "Renaissance Causes", question: "What was Paracelsus's contribution to understanding the causes of disease (alchemy)?", answer: "He argued diseases were caused by chemical and mineral imbalances, not bodily humours.", details: "Pioneered iatrochemistry (medical chemistry), prescribing antimony and mercury." },
+                    { id: 38, topic: 'renaissance', topicLabel: "Renaissance Causes", question: "What dietary deficiency disease was first linked to diet on long sea voyages?", answer: "Scurvy (caused by a lack of vitamin C).", details: "Sailors suffered bleeding gums, tooth loss, reopening wounds, and extreme lethargy." },
+                    { id: 39, topic: 'renaissance', topicLabel: "Key Figures", question: "What did Surgeon General John Woodall discover in his 1617 book 'The Surgions Mate'?", answer: "That citrus juice (lemons and limes) successfully cured and prevented scurvy.", details: "One of the earliest clinical observations connecting citrus fruits to scurvy prevention." },
+                    { id: 40, topic: 'renaissance', topicLabel: "Key Figures", question: "What landmark anatomy book was published by Andreas Vesalius in 1543?", answer: "'De Humani Corporis Fabrica' (On the Fabric of the Human Body).", details: "Lavishly illustrated with woodcuts based on meticulous human dissections." },
+                    { id: 41, topic: 'renaissance', topicLabel: "Key Figures", question: "How many errors of Galen did Vesalius correct in 'The Fabric of the Human Body'?", answer: "Over 200 (and over 300) errors.", details: "Proved Galen had dissected apes and pigs, e.g. proving human breastbones have 3 parts, not 7." },
+                    { id: 42, topic: 'renaissance', topicLabel: "Key Figures", question: "Who translated Vesalius's anatomical work into English in 1545?", answer: "Thomas Geminus in 'Compendiosa Totius Anatomiae Delineatio'.", details: "Published three editions between 1545 and 1559, popularizing dissection in England." },
+                    { id: 43, topic: 'renaissance', topicLabel: "Key Figures", question: "What imperial role gave Vesalius royal protection to publish his radical findings?", answer: "He served as court physician to Holy Roman Emperor Charles V.", details: "Royal patronage protected him from ecclesiastical prosecution for challenging Galen." },
+                    { id: 44, topic: 'renaissance', topicLabel: "Key Figures", question: "What battlefield accident occurred to Ambroise Paré in 1537?", answer: "He ran out of boiling oil to cauterise gunshot wounds during the siege of Turin.", details: "He mixed an emergency ointment of egg yolks, oil of roses, and turpentine." },
+                    { id: 45, topic: 'renaissance', topicLabel: "Key Figures", question: "What did Paré discover when he examined his ointment-treated patients the next morning?", answer: "Their wounds were cool, painless, and uninfected, while boiling-oil patients were feverish.", details: "Proved scientifically that soothing antiseptics healed better than traumatic boiling oil." },
+                    { id: 46, topic: 'renaissance', topicLabel: "Key Figures", question: "What surgical innovation did Paré introduce in amputations to replace hot cautery irons?", answer: "Ligatures (tying off blood vessels with silk threads).", details: "Dramatically reduced the agony of cauterisation, though silk threads carried infection risks." },
+                    { id: 47, topic: 'renaissance', topicLabel: "Key Figures", question: "What mechanical devices did Ambroise Paré design for wounded soldiers?", answer: "Prosthetic artificial limbs with moving joints and gears.", details: "Helped establish surgery as a skilled, respected scientific profession." },
+                    { id: 48, topic: 'renaissance', topicLabel: "Key Figures", question: "What did William Harvey publish in 1628 ('De Motu Cordis')?", answer: "That blood is pumped continuously around the body in a circle by the heart.", details: "Disproved Galen's ancient belief that blood was continually manufactured by the liver." },
+                    { id: 49, topic: 'renaissance', topicLabel: "Key Figures", question: "What did Harvey prove regarding the valves inside veins?", answer: "Veins contain one-way valves ensuring blood flows only toward the heart.", details: "Demonstrated through mechanical ligature experiments on human arms." },
+                    { id: 50, topic: 'renaissance', topicLabel: "Key Figures", question: "What technological limitation prevented Harvey from observing tiny capillaries?", answer: "Microscopes had not yet been invented or were not powerful enough.", details: "Marcello Malpighi finally observed capillaries under a microscope in 1661 after Harvey's death." },
+                    { id: 51, topic: 'renaissance', topicLabel: "Key Figures", question: "Why was Thomas Sydenham known as the 'English Hippocrates'?", answer: "He emphasized bedside clinical observation rather than relying on ancient textbooks.", details: "Taught that diseases were distinct species that should be classified by symptoms." },
+                    { id: 52, topic: 'renaissance', topicLabel: "Key Figures", question: "What liquid form of opium did Thomas Sydenham popularize for pain relief?", answer: "Laudanum.", details: "Dissolved opium in alcohol, prescribing it for pain, insomnia, and acute diarrhea." },
+                    { id: 53, topic: 'renaissance', topicLabel: "Key Figures", question: "What controversial book did Nicholas Culpeper publish in 1652?", answer: "'The English Physician' (The Complete Herbal).", details: "Translated Greek and Latin pharmacy recipes into plain English for self-treatment." },
+                    { id: 54, topic: 'renaissance', topicLabel: "Key Figures", question: "Why did the medical establishment criticize Nicholas Culpeper?", answer: "He rejected expensive foreign drugs, promoted self-dosing, and incorporated astrology.", details: "The College of Physicians felt threatened by cheap, accessible domestic herbal treatments." },
+                    { id: 55, topic: 'renaissance', topicLabel: "Key Figures", question: "What anatomical treasure did Scottish surgeon John Hunter amass in London?", answer: "A museum of 14,000 anatomical specimens from over 500 species (The Hunterian Museum).", details: "Trained countless famous surgeons, including Edward Jenner, in rigorous scientific methods." },
+
+                    // --- PART 3: INDUSTRIAL REVOLUTION, GERM THEORY & PUBLIC HEALTH (Cards 56 to 90) ---
+                    { id: 56, topic: 'industrial', topicLabel: "Industrial Surgery", question: "What dangerous medical mistake did John Hunter make regarding venereal diseases?", answer: "He injected himself with pus believing gonorrhea and syphilis were caused by the same microbe.", details: "The donor had both infections simultaneously; Hunter contaminated his needle and infected himself." },
+                    { id: 57, topic: 'industrial', topicLabel: "Key Figures", question: "In what year did Edward Jenner perform his famous smallpox experiment on James Phipps?", answer: "1796.", details: "Inoculated Phipps with pus from milkmaid Sarah Nelmes' cowpox sores, proving immunity." },
+                    { id: 58, topic: 'industrial', topicLabel: "Key Figures", question: "What proportion of patients who caught smallpox in the 18th century died from it?", answer: "Around 30% of those infected died.", details: "Smallpox was the single biggest killer of young children in Britain prior to vaccination." },
+                    { id: 59, topic: 'industrial', topicLabel: "Key Figures", question: "Why did early religious opponents object to Jenner's smallpox vaccine?", answer: "They argued using animal material on humans was unnatural and interfered with God's will.", details: "Anti-vaccination satirists drew cartoons of patients sprouting cow horns." },
+                    { id: 60, topic: 'industrial', topicLabel: "Key Figures", question: "What financial grant did the British Parliament award Edward Jenner in 1802?", answer: "A grant of £10,000 (followed by an additional £20,000 in 1807).", details: "State funding recognized vaccination as safer and cheaper than dangerous inoculation." },
+                    { id: 61, topic: 'industrial', topicLabel: "Key Figures", question: "In what year was the smallpox vaccination made compulsory by the British Government?", answer: "In 1853.", details: "Marked a decisive break with laissez-faire by mandating childhood immunisation." },
+                    { id: 62, topic: 'industrial', topicLabel: "Industrial Conditions", question: "Why did rapid industrialisation make urban living conditions worse for the poor?", answer: "Back-to-back slums, shared outdoor privies, sewage-polluted pumps, and zero rubbish collection.", details: "Population booms outstripped sanitation, causing cholera, typhus, and tuberculosis." },
+                    { id: 63, topic: 'industrial', topicLabel: "Industrial Public Health", question: "What landmark report was published by Edwin Chadwick in 1842?", answer: "'Report on the Sanitary Conditions of the Labouring Population'.", details: "Statistically proved that squalor, filth, and contaminated water directly bred disease." },
+                    { id: 64, topic: 'industrial', topicLabel: "Industrial Public Health", question: "What economic argument did Chadwick use to convince the wealthy to support sanitation?", answer: "A healthier workforce was more productive and would cost taxpayers far less in poor relief.", details: "Framed clean water and sewers as financially profitable investments for the ruling classes." },
+                    { id: 65, topic: 'industrial', topicLabel: "Industrial Public Health", question: "Why did Parliament refuse to act on Chadwick's 1842 report initially?", answer: "Belief in 'laissez-faire' ('leave alone') and opposition from landlord MPs owning slum rentals.", details: "Taxpayers resented rate increases and local councils fiercely resisted state meddling." },
+                    { id: 66, topic: 'industrial', topicLabel: "Industrial Public Health", question: "Why was the 1848 Public Health Act largely ineffective across Britain?", answer: "It was purely optional, so by 1853 only 103 towns had set up local health boards.", details: "Without legal compulsion, councils chose to save money rather than build clean sewers." },
+                    { id: 67, topic: 'industrial', topicLabel: "Industrial Public Health", question: "What event in the hot summer of 1858 forced politicians in Parliament to take action?", answer: "The 'Great Stink' of London.", details: "Baking heat caused sewage in the Thames to reek outside Parliament, forcing MPs to act." },
+                    { id: 68, topic: 'industrial', topicLabel: "Industrial Public Health", question: "Who was appointed to design London's vast underground sewer network in 1858?", answer: "Sir Joseph Bazalgette.", details: "Parliament granted him £3 million (equivalent to £1 billion today) to rebuild municipal drainage." },
+                    { id: 69, topic: 'industrial', topicLabel: "Industrial Public Health", question: "How large was Bazalgette's completed London sewer network by 1866?", answer: "83 miles of main brick sewers handling 420 million gallons of wastewater daily.", details: "Diverted London's untreated sewage eastward past the city and eliminated recurring cholera." },
+                    { id: 70, topic: 'industrial', topicLabel: "Industrial Public Health", question: "What political reform in 1867 forced politicians to cater to working-class health?", answer: "The 1867 Reform Act (gave working-class urban men the right to vote).", details: "Parties had to compete for workers' votes by promising real improvements in public health." },
+                    { id: 71, topic: 'industrial', topicLabel: "Industrial Public Health", question: "Why was the 1875 Public Health Act far more successful than the 1848 Act?", answer: "It was strictly compulsory: every council had to appoint medical officers and build covered sewers.", details: "Mandated clean water supply, street lighting, and compulsory rubbish collections." },
+                    { id: 72, topic: 'industrial', topicLabel: "Key Figures", question: "How did Dr John Snow prove cholera was waterborne in Soho, London in 1854?", answer: "He mapped cholera deaths using a 'ghost map' and traced them to the Broad Street water pump.", details: "Demonstrated deaths ceased once the pump handle was removed, disproving miasma." },
+                    { id: 73, topic: 'industrial', topicLabel: "Key Figures", question: "Why were John Snow's 1854 cholera findings resisted initially by the Board of Health?", answer: "Miasma theory was entrenched, and Snow lacked biological proof of germs (pre-Pasteur).", details: "Critics could not fathom how microscopic invisible entities in clear water could kill." },
+                    { id: 74, topic: 'industrial', topicLabel: "Industrial Causes", question: "What was the theory of Spontaneous Generation prior to Pasteur's Germ Theory?", answer: "The belief that rotting matter created microbes out of non-living material.", details: "Scientists mistakenly viewed bacteria as the harmless symptom of decay rather than the cause." },
+                    { id: 75, topic: 'industrial', topicLabel: "Industrial Causes", question: "What experiment did Louis Pasteur use in 1861 to disprove spontaneous generation?", answer: "He boiled liquid in swan-neck flasks; broth stayed sterile until the curved neck was broken.", details: "Proved conclusively that living microbes in the air entered the broth and caused decay." },
+                    { id: 76, topic: 'industrial', topicLabel: "Industrial Causes", question: "Who was Dr Charlton Bastian and why did he oppose Germ Theory in the 1860s?", answer: "A respected British physician who published articles defending spontaneous generation.", details: "Argued microbes were far too small to harm large complex human beings." },
+                    { id: 77, topic: 'industrial', topicLabel: "Industrial Causes", question: "How did Lionel Beale help prove Germ Theory in Britain during the 1866 Cattle Plague?", answer: "He isolated and proved under a microscope that a single specific microbe spread between cows.", details: "Convinced skeptical British vets and physicians that distinct germs caused distinct diseases." },
+                    { id: 78, topic: 'industrial', topicLabel: "Industrial Causes", question: "Which famous British physicist delivered influential public lectures defending Germ Theory?", answer: "John Tyndall.", details: "Repeated Pasteur's experiments and publicly demolished Charlton Bastian's papers." },
+                    { id: 79, topic: 'industrial', topicLabel: "Key Figures", question: "What distinct technique did Robert Koch invent to study bacteria under microscopes?", answer: "He used industrial chemical dyes to stain microbes, grew them on agar, and photographed them.", details: "Koch's microphotography allowed scientists worldwide to identify identical pathogens." },
+                    { id: 80, topic: 'industrial', topicLabel: "Key Figures", question: "Name three lethal disease bacteria discovered and isolated by Robert Koch.", answer: "Anthrax (1876), Tuberculosis (1882), and Cholera (1883).", details: "Also established 'Koch's Postulates' to prove a specific microbe causes a specific disease." },
+                    { id: 81, topic: 'industrial', topicLabel: "Industrial Anaesthetics", question: "Who discovered the painkilling properties of Nitrous Oxide ('laughing gas') in 1800?", answer: "Humphry Davy.", details: "Initially used as theatrical party entertainment until Horace Wells used it in dentistry in 1844." },
+                    { id: 82, topic: 'industrial', topicLabel: "Industrial Anaesthetics", question: "Who first demonstrated Ether as an effective surgical anaesthetic in 1842/1846?", answer: "William Clark (1842) and William Morton (1846).", details: "Pioneered painless tooth extractions, but ether was highly flammable and irritated lungs." },
+                    { id: 83, topic: 'industrial', topicLabel: "Industrial Anaesthetics", question: "How did James Simpson discover the anaesthetic properties of Chloroform in 1847?", answer: "By chance, when he and his colleagues inhaled chemical vapours around his dining table.", details: "They knocked themselves unconscious, proving chloroform was far more potent than ether." },
+                    { id: 84, topic: 'industrial', topicLabel: "Industrial Anaesthetics", question: "Why did military surgeons initially oppose using anaesthetics on wounded soldiers?", answer: "Army doctors believed it was a soldier's duty to endure pain without complaining.", details: "Surgeon-General Hall argued battlefield shock and pain spurred vital bodily survival." },
+                    { id: 85, topic: 'industrial', topicLabel: "Industrial Anaesthetics", question: "What royal event in 1853 silenced Victorian moral and religious opposition to chloroform?", answer: "Queen Victoria accepted chloroform during the birth of Prince Leopold.", details: "Administered by Dr John Snow, the Queen declared it 'blessed and delightful'." },
+                    { id: 86, topic: 'industrial', topicLabel: "Industrial Antiseptics", question: "What chemical did Joseph Lister introduce in 1867 to sterilise surgical wounds?", answer: "Carbolic acid (phenol).", details: "Inspired by Pasteur's germ theory and Carlisle sewage treatment using carbolic to kill stench." },
+                    { id: 87, topic: 'industrial', topicLabel: "Industrial Antiseptics", question: "Whose crushed leg did Joseph Lister famously save from amputation in 1865?", answer: "11-year-old Jamie Greenlees.", details: "Dressed the compound fracture in carbolic lint; after 6 weeks the bone set without infection." },
+                    { id: 88, topic: 'industrial', topicLabel: "Industrial Antiseptics", question: "By how much did surgical mortality fall between 1864 and 1870 due to Lister's carbolic acid?", answer: "Fell dramatically from roughly 50% in 1864 to around 15% by 1870.", details: "Overcame hospital gangrene and sepsis in Glasgow and Edinburgh Royal Infirmaries." },
+                    { id: 89, topic: 'industrial', topicLabel: "Industrial Surgery", question: "What is the difference between antiseptic surgery and aseptic surgery?", answer: "Antiseptics kill microbes during surgery; asepsis excludes all germs before surgery begins.", details: "Asepsis introduced steam-autoclaved instruments, boiled surgical gowns, and rubber gloves." },
+                    { id: 90, topic: 'industrial', topicLabel: "Key Figures", question: "What statistical innovation did Florence Nightingale introduce from the Crimean War (1853)?", answer: "Polar area diagrams (pie charts) proving more soldiers died of hospital infection than wounds.", details: "Founded Nightingale Training School at St Thomas' Hospital, transforming sanitary nursing." },
+
+                    // --- PART 4: MODERN ERA, PENICILLIN, WELFARE & THE NHS (Cards 91 to 125) ---
+                    { id: 91, topic: 'modern', topicLabel: "Modern Public Health", question: "What shocking finding did Charles Booth's poverty survey reveal about London?", answer: "30% to 35% of Londoners were living in crushing poverty, unable to afford daily food.", details: "Published in 'Life and Labour of the People in London' (1889–1903) using color-coded maps." },
+                    { id: 92, topic: 'modern', topicLabel: "Modern Public Health", question: "What proportion of York's population did Seebohm Rowntree discover in poverty in 1899?", answer: "28% of the population lived below the minimum subsistence wage.", details: "Published in 'Poverty: A Study of Town Life', proving poverty was national, not just London." },
+                    { id: 93, topic: 'modern', topicLabel: "Modern Public Health", question: "What recruitment shock during the 1899 Boer War alarmed the British Government?", answer: "Up to 40% of young volunteer recruits were physically unfit to serve as soldiers.", details: "Malnutrition, rickets, and poor eyesight sparked fears of national military decline." },
+                    { id: 94, topic: 'modern', topicLabel: "Liberal Reforms", question: "What did the 1906 Liberal Reform regarding school children introduce?", answer: "Free School Meals for impoverished children.", details: "Allowed local authorities to provide free school dinners to guarantee one hot meal daily." },
+                    { id: 95, topic: 'modern', topicLabel: "Liberal Reforms", question: "What compulsory service was introduced for all schools in 1907?", answer: "The School Medical Service.", details: "Mandatory school inspections to diagnose rickets, lice, malnutrition, and tuberculosis." },
+                    { id: 96, topic: 'modern', topicLabel: "Liberal Reforms", question: "What historic welfare act was passed by the Liberal Government in 1908?", answer: "The Old Age Pensions Act (5 shillings a week for poor people over 70).", details: "Kept impoverished elderly citizens out of the Victorian workhouse." },
+                    { id: 97, topic: 'modern', topicLabel: "Liberal Reforms", question: "What did the 1909 Labour Exchanges introduce across Britain?", answer: "The first state-run job centres to help the unemployed find work.", details: "Set up by Winston Churchill to reduce periods of wage-less destitution." },
+                    { id: 98, topic: 'modern', topicLabel: "Liberal Reforms", question: "What was provided under the 1911 National Insurance Act?", answer: "Statutory sick pay, free doctor consultations, and temporary unemployment benefits.", details: "Funded by tripartite contributions from the worker, employer, and the state." },
+                    { id: 99, topic: 'modern', topicLabel: "Liberal Reforms", question: "Why was the Liberal Government under pressure to introduce these reforms?", answer: "The newly formed Labour Party was growing and competing for working-class votes.", details: "Liberals enacted social reforms to prove democratic capitalism could protect workers." },
+                    { id: 100, topic: 'modern', topicLabel: "Modern Magic Bullets", question: "What was the first synthetic 'magic bullet' cure developed by Paul Ehrlich in 1909?", answer: "Salvarsan 606 (an arsenic compound targeting the syphilis microbe).", details: "Tested by Sahachiro Hata on the 606th attempt; destroyed bacteria without killing the host." },
+                    { id: 101, topic: 'modern', topicLabel: "Penicillin", question: "How did Alexander Fleming discover penicillin by chance in 1928?", answer: "Penicillium notatum mould contaminated an unwashed petri dish and killed staph bacteria.", details: "Fleming published his findings in 1929 but could not purify the mould into a stable drug." },
+                    { id: 102, topic: 'modern', topicLabel: "Penicillin", question: "Which Oxford scientists successfully extracted and purified penicillin in 1940?", answer: "Howard Florey and Ernst Chain.", details: "Tested it on Albert Alexander in 1941; he recovered until the tiny supply ran out." },
+                    { id: 103, topic: 'modern', topicLabel: "Penicillin", question: "How was mass production of penicillin funded during the Second World War?", answer: "The US Government granted multi-million dollar subsidies to chemical factories in 1941.", details: "War urgency prompted industrial deep-tank fermentation in beer vats across America." },
+                    { id: 104, topic: 'modern', topicLabel: "Penicillin", question: "How many Allied soldiers were treated with penicillin by D-Day / 1945?", answer: "Over 250,000 soldiers.", details: "Wounded soldier death rates plummeted from 15% in WW1 to under 1% in WW2." },
+                    { id: 105, topic: 'modern', topicLabel: "Modern Welfare", question: "What were the 'Five Giants' identified by William Beveridge in his 1942 Report?", answer: "Want, Disease, Ignorance, Squalor, and Idleness.", details: "Beveridge argued the post-war state must provide security from 'cradle to grave'." },
+                    { id: 106, topic: 'modern', topicLabel: "Modern Welfare", question: "How many copies of the Beveridge Report were sold in its first month of publication?", answer: "Over 100,000 copies (and over 600,000 copies in total).", details: "Became a surprise national bestseller that defined post-war British expectations." },
+                    { id: 107, topic: 'modern', topicLabel: "The NHS", question: "On what exact date was the National Health Service (NHS) launched?", answer: "5th July 1948.", details: "Created under the 1946 National Insurance Act by Clement Attlee's Labour Government." },
+                    { id: 108, topic: 'modern', topicLabel: "The NHS", question: "Who was the Minister of Health who created the NHS against BMA opposition?", answer: "Aneurin (Nye) Bevan.", details: "He famously 'stuffed their mouths with gold' by allowing senior doctors to keep private patients." },
+                    { id: 109, topic: 'modern', topicLabel: "The NHS", question: "What was the founding principle of the NHS in 1948?", answer: "Healthcare free at the point of delivery, based on clinical need, not ability to pay.", details: "Overnight, working-class families gained free access to doctors, dentists, spectacles, and surgery." },
+                    { id: 110, topic: 'modern', topicLabel: "The NHS", question: "How did the NHS eradicate killer childhood epidemics after 1948?", answer: "By funding free mass vaccinations, eradicating TB (1948) and Polio (1955).", details: "National vaccination campaigns wiped out whooping cough, diphtheria, and measles." },
+                    { id: 111, topic: 'modern', topicLabel: "Modern Housing", question: "What was Prime Minister David Lloyd George's post-WW1 housing pledge?", answer: "He promised to build 'homes fit for heroes'.", details: "Led to the 1919 Addison Act, providing government subsidies to build council houses." },
+                    { id: 112, topic: 'modern', topicLabel: "Modern Housing", question: "How many council homes were being built annually in Britain by 1948?", answer: "280,000 council homes each year.", details: "Slum clearance was combined with twelve designated New Towns (e.g. Stevenage, Welwyn)." },
+                    { id: 113, topic: 'modern', topicLabel: "Modern Discoveries", question: "Who discovered the double helix structure of DNA in 1953?", answer: "James Watson, Francis Crick, and Rosalind Franklin.", details: "Unlocked molecular biology, gene therapy, and understanding of inherited hereditary disorders." },
+                    { id: 114, topic: 'modern', topicLabel: "Modern Treatments", question: "What immunosuppressive drug developed in 1970 revolutionized organ transplants?", answer: "Cyclosporine.", details: "Prevented the patient's immune system from rejecting foreign transplanted kidneys and hearts." },
+                    { id: 115, topic: 'modern', topicLabel: "Modern Treatments", question: "What medical milestone was achieved in Britain in 1978 by Steptoe and Edwards?", answer: "The birth of Louise Brown, the world's first IVF ('test-tube') baby.", details: "Pioneered in vitro fertilisation for couples struggling with human reproductive infertility." },
+                    { id: 116, topic: 'modern', topicLabel: "Modern Causes", question: "Name three technological diagnostic machines developed in the 20th century.", answer: "X-rays, CT scanners, and MRI scanners.", details: "Allowed non-invasive internal visualization of tumours, blood clots, and brain traumas." },
+                    { id: 117, topic: 'modern', topicLabel: "Modern Lifestyle", question: "What modern lifestyle and environmental causes of cancer were proved in the 20th century?", answer: "Cigarette smoking, asbestos exposure, radiation, and obesity/high-sugar diets.", details: "Epidemiological studies (like Doll and Hill in 1950) proved smoking caused lung cancer." },
+                    { id: 118, topic: 'modern', topicLabel: "Modern Prevention", question: "What preventative public health campaigns does the modern state run?", answer: "The '5 A Day' fruit/vegetable campaign, plain tobacco packaging, and sugar taxes.", details: "Aimed at reducing chronic NHS burdens from type-2 diabetes and cardiovascular disease." },
+                    { id: 119, topic: 'modern', topicLabel: "Modern Prevention", question: "What national cancer screening programmes exist in Britain today?", answer: "Routine mammograms, cervical smear tests, and bowel cancer home screening kits.", details: "Detect pre-cancerous cellular abnormalities before malignant symptoms manifest." },
+                    { id: 120, topic: 'modern', topicLabel: "Modern Surgery", question: "What is keyhole (laparoscopic) surgery?", answer: "Minimally invasive operations using tiny incisions, cameras, and fiber-optic instruments.", details: "Reduces patient blood loss, post-operative infection risks, and hospital recovery times." },
+                    { id: 121, topic: 'modern', topicLabel: "Modern Surgery", question: "How does laser surgery improve clinical outcomes in modern operations?", answer: "It allows ultra-precise cutting and cauterisation, such as fixing detached retinas.", details: "Pioneered in the 1950s and 60s for delicate ophthalmology and tumor ablation." },
+                    { id: 122, topic: 'modern', topicLabel: "Modern Surgery", question: "What is robotic surgery?", answer: "Computer-assisted robotic arms operated by surgeons for ultra-fine precision operations.", details: "Eliminates hand tremors during delicate prostate and cardiac surgeries." },
+                    { id: 123, topic: 'modern', topicLabel: "Modern Challenges", question: "What is antimicrobial resistance (superbugs) and why does it threaten modern medicine?", answer: "Bacteria like MRSA evolving resistance to antibiotics due to over-prescription.", details: "Threatens to render routine surgical operations and minor infections lethal once again." },
+                    { id: 124, topic: 'modern', topicLabel: "Modern Communication", question: "How has internet technology like NHS 111 changed modern public healthcare?", answer: "Provides instant medical triage advice online, reducing emergency room overcrowding.", details: "Allows citizens to check symptoms remotely without visiting GP surgeries." },
+                    { id: 125, topic: 'modern', topicLabel: "Modern Limitations", question: "What ethical dilemmas surround cutting-edge 21st-century medicine?", answer: "Stem cell harvesting, genetic engineering, cloning, and equitable organ allocation.", details: "Debates over embryonic research ethics and who should receive rationed NHS treatments." },
+
+                    // --- PART 5: SURGERY THROUGH TIME (Cards 126 to 155) ---
+                    { id: 126, topic: 'surgery', topicLabel: "Medieval Surgery", question: "What three fundamental obstacles historically blocked the progress of surgery?", answer: "Pain, Bleeding, and Infection.", details: "Every breakthrough in surgical history aimed to overcome one of these three roadblocks." },
+                    { id: 127, topic: 'surgery', topicLabel: "Medieval Surgery", question: "What was trephination in the Middle Ages?", answer: "Drilling a circular hole into the skull to relieve pressure or release evil spirits.", details: "Used for fractured skulls, epilepsy, and mental illness without anaesthesia." },
+                    { id: 128, topic: 'surgery', topicLabel: "Medieval Surgery", question: "What was cauterisation?", answer: "Sealing open wounds and amputated stumps using red-hot irons or boiling oil.", details: "Extremely agonising, often killing patients from surgical shock." },
+                    { id: 129, topic: 'surgery', topicLabel: "Medieval Surgery", question: "Who carried out the majority of minor operations and tooth extractions in the Middle Ages?", answer: "Barber-surgeons.", details: "Learned their trade via apprenticeship; surgeons were considered inferior to physicians." },
+                    { id: 130, topic: 'surgery', topicLabel: "Medieval Surgery", question: "What painkilling ointment did John of Arderne develop in 14th-century England?", answer: "A pain-dulling ointment containing hemlock, henbane, and opium.", details: "Allowed Arderne to successfully operate on anal fistulae without blinding agony." },
+                    { id: 131, topic: 'surgery', topicLabel: "Medieval Surgery", question: "What wound care discovery was noted by Italian surgeon Hugh of Lucca in the Crusades?", answer: "He noticed that wine acted as an effective antiseptic wash to prevent infection.", details: "Challenged the prevailing dogma that pus was necessary for wound healing." },
+                    { id: 132, topic: 'surgery', topicLabel: "Medieval Surgery", question: "Why were human dissections banned or strictly limited during the Middle Ages?", answer: "Religious doctrine dictated human bodies must remain intact for resurrection on Judgment Day.", details: "Doctors relied on animal dissections and Galen's ancient pig anatomy." },
+                    { id: 133, topic: 'surgery', topicLabel: "Renaissance Surgery", question: "What was the main surgical drawback of Ambroise Paré's silk ligatures in 1536?", answer: "The silk threads were unsterilised, introducing bacteria and causing deep-seated infections.", details: "Ligatures stopped bleeding effectively, but Lister's antiseptics were needed to make them safe." },
+                    { id: 134, topic: 'surgery', topicLabel: "Renaissance Surgery", question: "What was 'Les Oeuvres' published by Ambroise Paré in 1575?", answer: "His collected surgical works containing techniques for ligatures, ointments, and prosthetics.", details: "Written in vernacular French rather than Latin, making it accessible to barber-surgeons." },
+                    { id: 135, topic: 'surgery', topicLabel: "Renaissance Surgery", question: "Why was major internal surgery completely impossible during the Renaissance?", answer: "Patients could not survive the intense pain, massive blood loss, and lethal gangrene.", details: "Operations were restricted to external extremities, bladder stones, and fast amputations." },
+                    { id: 136, topic: 'surgery', topicLabel: "Renaissance Surgery", question: "What pain relief methods were available to patients before modern anaesthetics?", answer: "Alcohol, opium (laudanum), or simply being physically held down by surgical assistants.", details: "Surgeons were judged primarily on their physical speed, amputating limbs in seconds." },
+                    { id: 137, topic: 'surgery', topicLabel: "Industrial Surgery", question: "Why did the 1840s and 1850s become known as the 'Black Period' of surgical history?", answer: "Anaesthetics allowed deeper, longer surgeries, but without antiseptics, infection deaths skyrocketed.", details: "Surgeons operated inside the abdomen wearing filthy, pus-encrusted surgical frock coats." },
+                    { id: 138, topic: 'surgery', topicLabel: "Industrial Surgery", question: "What was Hannah Greener's tragic significance in surgical history (1848)?", answer: "She was the first recorded fatal overdose from chloroform (during toenail removal).", details: "Showed the lethal danger of administering unregulated dosages without specialized inhalers." },
+                    { id: 139, topic: 'surgery', topicLabel: "Industrial Surgery", question: "What piece of equipment did John Snow invent to make chloroform administration safer?", answer: "A regulated chloroform inhaler mask.", details: "Precisely controlled the chemical dosage delivered to the patient's respiratory tract." },
+                    { id: 140, topic: 'surgery', topicLabel: "Industrial Surgery", question: "Why did some Victorian surgeons dislike Joseph Lister's carbolic acid spray?", answer: "It cracked surgeons' hands, made instruments slippery, and slowed operations down.", details: "Skeptical surgeons argued Lister was blaming invisible imaginary 'germs' for their failures." },
+                    { id: 141, topic: 'surgery', topicLabel: "Industrial Surgery", question: "When did aseptic surgery fully replace antiseptic carbolic acid spray?", answer: "In the late 1880s and 1890s.", details: "Operating theatres were tiled, instruments steam-autoclaved, and Gustav Neuber invented sterile air." },
+                    { id: 142, topic: 'surgery', topicLabel: "Industrial Surgery", question: "Who introduced thin rubber surgical gloves to prevent dermatitis and sepsis in 1890?", answer: "William Halsted (at Johns Hopkins Hospital).", details: "Protected operating staff from chemicals and kept germs on surgeons' skin out of wounds." },
+                    { id: 143, topic: 'surgery', topicLabel: "Modern Surgery", question: "What major blood breakthrough in 1900 enabled safe surgical blood transfusions?", answer: "Karl Landsteiner discovered human ABO blood groups.", details: "Prevented fatal blood agglutination (clumping) caused by mixing incompatible blood types." },
+                    { id: 144, topic: 'surgery', topicLabel: "Modern Surgery", question: "What chemical discovery in 1914 stopped stored blood from clotting?", answer: "Sodium citrate.", details: "Allowed donor blood to be stored in refrigerated bottles, creating the first battlefield blood banks." },
+                    { id: 145, topic: 'surgery', topicLabel: "Modern Surgery", question: "Who pioneered facial reconstruction and plastic surgery during the First World War?", answer: "Harold Gillies at Queen's Hospital in Sidcup, Kent.", details: "Pioneered the 'tubed pedicle' skin grafting method, repairing horrific trench shrapnel facial wounds." },
+                    { id: 146, topic: 'surgery', topicLabel: "Modern Surgery", question: "How many beds did Queen's Hospital in Kent have for wounded soldiers by 1917?", answer: "Over 1,000 beds dedicated to facial reconstructive surgery.", details: "Soldiers with blown-away jaws and facial burns were rebuilt over dozens of operations." },
+                    { id: 147, topic: 'surgery', topicLabel: "Modern Surgery", question: "Who advanced plastic surgery further during WW2 treating RAF burn victims?", answer: "Archibald McIndoe (The 'Guinea Pig Club' at East Grinstead).", details: "Used saline baths to treat deep burns suffered by Allied Spitfire and Lancaster pilots." },
+                    { id: 148, topic: 'surgery', topicLabel: "Modern Surgery", question: "Who improved X-ray tubes in 1913 to make medical radiography reliable?", answer: "American engineer William Coolidge.", details: "His hot-cathode tube produced consistent, high-powered X-ray beams for deep tissue imaging." },
+                    { id: 149, topic: 'surgery', topicLabel: "Modern Surgery", question: "How did Polish-French scientist Marie Curie help the wounded on WW1 battlefields in 1914?", answer: "She designed and drove mobile X-ray vans ('petites Curies') to front-line field hospitals.", details: "Allowed military surgeons to pinpoint shrapnel and bullet fragments inside wounded soldiers." },
+                    { id: 150, topic: 'surgery', topicLabel: "Modern Surgery", question: "When was the first successful human open-heart surgery performed using a bypass machine?", answer: "In the 1950s (John Gibbon's heart-lung machine in 1953).", details: "Kept oxygenated blood circulating while surgeons stopped the heart to repair internal valves." },
+                    { id: 151, topic: 'surgery', topicLabel: "Modern Surgery", question: "In what year was the first successful kidney transplant performed in the UK?", answer: "In 1960 (performed by Sir Michael Woodruff in Edinburgh).", details: "Paved the way for successful liver, lung, and heart transplants across the UK." },
+                    { id: 152, topic: 'surgery', topicLabel: "Modern Surgery", question: "Who performed the world's first successful human heart transplant in 1967?", answer: "Dr Christiaan Barnard in Cape Town, South Africa.", details: "The patient, Louis Washkansky, lived for 18 days before dying of pneumonia." },
+                    { id: 153, topic: 'surgery', topicLabel: "Modern Surgery", question: "What is radiotherapy and what is its role in modern oncological surgery?", answer: "Using targeted high-energy radiation beams to shrink tumours and kill cancer cells.", details: "Often paired with surgical excision to destroy remaining microscopic malignant cells." },
+                    { id: 154, topic: 'surgery', topicLabel: "Modern Surgery", question: "What is microsurgery?", answer: "Reconstructive surgery performed under high-magnification microscopes.", details: "Allows surgeons to reconnect severed nerves and tiny blood vessels during limb reattachment." },
+                    { id: 155, topic: 'surgery', topicLabel: "Modern Surgery", question: "How has stem cell research opened possibilities for regenerative surgery?", answer: "Stem cells can potentially be grown into biological replacement organs and nerve tissues.", details: "Offers the future promise of repairing paralyzed spinal cords and growing rejection-free organs." },
+
+                    // --- PART 6: FACTORS AFFECTING MEDICAL HISTORY (Cards 156 to 180) ---
+                    { id: 156, topic: 'factors', topicLabel: "Factor: War", question: "How did the medieval Crusades advance European medical knowledge?", answer: "They brought Christian and Islamic doctors into direct contact, sharing Arabic medical texts.", details: "Europeans translated Ibn Sina's 'Canon of Medicine' and learned advanced Greek-Islamic ideas." },
+                    { id: 157, topic: 'factors', topicLabel: "Factor: War", question: "How did the 1870–1871 Franco-Prussian War accelerate bacteriological breakthroughs?", answer: "Intense national rivalry between France (Pasteur) and Germany (Koch) drove government funding.", details: "Both governments provided labs and research teams to outdo their national enemy." },
+                    { id: 158, topic: 'factors', topicLabel: "Factor: War", question: "How did the two World Wars act as a massive catalyst for medical progress?", answer: "Battlefields provided millions of patients, forcing state spending on penicillin and surgery.", details: "Governments funded blood banks, skin grafting, mobile X-rays, and rehabilitation." },
+                    { id: 159, topic: 'factors', topicLabel: "Factor: War", question: "How did evacuation during the Second World War impact British social attitudes?", answer: "It exposed wealthy rural hosts to the shocking poverty, rickets, and lice of city children.", details: "Created widespread national consensus that the state must introduce universal welfare and the NHS." },
+                    { id: 160, topic: 'factors', topicLabel: "Factor: Religion", question: "In what two contradictory ways did the medieval Christian Church affect medicine?", answer: "It preserved Roman texts and founded hospitals, but banned human dissection and blocked new research.", details: "Promoted Galen because his single Creator view matched Christian dogma, executing heretics." },
+                    { id: 161, topic: 'factors', topicLabel: "Factor: Religion", question: "What was the Islamic approach to public health and hospitals in the Middle Ages?", answer: "Islam encouraged hygiene and exercise, building clean, free hospitals open to all in every city.", details: "The first hospital was founded in Baghdad in 805; Baghdad became the Silk Road medical centre." },
+                    { id: 162, topic: 'factors', topicLabel: "Factor: Religion", question: "Who was Ibn Sina (Avicenna) and what was his famous medical masterpiece?", answer: "A Persian physician who wrote the 'Canon of Medicine', a massive medical encyclopedia.", details: "Listed 760 drugs and synthesised Greek, Roman, and Islamic clinical observations." },
+                    { id: 163, topic: 'factors', topicLabel: "Factor: Religion", question: "What impact did King Henry VIII's Dissolution of the Monasteries (1536) have on healthcare?", answer: "It shut down hundreds of monastic hospitals, leaving poor and sick people destitute on the streets.", details: "Forced town councils and wealthy benefactors to endow secular civic hospitals like St Bart's." },
+                    { id: 164, topic: 'factors', topicLabel: "Factor: Religion", question: "What religious opposition was voiced against the use of chloroform in childbirth in 1847?", answer: "Clergymen claimed women were ordained by God in Genesis to suffer the pain of childbirth.", details: "Quoted the Bible ('in sorrow thou shalt bring forth children') until Queen Victoria intervened." },
+                    { id: 165, topic: 'factors', topicLabel: "Factor: Government", question: "What medical licensing body did King Henry VIII establish in 1518 to curb quackery?", answer: "The Royal College of Physicians.", details: "Granted licences to qualified doctors and attempted to punish unregulated quack doctors." },
+                    { id: 166, topic: 'factors', topicLabel: "Factor: Government", question: "Why did medieval and early industrial governments practice 'laissez-faire'?", answer: "They believed the state should not interfere in the economy, and MPs feared tax increases.", details: "Ministers thought poverty and disease were personal moral failures, not government duties." },
+                    { id: 167, topic: 'factors', topicLabel: "Factor: Government", question: "How did the British Government intervene directly to stop smallpox in 1853?", answer: "They made smallpox vaccination legally compulsory for all infants.", details: "Parents who refused faced fines and imprisonment, drastically cutting smallpox deaths." },
+                    { id: 168, topic: 'factors', topicLabel: "Factor: Government", question: "How did the 1945–1951 Labour Government revolutionize British health infrastructure?", answer: "Passed the 1946 National Insurance Act, launched the NHS (1948), and built 280,000 homes a year.", details: "Constructed twelve New Towns to rehouse families out of bomb-damaged inner-city slums." },
+                    { id: 169, topic: 'factors', topicLabel: "Factor: Science/Tech", question: "What ancient Greek doctor taught the essential scientific method of clinical observation?", answer: "Hippocrates.", details: "Urged doctors to examine symptoms, record case notes, and observe the natural course of illness." },
+                    { id: 170, topic: 'factors', topicLabel: "Factor: Science/Tech", question: "Why did the invention of high-powered microscopes cause initial confusion in the 1700s?", answer: "Scientists could see microbes for the first time but mistakenly believed all microbes were identical.", details: "It took Koch's staining methods in the 1870s to prove specific bacteria caused specific diseases." },
+                    { id: 171, topic: 'factors', topicLabel: "Factor: Science/Tech", question: "How did the development of Big Pharma accelerate 20th-century medicine?", answer: "Multinational pharmaceutical companies invested billions into mass-producing drugs and vaccines.", details: "Enabled global rollouts of synthetic antibiotics, heart medications, and chemotherapy." },
+                    { id: 172, topic: 'factors', topicLabel: "Factor: Communication", question: "How did Joseph Lister communicate Pasteur's Germ Theory to British doctors?", answer: "He translated Pasteur's French papers, tested carbolic acid, and published results in 'The Lancet'.", details: "Lister's prestige forced conservative British surgeons to take microscopic germs seriously." },
+                    { id: 173, topic: 'factors', topicLabel: "Factor: Communication", question: "What was the significance of Latin as the universal language of European medicine?", answer: "It allowed doctors across different nations to read each other's medical treatises directly.", details: "However, it excluded working-class surgeons until texts were translated into English." },
+                    { id: 174, topic: 'factors', topicLabel: "Factor: Chance", question: "Name three major medical breakthroughs that occurred partly through lucky chance.", answer: "Paré's ointment (1537), Simpson's chloroform (1847), and Fleming's penicillin (1928).", details: "In all cases, prepared scientific minds recognised and investigated the accidental discovery." },
+                    { id: 175, topic: 'factors', topicLabel: "Factor: Chance", question: "Why was the 'Great Stink' of 1858 a lucky geographical chance for public health?", answer: "The scorching heat hit while Parliament was in session directly beside the reeking River Thames.", details: "Had Parliament sat elsewhere, MPs would have delayed funding Bazalgette's sewers for decades." },
+                    { id: 176, topic: 'factors', topicLabel: "Factor: Individual", question: "Why is Edward Jenner considered an individual genius in medical history?", answer: "He carefully tested the milkmaids' folk belief through controlled experimentation on James Phipps.", details: "He coined 'vaccine' (from vacca = cow) and published his findings despite initial Royal Society skepticism." },
+                    { id: 177, topic: 'factors', topicLabel: "Factor: Individual", question: "How did Louis Pasteur's background as a chemist help him discover Germ Theory?", answer: "He investigated why beer and wine soured, approaching biological decay with chemical rigor.", details: "Discovered that heating liquids killed off spoilage microbes (pasteurisation)." },
+                    { id: 178, topic: 'factors', topicLabel: "Factor: Individual", question: "Why did Aneurin Bevan succeed in launching the NHS where earlier health ministers failed?", answer: "His uncompromising political determination and willingness to compromise on private practice.", details: "Overcame ferocious opposition from the British Medical Association through brilliant negotiation." },
+                    { id: 179, topic: 'factors', topicLabel: "Factor Interplay", question: "How did War and Government combine to make penicillin available for D-Day?", answer: "The war created an urgent military crisis, prompting the US and UK governments to fund mass vats.", details: "Without state subsidies, Florey and Chain could never have produced millions of doses in time." },
+                    { id: 180, topic: 'factors', topicLabel: "Factor Interplay", question: "How did Science/Tech and Government work together in the 1875 Public Health Act?", answer: "Snow's mapping and Pasteur's Germ Theory provided scientific proof, forcing government laws.", details: "Scientific knowledge removed excuses for laissez-faire, enabling mandatory legislation." },
+
+                    // --- PART 7: KEY FIGURES DEEP DIVE & EXAM TECHNIQUE (Cards 181 to 200) ---
+                    { id: 181, topic: 'figures', topicLabel: "Galen", question: "What was Galen's Theory of Opposites?", answer: "Treating humours with their opposite quality (e.g. treating cold phlegm with hot chillies/pepper).", details: "Transformed Hippocrates' humours from an explanation of disease into an active clinical cure." },
+                    { id: 182, topic: 'figures', topicLabel: "Galen", question: "What two physiological discoveries did Galen make using live animal dissections?", answer: "He proved the brain (not heart) controlled speech, and arteries carried blood (not air).", details: "Discovered recurrent laryngeal nerves by cutting them in squealing pigs to silence them." },
+                    { id: 183, topic: 'figures', topicLabel: "Galen", question: "Why did Galen's anatomical errors persist for over 1,300 years unchallenged?", answer: "He wrote over 350 books, and the Church endorsed him as infallible because he believed in one God.", details: "Challenging Galen's texts was treated as an attack on religious doctrine and orthodox faith." },
+                    { id: 184, topic: 'figures', topicLabel: "Hippocrates", question: "What ethical pledge written by Hippocrates is still taken by medical graduates today?", answer: "The Hippocratic Oath.", details: "Pledges doctors to protect patient confidentiality, treat all equally, and do no harm." },
+                    { id: 185, topic: 'figures', topicLabel: "Vesalius", question: "How did Andreas Vesalius obtain human bodies for his anatomical dissections in Padua?", answer: "He stole corpses from public execution gallows and graveyards at night.", details: "Boiled the flesh off bones to assemble accurate complete human skeletal models." },
+                    { id: 186, topic: 'figures', topicLabel: "Harvey", question: "What simple calculation did William Harvey perform to disprove Galen's blood theory?", answer: "He calculated the liver would need to produce 540 pints of blood per hour, which was impossible.", details: "Proved mathematically that blood must circulate continuously through the body." },
+                    { id: 187, topic: 'figures', topicLabel: "Jenner", question: "What was the critical difference between smallpox inoculation and Jenner's vaccination?", answer: "Inoculation used live smallpox (could kill or trigger epidemics); vaccination used mild cowpox.", details: "Vaccination was completely safe, carried no risk of death, and could not cause smallpox." },
+                    { id: 188, topic: 'figures', topicLabel: "Pasteur", question: "What animal vaccine breakthroughs did Louis Pasteur develop after Germ Theory?", answer: "Vaccines against Chicken Cholera, Anthrax, and Rabies (1885).", details: "Injected weakened (attenuated) microbes to trigger active antibody immunity." },
+                    { id: 189, topic: 'figures', topicLabel: "Koch", question: "What are Koch's Postulates?", answer: "Four scientific rules to prove a specific microbe is the causal agent of a specific disease.", details: "Microbe must be found in all cases, isolated in pure culture, reproduce disease, and re-isolated." },
+                    { id: 190, topic: 'figures', topicLabel: "Chadwick", question: "Why did taxpayers fiercely resist Edwin Chadwick's proposed public health reforms?", answer: "They objected to paying higher local rates and viewed central inspectors as dictatorial tyranny.", details: "The 1848 Act was repealed in part due to hatred of Chadwick's centralising authoritarianism." },
+                    { id: 191, topic: 'figures', topicLabel: "John Snow", question: "What medical service did Dr John Snow provide to Queen Victoria in 1853 and 1857?", answer: "He served as personal anaesthetist, administering chloroform during royal childbirths.", details: "Snow's reputation as Britain's top anaesthetist gave him prestige to investigate cholera." },
+                    { id: 192, topic: 'figures', topicLabel: "Fleming", question: "Why didn't Alexander Fleming develop penicillin into a commercial antibiotic in 1928?", answer: "He was a bacteriologist, not a chemist, and lacked the equipment to purify unstable mould.", details: "Believed penicillin could only be used as a topical antiseptic on surface skin wounds." },
+                    { id: 193, topic: 'figures', topicLabel: "Florey & Chain", question: "What animal trial in 1940 proved penicillin was a miracle cure for systemic infections?", answer: "Eight mice were injected with lethal streptococci; the four given penicillin survived, others died.", details: "Convinced Oxford scientists to risk human clinical trials on terminally ill patients." },
+                    { id: 194, topic: 'figures', topicLabel: "Beveridge", question: "What political party won the 1945 General Election promising to implement Beveridge?", answer: "The Labour Party (led by Clement Attlee).", details: "Defeated Winston Churchill's Conservatives in a landslide by promising the Welfare State and NHS." },
+                    { id: 195, topic: 'figures', topicLabel: "Aneurin Bevan", question: "What compromise did Bevan concede to senior hospital consultants in 1948?", answer: "He allowed consultants to keep treating private fee-paying patients inside NHS hospitals.", details: "Broke the British Medical Association's strike threat and ensured consultant cooperation." },
+                    { id: 196, topic: 'figures', topicLabel: "Exam Misconceptions", question: "What is the common student mistake between public health, surgery, and causes/treatments?", answer: "Confusing the three distinct themes (e.g. writing about hospital surgery in a public health essay).", details: "Questions on Public Health require sewers/water/housing; Surgery requires pain/infection/blood." },
+                    { id: 197, topic: 'figures', topicLabel: "Exam Misconceptions", question: "What are the exact historical date boundaries for the four GCSE Health periods?", answer: "Medieval (c.1000–c.1450), Renaissance (c.1450–c.1800), Industrial (c.1800–1899), Modern (1900–Today).", details: "Always match key figures to their correct historical era to avoid losing chronology marks." },
+                    { id: 198, topic: 'figures', topicLabel: "Exam Technique", question: "In Question 1 (Source Utility), how does 'utility' differ from 'reliability'?", answer: "Utility evaluates how useful the source is for inquiry, not simply whether it is biased or reliable.", details: "Even a biased or inaccurate source is extremely useful for revealing contemporary attitudes." },
+                    { id: 199, topic: 'figures', topicLabel: "Exam Technique", question: "What rule must students remember for Question 3 (Similarity through time)?", answer: "Write only about similarities across two eras; do NOT write about differences.", details: "Focus on themes of continuity (e.g. government intervention, herbal remedies, or miasma)." },
+                    { id: 200, topic: 'figures', topicLabel: "Exam Technique", question: "What structural requirements are mandatory in Question 4 (The 16-mark essay)?", answer: "Cover at least two distinct time periods and two factors (including the named factor in the question).", details: "Provide a balanced comparison with a clear, supported judgment reaching a sustained conclusion." }
+                ],
+
+                init() {
+                    this.applyFilters();
+                    
+                    // Keyboard navigation
+                    window.addEventListener('keydown', (e) => {
+                        if (this.showSearchModal || this.deckCompleted || this.activeDeck.length === 0) return;
+                        if (e.code === 'Space') {
+                            e.preventDefault();
+                            this.flipCard();
+                        } else if (e.code === 'ArrowRight') {
+                            e.preventDefault();
+                            this.markCard(true);
+                        } else if (e.code === 'ArrowLeft') {
+                            e.preventDefault();
+                            this.markCard(false);
+                        }
+                    });
+                },
+
+                get currentCard() {
+                    return this.activeDeck[this.currentIndex] || {};
+                },
+
+                get filteredBankList() {
+                    if (!this.searchQuery.trim()) return this.allCards;
+                    const query = this.searchQuery.toLowerCase();
+                    return this.allCards.filter(c => 
+                        c.question.toLowerCase().includes(query) || 
+                        c.answer.toLowerCase().includes(query) || 
+                        c.details.toLowerCase().includes(query) ||
+                        c.topicLabel.toLowerCase().includes(query)
+                    );
+                },
+
+                getTopicColor(topic) {
+                    switch (topic) {
+                        case 'medieval': return 'bg-brown-800';
+                        case 'renaissance': return 'bg-accent-gold';
+                        case 'industrial': return 'bg-accent-teal';
+                        case 'modern': return 'bg-accent-forest';
+                        case 'surgery': return 'bg-accent-burgundy';
+                        case 'factors': return 'bg-accent-navy';
+                        case 'figures': return 'bg-brown-900';
+                        default: return 'bg-brown-800';
+                    }
+                },
+
+                getTopicLabel(topic) {
+                    switch (topic) {
+                        case 'medieval': return "Medieval & Black Death";
+                        case 'renaissance': return "Renaissance & Great Plague";
+                        case 'industrial': return "Industrial & Germ Theory";
+                        case 'modern': return "Modern & NHS";
+                        case 'surgery': return "Surgery Through Time";
+                        case 'factors': return "Key Factors";
+                        case 'figures': return "Key Figures & Technique";
+                        default: return "All 200 Questions";
+                    }
+                },
+
+                applyFilters() {
+                    let deck = [];
+                    if (this.isWrongOnlyMode) {
+                        deck = [...this.wrongCards];
+                    } else if (this.selectedTopic === 'all') {
+                        deck = [...this.allCards];
+                    } else {
+                        deck = this.allCards.filter(c => c.topic === this.selectedTopic);
+                    }
+
+                    // Shuffle deck for testing
+                    deck = deck.sort(() => Math.random() - 0.5);
+
+                    if (this.sessionLimit < deck.length && !this.isWrongOnlyMode) {
+                        deck = deck.slice(0, this.sessionLimit);
+                    }
+
+                    this.activeDeck = deck;
+                    this.currentIndex = 0;
+                    this.isFlipped = false;
+                    this.deckCompleted = this.activeDeck.length === 0;
+                },
+
+                setSessionLimit(limit) {
+                    this.sessionLimit = limit;
+                    this.isWrongOnlyMode = false;
+                    this.applyFilters();
+                },
+
+                flipCard() {
+                    this.isFlipped = !this.isFlipped;
+                },
+
+                previousCard() {
+                    if (this.currentIndex > 0) {
+                        this.currentIndex--;
+                        this.isFlipped = false;
+                    }
+                },
+
+                markCard(isCorrect) {
+                    const card = this.currentCard;
+                    if (!card.id) return;
+
+                    if (isCorrect) {
+                        if (!this.correctCards.some(c => c.id === card.id)) {
+                            this.correctCards.push(card);
+                        }
+                        this.wrongCards = this.wrongCards.filter(c => c.id !== card.id);
+                    } else {
+                        if (!this.wrongCards.some(c => c.id === card.id)) {
+                            this.wrongCards.push(card);
+                        }
+                        this.correctCards = this.correctCards.filter(c => c.id !== card.id);
+                    }
+
+                    if (this.currentIndex < this.activeDeck.length - 1) {
+                        this.currentIndex++;
+                        this.isFlipped = false;
+                    } else {
+                        this.deckCompleted = true;
+                    }
+                },
+
+                isCardInWrongList(id) {
+                    return this.wrongCards.some(c => c.id === id);
+                },
+
+                revisitWrongCards() {
+                    if (this.wrongCards.length === 0) return;
+                    this.isWrongOnlyMode = true;
+                    this.deckCompleted = false;
+                    this.applyFilters();
+                },
+
+                toggleWrongOnlyMode() {
+                    if (this.wrongCards.length === 0 && !this.isWrongOnlyMode) return;
+                    this.isWrongOnlyMode = !this.isWrongOnlyMode;
+                    this.applyFilters();
+                },
+
+                shuffleDeck() {
+                    this.activeDeck = [...this.activeDeck].sort(() => Math.random() - 0.5);
+                    this.currentIndex = 0;
+                    this.isFlipped = false;
+                    this.deckCompleted = false;
+                },
+
+                resetDeckProgress() {
+                    this.currentIndex = 0;
+                    this.isFlipped = false;
+                    this.deckCompleted = false;
+                },
+
+                jumpToCard() {
+                    if (!this.jumpInput || this.jumpInput < 1 || this.jumpInput > this.activeDeck.length) return;
+                    this.currentIndex = this.jumpInput - 1;
+                    this.isFlipped = false;
+                    this.jumpInput = null;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
