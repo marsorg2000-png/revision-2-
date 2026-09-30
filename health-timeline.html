@@ -1,1 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Health &amp; the People Timeline (c1000–Present)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            cobalt: '#1e3a5f',
+                            emerald: '#059669',
+                            amber: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search, era filtering, and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .timeline-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .timeline-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="healthTimelineApp()">
 
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="health-revision-hub.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Health Hub">
+                    <i class="fa-solid fa-staff-snake text-xl text-accent-forest bg-beige-200 p-1.5 rounded-lg"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Health &amp; the People Timeline</h1>
+                    <p class="text-xs text-beige-300">A Millennium of British Medicine &amp; Surgery (c1000–Present)</p>
+                </div>
+            </div>
+
+            <!-- Stats & Quick Link Badge -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-brown-800/90 px-4 py-2 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Total events:</span>
+                    <span class="font-bold text-beige-50" x-text="healthTimelineEvents.length"></span>
+                </div>
+                <a href="health-revision-hub.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition">
+                    <i class="fa-solid fa-arrow-left text-[11px]"></i>
+                    <span>Hub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, Era Filter & Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- View Mode Switcher -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-beige-300/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-brown-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[12px] text-brown-700"></i> Mode:
+                    </span>
+                    <div class="inline-flex bg-beige-50 p-1 rounded-xl border border-beige-300 shadow-inner text-xs font-semibold">
+                        <button 
+                            @click="viewMode = 'timeline'"
+                            :class="viewMode === 'timeline' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Timeline View</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'detailed'"
+                            :class="viewMode === 'detailed' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                            <span>Detailed Study Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Toggle All Descriptions button -->
+                <div class="flex items-center gap-2 text-xs">
+                    <button 
+                        @click="toggleAllDescriptions()"
+                        class="px-3 py-1.5 rounded-xl bg-beige-50 hover:bg-beige-300/50 border border-beige-300 text-brown-800 font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid" :class="allExpanded ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="allExpanded ? 'Collapse All Notes' : 'Expand All Notes'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search & Order Controls Row -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search pioneers, discoveries, eras, or surgery (e.g. Jenner, Lister, Germ Theory, 1848, NHS, Penicillin)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-1-9' : 'fa-arrow-up-9-1'"></i>
+                        <span x-text="sortAscending ? 'Earliest First' : 'Latest First'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredEvents.length"></span> / <span x-text="healthTimelineEvents.length"></span> shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Era Category Filter Pills -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-beige-300/80">
+                <span class="text-xs font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Era:
+                </span>
+                <button 
+                    @click="selectedEra = 'all'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    All Eras
+                </button>
+                <button 
+                    @click="selectedEra = 'medieval'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'medieval' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Ancient &amp; Medieval (to c1450)
+                </button>
+                <button 
+                    @click="selectedEra = 'renaissance'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'renaissance' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Renaissance (c1450–c1750)
+                </button>
+                <button 
+                    @click="selectedEra = 'industrial'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'industrial' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Industrial (c1750–c1900)
+                </button>
+                <button 
+                    @click="selectedEra = 'modern'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'modern' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Modern (c1900–Present)
+                </button>
+            </div>
+        </div>
+
+        <!-- Timeline Header and Dynamic Cards List -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-timeline text-brown-700"></i>
+                    <span>Chronological Medical Developments</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredEvents.length + ' event' + (filteredEvents.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- Timeline Cards -->
+            <div class="space-y-3">
+                <template x-for="(event, index) in filteredEvents" :key="index + '-' + event.date + '-' + event.event">
+                    <div class="timeline-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm p-4 sm:p-5 hover:bg-beige-100/70 transition flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        
+                        <!-- Left: Date & Era Pill -->
+                        <div class="md:w-1/4 flex-shrink-0 flex items-center md:items-start justify-between md:flex-col gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                      :class="{
+                                          'bg-accent-gold': event.era === 'medieval',
+                                          'bg-accent-cobalt': event.era === 'renaissance',
+                                          'bg-accent-ruby': event.era === 'industrial',
+                                          'bg-accent-forest': event.era === 'modern'
+                                      }"></span>
+                                <span class="font-extrabold text-brown-900 text-sm sm:text-base tracking-tight font-mono" x-text="event.date"></span>
+                            </div>
+                            <span class="text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md border text-brown-700 bg-beige-200/70 border-beige-300"
+                                  x-text="getEraLabel(event.era)">
+                            </span>
+                        </div>
+
+                        <!-- Right: Event Headline & Note -->
+                        <div class="md:w-3/4 pl-0 md:pl-4 border-t md:border-t-0 md:border-l-2 border-beige-200 pt-3 md:pt-0 space-y-2">
+                            <div class="flex items-start justify-between gap-3">
+                                <p class="text-xs sm:text-sm text-brown-900 leading-relaxed font-bold" x-text="event.event"></p>
+                                <button 
+                                    @click="toggleEvent(event)"
+                                    class="text-brown-700 hover:text-brown-900 text-xs px-2 py-1 rounded-lg bg-beige-200/60 hover:bg-beige-300/60 border border-beige-300 flex-shrink-0 flex items-center gap-1 transition"
+                                    :title="isExpanded(event) ? 'Hide details' : 'Show details'">
+                                    <span class="text-[11px] hidden sm:inline" x-text="isExpanded(event) ? 'Hide Note' : 'Brief Note'"></span>
+                                    <i class="fa-solid text-[10px]" :class="isExpanded(event) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                </button>
+                            </div>
+
+                            <!-- Expandable Brief Revision Description -->
+                            <div x-show="isExpanded(event)" x-collapse.duration.200ms class="pt-2 text-xs sm:text-sm text-brown-800 bg-beige-100/90 p-3.5 rounded-xl border border-beige-300/80 leading-relaxed whitespace-pre-line">
+                                <div class="flex items-center gap-1.5 text-brown-700 font-semibold text-[11px] uppercase tracking-wider mb-1">
+                                    <i class="fa-solid fa-circle-info text-accent-forest"></i>
+                                    <span>GCSE Revision Summary</span>
+                                </div>
+                                <p x-text="event.description"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredEvents.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-calendar-xmark text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No medical events found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any events matching "<span class="font-semibold" x-text="searchQuery"></span>" in the selected era.
+                </p>
+                <div class="flex justify-center gap-3">
+                    <button 
+                        @click="searchQuery = ''; selectedEra = 'all'" 
+                        class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                    >
+                        Reset All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-6 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>GCSE History Revision Hub &bull; Health and the People (c1000–Present) Chronology Edition ⚕️</p>
+            <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Back to Health Hub</a>
+        </div>
+    </footer>
+
+    <script>
+        function healthTimelineApp() {
+            return {
+                searchQuery: '',
+                sortAscending: true,
+                selectedEra: 'all',
+                viewMode: 'timeline',
+                expandedEvents: {},
+                allExpanded: false,
+
+                toggleEvent(event) {
+                    const key = event.date + '-' + event.order;
+                    this.expandedEvents[key] = !this.isExpanded(event);
+                },
+
+                isExpanded(event) {
+                    if (this.viewMode === 'detailed') return true;
+                    const key = event.date + '-' + event.order;
+                    return !!this.expandedEvents[key];
+                },
+
+                toggleAllDescriptions() {
+                    this.allExpanded = !this.allExpanded;
+                    if (this.allExpanded) {
+                        this.viewMode = 'detailed';
+                    } else {
+                        this.viewMode = 'timeline';
+                        this.expandedEvents = {};
+                    }
+                },
+
+                healthTimelineEvents: [
+                    {
+                        date: "1500–300 BC",
+                        event: "Ancient Greek Medicine & the Asclepeion",
+                        description: "Medicine was still rooted in religious belief. At the Temple of Asclepius (Asclepeion), patients sought divine healing, but recovery occurred primarily through healthy routines: rest, relaxation, fresh diet, and physical exercise (functioning like a health spa).",
+                        era: "medieval",
+                        order: -1500
+                    },
+                    {
+                        date: "c400 BC",
+                        event: "Hippocrates & the Four Humours Theory",
+                        description: "Hippocrates separated clinical medicine from superstition. He created the Theory of the Four Humours (Blood, Phlegm, Black Bile, Yellow Bile), introduced the Hippocratic Oath of medical ethics, and emphasized careful clinical observation recorded in the Hippocratic Collection.",
+                        era: "medieval",
+                        order: -400
+                    },
+                    {
+                        date: "400 BC–AD 500",
+                        event: "Roman Public Health Engineering",
+                        description: "The Roman Empire pioneered state public health infrastructure to maintain healthy soldiers and citizens. They engineered aqueducts supplying clean mountain water, public baths, stone sewers (Cloaca Maxima), and underground latrines.",
+                        era: "medieval",
+                        order: -300
+                    },
+                    {
+                        date: "c160 AD",
+                        event: "Galen Expands Medicine in Rome",
+                        description: "Galen expanded Hippocrates' ideas with his Theory of Opposites (treating cold with heat). He dissected pigs and apes, demonstrating the brain controls speech via nerves. His belief in a single divine Creator led the Christian Church to declare his medical writings infallible for over 1,400 years.",
+                        era: "medieval",
+                        order: 160
+                    },
+                    {
+                        date: "1100s–1200s",
+                        event: "The Crusades & Transmission of Islamic Medicine",
+                        description: "Military and trade contacts during the Crusades allowed Western doctors to interact with Islamic physicians. Arabic translations preserved Greek knowledge and advanced it via scholars like Ibn Sina (Avicenna) and Al-Razi (Rhazes), reintroducing medical scholarship to Europe.",
+                        era: "medieval",
+                        order: 1150
+                    },
+                    {
+                        date: "1347–1348",
+                        event: "The Black Death Pandemics",
+                        description: "The plague killed over 25 million people across Europe (between one-third and one-half of Britain's population). Two variants raged: Bubonic (carried by fleas on black rats, 50–75% death rate within 8 days) and airborne Pneumonic (90–95% mortality within 2–3 days). With no understanding of microbes, people blamed God's wrath, planetary alignment, bad air (miasma), and poisoned wells.",
+                        era: "medieval",
+                        order: 1348
+                    },
+                    {
+                        date: "1455",
+                        event: "Johannes Gutenberg Invents the Movable-Type Printing Press",
+                        description: "Gutenberg's printing press allowed medical textbooks, detailed anatomical diagrams, and research papers to be mass-produced accurately and affordably. It broke the Catholic Church's monopoly over medical knowledge and enabled rapid communication across Europe.",
+                        era: "renaissance",
+                        order: 1455
+                    },
+                    {
+                        date: "1517",
+                        event: "Martin Luther Sparked the Protestant Reformation",
+                        description: "Luther nailed his Ninety-Five Theses to the church door in Wittenberg, challenging Catholic authority. The Reformation encouraged critical thinking, scientific questioning, and an appetite to challenge traditional dogmas like Galen's unquestioned anatomical claims.",
+                        era: "renaissance",
+                        order: 1517
+                    },
+                    {
+                        date: "1543",
+                        event: "Andreas Vesalius Publishes 'The Fabric of the Human Body'",
+                        description: "Vesalius dissected executed human criminals, proving Galen had made over 200 anatomical errors by dissecting animals. He proved the human jaw consists of one single bone (not two) and blood does not pass through invisible holes in the septum, encouraging doctors to rely on direct observation.",
+                        era: "renaissance",
+                        order: 1543
+                    },
+                    {
+                        date: "1570s",
+                        event: "Ambroise Paré Revolutionizes Battlefield Surgery",
+                        description: "French army surgeon Paré ran out of boiling cautery oil in 1537 and mixed a soothing ointment of egg yolk, oil of roses, and turpentine. Wounds healed far better without infection. He also reintroduced silk ligatures to tie blood vessels during amputations and designed prosthetic limbs.",
+                        era: "renaissance",
+                        order: 1575
+                    },
+                    {
+                        date: "1628",
+                        event: "William Harvey Discovers the Circulation of the Blood",
+                        description: "English physician Harvey published 'De Motu Cordis', proving that the heart acts as a muscular pump circulating a fixed volume of blood around the body in a one-way closed system through valves. He decisively disproved Galen's belief that blood was continually manufactured in the liver.",
+                        era: "renaissance",
+                        order: 1628
+                    },
+                    {
+                        date: "1665",
+                        event: "The Great Plague of London",
+                        description: "The plague killed almost 69,000 Londoners. Little progress had been made since 1348 regarding the causes (still blamed on miasma and punishment for sin). However, municipal responses improved: infected homes were locked with red crosses ('Lord Have Mercy on Us'), watchmen posted, and mass burial pits organized.",
+                        era: "renaissance",
+                        order: 1665
+                    },
+                    {
+                        date: "1721",
+                        event: "Lady Mary Wortley Montagu Introduces Smallpox Inoculation",
+                        description: "Lady Montagu observed variolation in Turkey and introduced it to Britain. A mild strain of live smallpox was scratched into the skin. While risky (some caught full smallpox and died), it provided vital immunity and set the stage for Jenner's safer cowpox vaccine.",
+                        era: "renaissance",
+                        order: 1721
+                    },
+                    {
+                        date: "1796",
+                        event: "Edward Jenner Discovers the Smallpox Vaccination",
+                        description: "Jenner noticed dairymaids caught mild cowpox and never smallpox. He inoculated eight-year-old James Phipps with cowpox pus from Sarah Nelmes, then exposed him to smallpox; Phipps remained immune. Published in 1798, the procedure was coined 'vaccination' (from vacca, cow) and made compulsory in Britain in 1852.",
+                        era: "industrial",
+                        order: 1796
+                    },
+                    {
+                        date: "1799",
+                        event: "Humphry Davy Discovers Nitrous Oxide (Laughing Gas)",
+                        description: "Davy synthesized nitrous oxide at the Pneumatic Institution in Bristol and discovered its pain-relieving effects. Although initially used for fairground entertainment, it opened scientific investigation into chemical pain relief in surgical operations.",
+                        era: "industrial",
+                        order: 1799
+                    },
+                    {
+                        date: "1830s",
+                        event: "Industrial Revolution Triggers Severe Public Health Crises",
+                        description: "Rapid migration into manufacturing towns caused horrific living conditions: back-to-back poorly ventilated tenements, contaminated shared water pumps, overflowing privy cesspools, and unpaved streets, causing rampant typhus, tuberculosis, and rickets.",
+                        era: "industrial",
+                        order: 1830
+                    },
+                    {
+                        date: "1831",
+                        event: "First British Cholera Epidemic",
+                        description: "Cholera reached Britain via ports, killing over 31,000 in its first outbreak. Victims suffered severe watery diarrhea, dehydration, and died within hours. Recurrent devastating waves struck Britain in 1848 and 1854.",
+                        era: "industrial",
+                        order: 1831
+                    },
+                    {
+                        date: "1842",
+                        event: "Edwin Chadwick Publishes Sanitary Report",
+                        description: "Chadwick investigated the living conditions of working classes, documenting that filth and impure water caused sickness, which produced poverty. He urged national legislation for clean piped water, sewage disposal, and salaried medical officers.",
+                        era: "industrial",
+                        order: 1842
+                    },
+                    {
+                        date: "1846",
+                        event: "Ether First Used as a Surgical Anaesthetic",
+                        description: "American dentist William Morton demonstrated ether as an anaesthetic. In December 1846, British surgeon Robert Liston performed a painless leg amputation using ether, though it irritated patients' lungs and was dangerously flammable.",
+                        era: "industrial",
+                        order: 1846
+                    },
+                    {
+                        date: "1847",
+                        event: "James Simpson Discovers Chloroform Anaesthesia",
+                        description: "Scottish doctor James Simpson discovered the effective anaesthetic properties of chloroform during experiments with friends. Chloroform overcame the immense shock and agony of surgery, allowing surgeons to operate deeper inside the human body.",
+                        era: "industrial",
+                        order: 1847
+                    },
+                    {
+                        date: "1848",
+                        event: "First Public Health Act Passed",
+                        description: "Spurred by the second cholera epidemic and Chadwick's campaigning, Parliament set up the General Board of Health. However, its measures were permissive (voluntary); local councils only had to build sewers if the local death rate exceeded 23 per 1,000.",
+                        era: "industrial",
+                        order: 1848
+                    },
+                    {
+                        date: "1854",
+                        event: "Crimean War: Florence Nightingale & Mary Seacole",
+                        description: "Nightingale reorganized Scutari hospital through rigorous hygiene, clean bandages, proper drainage, and fresh food, slashing hospital mortality from ~42% to 2%. Meanwhile, Jamaican nurse Mary Seacole financed her own voyage to nurse wounded troops on the frontlines at the 'British Hotel'.",
+                        era: "industrial",
+                        order: 1854.1
+                    },
+                    {
+                        date: "1854",
+                        event: "John Snow Proves Cholera is Waterborne via Broad Street Pump",
+                        description: "During a Soho outbreak, Dr John Snow mapped cholera deaths and traced the outbreak to the public water pump on Broad Street. Removing the handle stopped the deaths immediately, proving cholera was waterborne and disproving miasma theory years before bacteria were accepted.",
+                        era: "industrial",
+                        order: 1854.2
+                    },
+                    {
+                        date: "1857",
+                        event: "Queen Victoria Takes Chloroform for Childbirth",
+                        description: "Queen Victoria publicly endorsed chloroform after John Snow administered it during the birth of Prince Leopold (her eighth child). Her approval silenced religious arguments that pain during childbirth was God's punishment for Eve.",
+                        era: "industrial",
+                        order: 1857
+                    },
+                    {
+                        date: "1861",
+                        event: "Louis Pasteur Publishes Germ Theory",
+                        description: "Investigating souring beer and wine, French chemist Pasteur proved that decay is caused by airborne microorganisms, disproving Spontaneous Generation. In 1861, he published Germ Theory, proving microscopic germs cause infectious human diseases.",
+                        era: "industrial",
+                        order: 1861
+                    },
+                    {
+                        date: "1865",
+                        event: "Elizabeth Garrett Anderson Becomes Britain's First Female Doctor",
+                        description: "Denied admission to medical schools due to her gender, Garrett Anderson studied privately and passed the Society of Apothecaries exam. She established a dispensary for women and children and founded the London School of Medicine for Women.",
+                        era: "industrial",
+                        order: 1865
+                    },
+                    {
+                        date: "1867",
+                        event: "Joseph Lister Introduces Carbolic Acid Antiseptic Surgery",
+                        description: "Applying Pasteur's Germ Theory, Joseph Lister realized wound gangrene was caused by bacteria. He soaked surgical dressings and sprayed carbolic acid over operative fields, reducing patient mortality from 45.7% to 15.0% and ushering in aseptic surgery.",
+                        era: "industrial",
+                        order: 1867
+                    },
+                    {
+                        date: "1875",
+                        event: "Second Public Health Act Enforces Compulsory Sanitation",
+                        description: "Marked the end of government laissez-faire policy. The Act was compulsory: all local councils were legally required to provide clean water, build covered sewers away from housing, enforce minimum distances between dwellings, and appoint Medical Officers of Health.",
+                        era: "industrial",
+                        order: 1875
+                    },
+                    {
+                        date: "1876",
+                        event: "Victorian Public Health Reforms & River Pollution Act",
+                        description: "Parliament passed aggressive public health legislation including the River Pollution Prevention Act (banning toxic factory waste in drinking rivers), the Sale of Food and Drugs Act (punishing milk and food adulteration), and strict housing codes banning cellar dwellings.",
+                        era: "industrial",
+                        order: 1876
+                    },
+                    {
+                        date: "1881",
+                        event: "Robert Koch Isolates Specific Disease-Causing Bacteria",
+                        description: "German bacteriologist Koch perfected agar-agar jelly petri dishes and chemical staining dyes to photograph and isolate microbes. He identified the specific bacteria for anthrax (1876), tuberculosis (1882), and cholera (1883), proving each disease is caused by a unique microorganism.",
+                        era: "industrial",
+                        order: 1881
+                    },
+                    {
+                        date: "1895",
+                        event: "Wilhelm Röntgen Discovers X-Rays",
+                        description: "German physicist Röntgen accidentally discovered electromagnetic rays that penetrated soft tissue to cast shadows of bones on photographic plates. Battlefield surgery during World War I rapidly propelled mobile X-ray units into standard clinical diagnostic care.",
+                        era: "industrial",
+                        order: 1895.1
+                    },
+                    {
+                        date: "1895",
+                        event: "Marie & Pierre Curie Discover Radioactive Radium & Polonium",
+                        description: "The Curies isolated radioactive elements radium and polonium. Marie Curie's pioneering research laid the foundation for radiation therapy in cancer treatment and mobile radiography ambulances on the Western Front.",
+                        era: "industrial",
+                        order: 1895.2
+                    },
+                    {
+                        date: "1901",
+                        event: "Karl Landsteiner Discovers Human ABO Blood Groups",
+                        description: "Landsteiner identified that blood belongs to distinct groups (A, B, AB, and O). Transfusions only succeed between compatible groups, otherwise blood clots dangerously. This eliminated fatal transfusion reactions, transforming complex major surgery.",
+                        era: "modern",
+                        order: 1901
+                    },
+                    {
+                        date: "1905",
+                        event: "Paul Ehrlich Discovers the First 'Magic Bullet' (Salvarsan 606)",
+                        description: "Ehrlich searched for chemicals that selectively destroyed disease organisms without harming the human host. After 605 failed trials, his team tested compound 606 (Salvarsan), successfully destroying the syphilis bacteria—the world's first synthetic chemical cure.",
+                        era: "modern",
+                        order: 1905
+                    },
+                    {
+                        date: "1911",
+                        event: "National Health Insurance Act Introduced in Britain",
+                        description: "Chancellor David Lloyd George introduced compulsory state health insurance for low-paid workers: 'ninepence for fourpence'. Workers received free GP medical treatment, sick pay, and maternity benefits, beginning state welfare support for working-class healthcare.",
+                        era: "modern",
+                        order: 1911
+                    },
+                    {
+                        date: "1914–1918",
+                        event: "World War I Medical Innovations (Blood Storage & Plastic Surgery)",
+                        description: "Trench warfare forced rapid breakthroughs. Harold Gillies established the Queen's Hospital in Sidcup, pioneering facial plastic surgery for disfigured soldiers. Adding sodium citrate and glucose enabled blood to be refrigerated and stored in advance for emergency transfusions.",
+                        era: "modern",
+                        order: 1914
+                    },
+                    {
+                        date: "1928",
+                        event: "Alexander Fleming Discovers Penicillin",
+                        description: "At St Mary's Hospital, Fleming returned from holiday to discover Penicillium notatum mould growing in an unwashed staphylococcus petri dish had created a bacteria-free zone around it. He published his findings in 1929, identifying the first natural antibiotic.",
+                        era: "modern",
+                        order: 1928
+                    },
+                    {
+                        date: "1937–1945",
+                        event: "Florey, Chain & Heatley Mass-Produce Penicillin",
+                        description: "Howard Florey and Ernst Chain at Oxford read Fleming's paper, grew the mould in hospital bedpans, and purified penicillin. Proving its efficacy on mice and patient Albert Alexander in 1941, they secured funding from US pharmaceutical factories to mass-produce it for D-Day casualties in 1944.",
+                        era: "modern",
+                        order: 1941
+                    },
+                    {
+                        date: "1942",
+                        event: "William Beveridge Publishes the Beveridge Report",
+                        description: "The landmark government report pledged to defeat the 'Five Giant Evils' on the road to reconstruction: Want, Disease, Ignorance, Squalor, and Idleness. It provided the blueprint for a cradle-to-grave welfare state including a free, universal health service.",
+                        era: "modern",
+                        order: 1942
+                    },
+                    {
+                        date: "1948",
+                        event: "Establishment of the National Health Service (NHS)",
+                        description: "On 5 July 1948, Minister for Health Aneurin Bevan launched the NHS, providing free healthcare at the point of delivery based on clinical need rather than ability to pay. Bevan overcame fierce resistance from the British Medical Association by allowing doctors to keep private patients.",
+                        era: "modern",
+                        order: 1948
+                    },
+                    {
+                        date: "1950",
+                        event: "First Open-Heart Surgery Performed by William Bigelow",
+                        description: "Canadian surgeon Bigelow pioneered hypothermia techniques to slow patient metabolism and reduce oxygen demand, successfully repairing an internal cardiac defect in a human heart for the first time.",
+                        era: "modern",
+                        order: 1950
+                    },
+                    {
+                        date: "1952",
+                        event: "First Successful Kidney Transplant",
+                        description: "Surgeons successfully transplanted a living donor kidney between identical twins in Boston, eliminating organ rejection risks and opening the era of whole-organ transplantation.",
+                        era: "modern",
+                        order: 1952.1
+                    },
+                    {
+                        date: "1952",
+                        event: "Prescription Charges Introduced to the NHS",
+                        description: "Faced with unexpectedly soaring public health costs and Cold War rearmament expenses, the government reluctantly introduced a flat prescription fee of one shilling, sparking fierce political debate over universal free healthcare.",
+                        era: "modern",
+                        order: 1952.2
+                    },
+                    {
+                        date: "1953",
+                        event: "Francis Crick & James Watson Describe the Structure of DNA",
+                        description: "Using Rosalind Franklin's X-ray crystallography photograph (Photo 51) without her knowledge, Watson and Crick identified the double-helix chemical structure of DNA, opening the modern fields of genetics, gene therapies, and inherited disease mapping.",
+                        era: "modern",
+                        order: 1953
+                    },
+                    {
+                        date: "1961",
+                        event: "The Contraceptive Pill Made Available on the NHS",
+                        description: "The hormonal contraceptive pill was made available on prescription in Britain. It granted women unprecedented reproductive autonomy, contributing to the sexual revolution and transforming public family planning.",
+                        era: "modern",
+                        order: 1961
+                    },
+                    {
+                        date: "1967",
+                        event: "Christiaan Barnard Performs the First Human Heart Transplant",
+                        description: "In Cape Town, South Africa, Dr Christiaan Barnard transplanted the heart of a deceased donor into 54-year-old Louis Washkansky. Washkansky survived for 18 days, demonstrating the feasibility of human cardiac replacement.",
+                        era: "modern",
+                        order: 1967
+                    },
+                    {
+                        date: "1978",
+                        event: "First Test-Tube Baby Born via IVF (Louise Brown)",
+                        description: "Louise Brown was born in Oldham, England, through in-vitro fertilisation developed by Patrick Steptoe and Robert Edwards, offering a breakthrough cure for clinical infertility across the globe.",
+                        era: "modern",
+                        order: 1978
+                    },
+                    {
+                        date: "1990s",
+                        event: "Keyhole Surgery & Minimally Invasive Operations",
+                        description: "The widespread adoption of laparoscopes, miniature fiber-optic cameras, and robotic surgical tools enabled operations via tiny incisions. This dramatically minimized surgical trauma, hospital recovery periods, and infection risks.",
+                        era: "modern",
+                        order: 1990
+                    },
+                    {
+                        date: "1994",
+                        event: "National NHS Organ Donor Register Established",
+                        description: "The UK launched a computerized national donor register to coordinate organ matches across hospitals, saving thousands of patients suffering from end-stage kidney, liver, and heart disease.",
+                        era: "modern",
+                        order: 1994
+                    }
+                ],
+
+                getEraLabel(era) {
+                    switch(era) {
+                        case 'medieval': return 'Medieval (c1000–c1450)';
+                        case 'renaissance': return 'Renaissance (c1450–c1750)';
+                        case 'industrial': return 'Industrial (c1750–c1900)';
+                        case 'modern': return 'Modern (c1900–Present)';
+                        default: return era;
+                    }
+                },
+
+                get filteredEvents() {
+                    let results = [...this.healthTimelineEvents];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(e => e.era === this.selectedEra);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(e => 
+                            e.date.toLowerCase().includes(q) || 
+                            e.event.toLowerCase().includes(q) ||
+                            e.description.toLowerCase().includes(q) ||
+                            this.getEraLabel(e.era).toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort chronologically
+                    results.sort((a, b) => {
+                        return this.sortAscending ? a.order - b.order : b.order - a.order;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
