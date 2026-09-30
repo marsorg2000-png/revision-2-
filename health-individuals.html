@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Key Figures &amp; Individuals | Health &amp; the People</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            wine: '#782329',
+                            cobalt: '#1e3a5f',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive search, filters, modal/expand view, and sorting -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .figure-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .figure-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="healthKeyFiguresApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="health-revision-hub.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Health Hub">
+                    <i class="fa-solid fa-user-doctor text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Key Figures &amp; Individuals</h1>
+                    <p class="text-xs text-beige-300">Pioneers, Reformers &amp; Scientists &bull; Health and the People (c1000–Present)</p>
+                </div>
+            </div>
+
+            <!-- Stats & Quick Links -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-timeline text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Eras:</span>
+                    <span class="font-bold text-beige-50">Ancient to 20th C</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Total Pioneers:</span>
+                    <span class="font-bold text-accent-gold" x-text="individuals.length"></span>
+                </div>
+                <a href="health-revision-hub.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span>Hub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, View Mode Switcher, and Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- Top Controls Row: View Mode Switcher & Expand All -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-beige-300/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-brown-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[12px] text-brown-700"></i> Mode:
+                    </span>
+                    <div class="inline-flex bg-beige-50 p-1 rounded-xl border border-beige-300 shadow-inner text-xs font-semibold">
+                        <button 
+                            @click="viewMode = 'study'"
+                            :class="viewMode === 'study' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-table-columns"></i>
+                            <span>Study Cards</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'compact'"
+                            :class="viewMode === 'compact' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Summary List</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Full Analysis / Quick View Toggle -->
+                <div class="flex items-center gap-2 text-xs">
+                    <button 
+                        @click="toggleAllCards()"
+                        class="px-3 py-1.5 rounded-xl bg-beige-50 hover:bg-beige-300/50 border border-beige-300 text-brown-800 font-semibold transition flex items-center gap-1.5 shadow-sm"
+                        :title="showFullAnalysis ? 'Collapse all profiles to discoveries only' : 'Expand full analysis for all profiles'">
+                        <i class="fa-solid" :class="showFullAnalysis ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="showFullAnalysis ? 'Switch All to Quick View' : 'Show All Full Analysis'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar & Sorting Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search pioneers, discoveries, factors, books or UK impact (e.g. Jenner, Galen, Lister, Penicillin, Miasma, Cholera)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-a-z' : 'fa-arrow-up-z-a'"></i>
+                        <span x-text="sortAscending ? 'Alphabetical (A-Z)' : 'Reverse (Z-A)'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredIndividuals.length"></span> / <span x-text="individuals.length"></span> shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Era Filter Pills -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-beige-300/80">
+                <span class="text-xs font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Era:
+                </span>
+                <button 
+                    @click="selectedEra = 'all'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    All Eras (<span x-text="individuals.length"></span>)
+                </button>
+                <button 
+                    @click="selectedEra = 'ancient-medieval'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'ancient-medieval' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Ancient &amp; Medieval
+                </button>
+                <button 
+                    @click="selectedEra = 'renaissance'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'renaissance' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Renaissance (c1500–c1750)
+                </button>
+                <button 
+                    @click="selectedEra = 'industrial'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'industrial' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Industrial (c1750–c1900)
+                </button>
+                <button 
+                    @click="selectedEra = 'modern'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEra === 'modern' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    Modern (c1900–Present)
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Header -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-bold text-brown-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-users-line text-brown-700"></i>
+                    <span>Profiles of Medical Pioneers &amp; Reformers</span>
+                </h2>
+                <span class="text-xs bg-beige-200 px-3 py-1 rounded-full text-brown-800 font-semibold border border-beige-300" 
+                      x-text="filteredIndividuals.length + ' individual' + (filteredIndividuals.length === 1 ? '' : 's')">
+                </span>
+            </div>
+
+            <!-- VIEW 1: DETAILED STUDY CARDS (Default) -->
+            <div x-show="viewMode === 'study'" class="space-y-4">
+                <template x-for="person in filteredIndividuals" :key="person.name">
+                    <article class="figure-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden transition">
+                        
+                        <!-- Card Header -->
+                        <div class="p-4 sm:p-5 bg-beige-50 border-b border-beige-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-inner"
+                                     :class="{
+                                         'bg-accent-gold/20 text-brown-900 border border-accent-gold/40': person.era === 'ancient-medieval',
+                                         'bg-accent-cobalt/15 text-accent-cobalt border border-accent-cobalt/30': person.era === 'renaissance',
+                                         'bg-accent-wine/15 text-accent-wine border border-accent-wine/30': person.era === 'industrial',
+                                         'bg-accent-forest/15 text-accent-forest border border-accent-forest/30': person.era === 'modern'
+                                     }">
+                                    <i :class="person.icon || 'fa-solid fa-user-doctor'"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base sm:text-lg font-bold text-brown-900 tracking-tight" x-text="person.name"></h3>
+                                        <span class="text-[11px] px-2 py-0.5 rounded-md font-semibold border"
+                                              :class="{
+                                                  'bg-amber-100 text-amber-900 border-amber-300': person.era === 'ancient-medieval',
+                                                  'bg-blue-100 text-blue-900 border-blue-300': person.era === 'renaissance',
+                                                  'bg-rose-100 text-rose-900 border-rose-300': person.era === 'industrial',
+                                                  'bg-emerald-100 text-emerald-900 border-emerald-300': person.era === 'modern'
+                                              }"
+                                              x-text="person.eraLabel">
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-brown-700 font-medium" x-text="person.role"></p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-center">
+                                <button 
+                                    @click="toggleCardMode(person.name)" 
+                                    class="text-xs px-3 py-1.5 rounded-lg border font-semibold transition flex items-center gap-1.5 shadow-xs"
+                                    :class="isFullAnalysis(person.name) 
+                                        ? 'bg-beige-200/90 hover:bg-beige-300 border-beige-300 text-brown-800' 
+                                        : 'bg-brown-800 hover:bg-brown-700 border-brown-700 text-beige-50'"
+                                    :title="isFullAnalysis(person.name) ? 'Switch to Quick View (Discoveries only)' : 'Show Full Analysis Matrix'">
+                                    <span x-text="isFullAnalysis(person.name) ? 'Quick View' : 'Full Analysis'"></span>
+                                    <i class="fa-solid text-[10px]" :class="isFullAnalysis(person.name) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card Body (Always visible Discoveries highlight + Expandable Analysis Matrix) -->
+                        <div class="p-4 sm:p-5 space-y-4">
+                            
+                            <!-- Key Discoveries Callout -->
+                            <div class="bg-beige-100/90 p-3.5 rounded-xl border border-beige-200 text-xs sm:text-sm text-brown-900 leading-relaxed">
+                                <div class="flex items-center gap-1.5 text-accent-forest font-bold text-[11px] uppercase tracking-wider mb-1.5">
+                                    <i class="fa-solid fa-flask"></i>
+                                    <span>Discoveries &amp; Key Ideas</span>
+                                </div>
+                                <div class="whitespace-pre-line text-brown-800" x-text="person.discoveries"></div>
+                            </div>
+
+                            <!-- Full Analysis Grid (Default: Visible; toggleable to Quick View) -->
+                            <div x-show="isFullAnalysis(person.name)" x-collapse.duration.250ms class="space-y-4 pt-1">
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs">
+                                    
+                                    <!-- 1. Reaction & Opposition -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-beige-200 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 text-accent-wine font-bold uppercase tracking-wider text-[11px]">
+                                            <i class="fa-solid fa-hand-holding-hand"></i>
+                                            <span>Contemporary Reaction</span>
+                                        </div>
+                                        <p class="text-brown-800 leading-relaxed whitespace-pre-line" x-text="person.reaction || 'Generally accepted within professional medical circles.'"></p>
+                                    </div>
+
+                                    <!-- 2. England / Impact -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-beige-200 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 text-accent-cobalt font-bold uppercase tracking-wider text-[11px]">
+                                            <i class="fa-solid fa-flag-checkered"></i>
+                                            <span>Impact &amp; Significance in Britain</span>
+                                        </div>
+                                        <div class="text-brown-800 leading-relaxed whitespace-pre-line">
+                                            <p x-show="person.england" class="mb-1.5"><strong class="text-brown-900">In England:</strong> <span x-text="person.england"></span></p>
+                                            <p><strong class="text-brown-900">Historical Impact:</strong> <span x-text="person.impact"></span></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. Factors Affecting Success -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-beige-200 space-y-1.5">
+                                        <div class="flex items-center gap-1.5 text-accent-gold font-bold uppercase tracking-wider text-[11px]">
+                                            <i class="fa-solid fa-network-wired"></i>
+                                            <span>Factors Affecting Success</span>
+                                        </div>
+                                        <p class="text-brown-800 leading-relaxed whitespace-pre-line" x-text="person.factors || 'Individual genius and scientific method.'"></p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+                </template>
+            </div>
+
+            <!-- VIEW 2: COMPACT SUMMARY LIST (Fast Recall) -->
+            <div x-show="viewMode === 'compact'" class="bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden divide-y divide-beige-200">
+                <template x-for="person in filteredIndividuals" :key="'compact-' + person.name">
+                    <div class="p-4 sm:p-5 hover:bg-beige-100/60 transition flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <div class="md:w-1/3 flex flex-col items-start gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full"
+                                      :class="{
+                                          'bg-accent-gold': person.era === 'ancient-medieval',
+                                          'bg-accent-cobalt': person.era === 'renaissance',
+                                          'bg-accent-wine': person.era === 'industrial',
+                                          'bg-accent-forest': person.era === 'modern'
+                                      }"></span>
+                                <span class="font-bold text-brown-900 text-sm sm:text-base leading-snug tracking-tight" x-text="person.name"></span>
+                            </div>
+                            <span class="text-[11px] text-brown-700 pl-4 font-medium" x-text="person.role"></span>
+                            <span class="text-[10px] ml-4 px-2 py-0.5 rounded-md font-semibold border bg-beige-200/80 border-beige-300 text-brown-800" x-text="person.eraLabel"></span>
+                        </div>
+                        <div class="md:w-2/3 pl-4 md:pl-0 border-l-2 border-beige-200 md:border-l-0 space-y-1.5">
+                            <p class="text-xs sm:text-sm text-brown-900 font-semibold" x-text="person.summaryDiscovery"></p>
+                            <p class="text-xs text-brown-700 leading-relaxed"><strong class="text-brown-900">Significance:</strong> <span x-text="person.impact"></span></p>
+                            <p class="text-[11px] text-brown-600 font-mono"><strong class="text-brown-800 font-sans">Factors:</strong> <span x-text="person.factors"></span></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search State -->
+            <div x-show="filteredIndividuals.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                    <i class="fa-solid fa-user-xmark text-lg"></i>
+                </div>
+                <h3 class="text-base font-bold text-brown-900 mb-1">No medical individuals found</h3>
+                <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                    We couldn't find any pioneers matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>" in the selected era.
+                </p>
+                <div class="flex justify-center gap-2">
+                    <button 
+                        @click="searchQuery = ''; selectedEra = 'all'" 
+                        class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                    >
+                        Reset All Filters
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-6 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>GCSE History Revision Hub &bull; Health and the People: Key Figures &amp; Pioneers ⚕️</p>
+            <div class="flex items-center gap-4">
+                <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Back to Health Hub</a>
+                <a href="health-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+                <a href="health-surgery.html" class="text-beige-200 hover:text-white underline">Surgery Guide</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic & Complete Dataset from Health Key figures.docx -->
+    <script>
+        function healthKeyFiguresApp() {
+            return {
+                searchQuery: '',
+                selectedEra: 'all',
+                viewMode: 'study', // 'study' (detailed cards) or 'compact' (summary list)
+                sortAscending: true,
+                showFullAnalysis: true, // Full Analysis is now active by default
+                cardModes: {}, // Tracks individual card overrides ('quick' or 'full')
+
+                isFullAnalysis(name) {
+                    if (this.cardModes[name] !== undefined) {
+                        return this.cardModes[name] === 'full';
+                    }
+                    return this.showFullAnalysis;
+                },
+
+                toggleCardMode(name) {
+                    const current = this.isFullAnalysis(name);
+                    this.cardModes[name] = current ? 'quick' : 'full';
+                },
+
+                toggleAllCards() {
+                    this.showFullAnalysis = !this.showFullAnalysis;
+                    this.cardModes = {}; // Clear individual overrides on global toggle
+                },
+
+                // Extracted strictly and faithfully from "Health Key figures.docx"
+                individuals: [
+                    {
+                        name: "Hippocrates",
+                        era: "ancient-medieval",
+                        eraLabel: "Pre-Medieval (c400 BC)",
+                        role: "Ancient Greek Physician & 'Father of Modern Medicine'",
+                        icon: "fa-solid fa-scroll",
+                        summaryDiscovery: "Four Humours Theory (Blood, Phlegm, Yellow Bile, Black Bile) & Clinical Observation.",
+                        discoveries: "• Developed the Theory of the Four Humours – all humours (Blood, Phlegm, Black Bile, Yellow Bile) need to be in balance.\n• Developed clinical observation: observing and recording patient symptoms.\n• Created the Hippocratic Oath of medical ethics.",
+                        reaction: "• Many physicians used his work and built off it for centuries (notably Galen who created the Theory of Opposites).\n• Respected as the gold standard of clinical medicine.",
+                        england: "His clinical approach influenced later British doctors, earning Thomas Sydenham the nickname 'The English Hippocrates'.",
+                        impact: "• Doctors still swear the Hippocratic Oath today.\n• The Four Humours guided Western healthcare for over a millennium.\n• Established observation rather than supernatural superstition as the basis of clinical diagnosis.",
+                        factors: "• Individual: Galen and later physicians built directly upon his framework.\n• Religion: The Christian Church agreed with his principles of order and design.\n• Science & Technology: Absence of scientific instruments (microscopes) meant his theories could not be disproved for over a thousand years."
+                    },
+                    {
+                        name: "Galen",
+                        era: "ancient-medieval",
+                        eraLabel: "Ancient & Medieval (c160 AD)",
+                        role: "Roman Physician to Gladiators & Emperors",
+                        icon: "fa-solid fa-monument",
+                        summaryDiscovery: "Theory of Opposites, Arterial Circulation & Speech Controlled by the Brain.",
+                        discoveries: "• Developed Hippocrates’ Theory of the Four Humours by creating the Theory of Opposites (treating cold with heat, dry with moist).\n• Developed Hippocrates’ ideas about exercise and diet – allowed the Four Humours to actually treat patients rather than just being an explanation.\n• Discovered the brain (not the heart) controlled speech by cutting pig nerves.\n• Discovered the arteries (not just veins) carried blood around the body.\n• Believed in dissections: encouraged doctors to dissect pigs or apes if humans were unavailable because their bodies were supposedly similar – leading to over 200 anatomical errors that hindered development because animals differed from humans.",
+                        reaction: "• Christian Church agreed completely with his belief in a single Divine Creator ('teleology').\n• Little alternatives existed, so people universally agreed with his infallible authority for 1,400 years.",
+                        england: "Galen's texts dominated British universities (Oxford & Cambridge); questioning his writings resulted in university expulsion or Church condemnation.",
+                        impact: "• People in the Middle Ages respected traditional authority, so his ideas lasted unchallenged for over 1,400 years.\n• Total Church support meant his medical books were copied and treated as infallible truth.\n• Wrote over 350 books, cementing his doctrine across Europe.",
+                        factors: "• Religion & Church: Strongly agreed with his single Creator teaching and possessed total institutional power to punish dissenters.\n• Communication: Wrote over 350 books; however, without the printing press, dissemination was slow and controlled by monastic copyists."
+                    },
+                    {
+                        name: "Andreas Vesalius",
+                        era: "renaissance",
+                        eraLabel: "Renaissance (1543)",
+                        role: "Flemish Anatomist & Professor of Surgery",
+                        icon: "fa-solid fa-bone",
+                        summaryDiscovery: "'The Fabric of the Human Body' (1543), correcting over 200 of Galen's anatomical errors.",
+                        discoveries: "• Published 'The Fabric of the Human Body' (De Humani Corporis Fabrica, 1543), an accurately illustrated human anatomy textbook.\n• Corrected over 200 of Galen’s errors (e.g. proved the human breastbone has three parts, not seven like an ape; the human jawbone has one bone, not two).\n• Highlighted through direct dissections of executed criminals that human bodies are fundamentally different from animals.",
+                        reaction: "• Disproved Galen, provoking furious opposition from traditional doctors and university faculties who claimed human anatomy had changed since antiquity.\n• Appointed court physician to Holy Roman Emperor Charles V.\n• Sparked wide debates on whether reliance on ancient texts was outdated.",
+                        england: "• Translated into English by Thomas Geminus in 'Compendiosa Totius Anatomiae Delineatio'.\n• Three editions of Compendiosa were published between 1545 and 1559, accelerating the growing anatomical understanding needed in British medicine.",
+                        impact: "• Disproved Galen and forced medical science to adopt direct empirical observation.\n• Represented the Renaissance spirit of individual scientific inquiry and challenging established dogmas.\n• Did not lead directly to instant cures or treatments, but laid the indispensable foundation for future breakthroughs (e.g. William Harvey).",
+                        factors: "• Communication: Johannes Gutenberg's printing press allowed detailed woodcut anatomical diagrams to be mass-produced accurately.\n• Government: Imperial protection and legitimacy granted by Emperor Charles V."
+                    },
+                    {
+                        name: "Ambroise Paré",
+                        era: "renaissance",
+                        eraLabel: "Renaissance (1570s)",
+                        role: "French Army Surgeon & Royal Physician",
+                        icon: "fa-solid fa-hand-holding-medical",
+                        summaryDiscovery: "Soothing wound ointment (egg yolk, rose oil, turpentine) & silk ligatures for amputations.",
+                        discoveries: "• Replaced searing cauterisation with a gentle ointment mixed from egg yolk, oil of roses, and turpentine when boiling oil ran out on the battlefield in 1537.\n• Introduced silk ligatures to tie off blood vessels during amputations instead of searing wounds with hot cautery irons – reducing immense shock, agony, and infection.\n• Designed advanced prosthetic limbs for amputee soldiers.\n• Published 'Les Oeuvres' in 1575.",
+                        reaction: "• Traditional surgeons preferred boiling oil cauterisation and resisted silk ligatures, arguing threads were slippery and introduced deep infection.\n• Gained immense respect and recognition on the battlefield among soldiers.\n• Appointed personal royal surgeon to King Henry II of France.",
+                        england: "• His books were translated into English; British surgeons quickly adopted silk ligatures, prosthetics, and wound ointments.",
+                        impact: "• Revolutionized battlefield trauma surgery.\n• Elevated surgery into a skilled, scientific, and respected medical profession rather than a brutal craft practiced by barber-surgeons.",
+                        factors: "• Chance: Ran out of boiling elderberry oil during the siege of Turin (1537), forcing him to experiment with an improvised ointment.\n• War: Continuous European battlefields provided thousands of gunshot wounds and amputation opportunities."
+                    },
+                    {
+                        name: "William Harvey",
+                        era: "renaissance",
+                        eraLabel: "Renaissance (1628)",
+                        role: "English Physician & Discoverer of Blood Circulation",
+                        icon: "fa-solid fa-heart-pulse",
+                        summaryDiscovery: "'De Motu Cordis' (1628): Proved the heart acts as a muscular pump circulating blood in a closed loop.",
+                        discoveries: "• Proved blood is continuously pumped around the body by the heart in a closed loop with one-way valves, decisively disproving Galen’s theory that blood was endlessly produced in the liver and consumed by tissues.\n• Proved veins only flow blood in one direction back towards the heart.\n• Published 'An Anatomical Treatise on the Motion of the Heart and Blood' (De Motu Cordis) in 1628.",
+                        reaction: "• Heavily criticized by conservative physicians for contradicting Galen's widely accepted humours and liver doctrines; some patients abandoned his practice.\n• Lacked technology to visually prove microscopic connections (capillaries were invisible without powerful microscopes).",
+                        england: "• Served as personal physician to King James I and King Charles I, giving his research high social standing and protection.",
+                        impact: "• Brought no immediate practical treatments or cures (blood transfusions failed without grouping knowledge), but created the cornerstone of modern cardiovascular medicine and physiology.\n• Emphasized experimental observation, mechanical measurement, and challenging dogma during the Scientific Revolution.",
+                        factors: "• Individual Genius: Rigorous quantitative experiments, dissections, and mechanical logic.\n• Technology Limits: Could not see capillaries connecting arteries and veins until Marcello Malpighi's microscope in 1661."
+                    },
+                    {
+                        name: "Edward Jenner",
+                        era: "renaissance",
+                        eraLabel: "Industrial Breakthrough (1796/1798)",
+                        role: "English Country Doctor & Vaccination Pioneer",
+                        icon: "fa-solid fa-shield-virus",
+                        summaryDiscovery: "Developed the world's first vaccination using cowpox to prevent deadly smallpox.",
+                        discoveries: "• Observed that milkmaids who caught mild cowpox never caught deadly smallpox.\n• Inoculated 8-year-old James Phipps with cowpox pus from dairymaid Sarah Nelmes, then exposed him to live smallpox; Phipps remained completely immune.\n• Smallpox was a dreaded disease killing 30% of sufferers and more young children than any other.\n• Published 'An Inquiry into the Causes and Effects of the Variolae Vaccinae' in 1798, coining the medical term 'vaccination' (from Latin vacca, cow).",
+                        reaction: "• Religious opposition: Some clergymen declared animal pus in human veins was an ungodly interference with God's will.\n• Inoculators opposed him because they profited from the expensive variolation method and labelled him a 'quack'.\n• Jenner could not scientifically explain why vaccination worked (Germ Theory was still 60 years away).",
+                        england: "• Vaccinations became fashionable after Lady Mary Wortley Montagu's earlier popularisation of variolation.\n• Members of the Royal Family, including King George III’s children, were vaccinated, boosting nationwide public confidence.\n• Jenner's safer method replaced inoculation; Parliament awarded him £10,000 in 1802 and £20,000 in 1807.\n• British Parliament made smallpox vaccination compulsory in 1853.",
+                        impact: "• Led directly to the global eradication of smallpox.\n• Established vaccination as the gold standard of preventative public medicine.",
+                        factors: "• Science & Technology: Inoculation techniques paved the way for his experiments.\n• Government Support: Parliament funded his research (£10,000 grant) and passed the compulsory 1853 Vaccination Act."
+                    },
+                    {
+                        name: "John Hunter",
+                        era: "renaissance",
+                        eraLabel: "Renaissance / Georgian (Late 18th C)",
+                        role: "Scottish Surgeon, Anatomist & Scientific Mentor",
+                        icon: "fa-solid fa-skull",
+                        summaryDiscovery: "Scientific dissection, treatment for aneurysms & founder of pathological anatomy.",
+                        discoveries: "• Applied strict scientific observation, specimen preservation, and surgical experimentation.\n• Tried to prove whether gonorrhoea and syphilis came from the same venereal microbe (accidentally infected himself with both using a contaminated needle).\n• Taught that mercury was an effective treatment for venereal disease.\n• Built an extraordinary anatomical collection of 14,000 specimens from more than 500 species, demonstrating comparative biology.\n• Pioneer of aneurysm surgery, preserving limbs instead of amputating.",
+                        reaction: "• Highly respected across the medical establishment.\n• Appointed personal surgeon to King George III and Surgeon General to the British Army in 1790.",
+                        england: "• Senior Surgeon at St. George’s Hospital, London.\n• Established the famed Hunterian Museum in London as an international centre for anatomical dissection.\n• Trained scores of famous surgeons, including Edward Jenner.",
+                        impact: "• Proved that syphilis and gonorrhoea were separate diseases (his experiment failed because the donor needle was dual-infected).\n• Authored foundational texts like 'A Treatise on the Blood, Inflammation, and Gunshot Wounds'.\n• Transformed surgery from an empirical trade into a rigorous academic science.",
+                        factors: "• Science & Technology: Relied exclusively on the scientific method, careful dissection, and empirical trials.\n• Communication: His massive collection and personal teaching trained a generation of pioneering British doctors."
+                    },
+                    {
+                        name: "Nicholas Culpeper",
+                        era: "renaissance",
+                        eraLabel: "Renaissance (1652)",
+                        role: "English Herbalist, Botanist & Apothecary",
+                        icon: "fa-solid fa-leaf",
+                        summaryDiscovery: "'The English Physician' (1652): Accessible herbal medicine translated into English.",
+                        discoveries: "• Translated Latin and Greek medical texts into everyday English so ordinary people could read them.\n• Published 'The English Physician' (1652), detailing native medicinal herbs, wild plants, and their clinical treatments.\n• Rejected expensive, foreign, Latin-prescribed apothecary drugs.\n• Integrated herbal remedies with astrological connections.",
+                        reaction: "• Medical establishment (College of Physicians) strongly opposed him, furious that he challenged their monopoly and encouraged self-treatment.\n• Reliance on common wild herbs was dismissed by academic physicians as unscientific.\n• Seen by some as eccentric for incorporating astrological planetary signs.",
+                        england: "Became one of the most widely read books in England, empowering working-class families to treat themselves with free hedgerow herbs.",
+                        impact: "• Democratized healthcare knowledge and empowered ordinary families to manage their ailments with affordable domestic remedies.\n• Opened the door to natural and alternative medicine in Britain.",
+                        factors: "• Communication: Translated Latin texts into English and published affordable handbooks.\n• Social Beliefs: Strong egalitarian desire to help the poor against elite medical exploitation."
+                    },
+                    {
+                        name: "Thomas Sydenham",
+                        era: "renaissance",
+                        eraLabel: "Renaissance (1676)",
+                        role: "English Physician & 'The English Hippocrates'",
+                        icon: "fa-solid fa-book-medical",
+                        summaryDiscovery: "'Observationes Medicae' (1676), clinical disease classification & laudanum pain relief.",
+                        discoveries: "• Championed bedside observation to diagnose illnesses rather than relying on theoretical humours books.\n• Discovered that diseases should be classified into specific species, just as botanists classify plants, recognizing that illnesses are not completely unique from person to person.\n• Popularized laudanum (liquid opium dissolved in alcohol) as reliable pain relief.\n• Prescribed iron for anaemia and cinchona bark (quinine) for malaria.",
+                        reaction: "• Many conservative doctors still clung to the Four Humours and resented his refusal to balance humours using aggressive bleedings and purgings.\n• Acclaimed as the 'English Hippocrates' for revitalising bedside clinical observation.",
+                        england: "His methods influenced English hospitals and established clinical case-histories as standard British practice.",
+                        impact: "• Published 'Observationes Medicae' (1676), which served as the standard medical textbook for two centuries.\n• Led to a modern scientific approach to diagnosing and categorizing infectious illnesses.",
+                        factors: "• Individual: Refused to accept abstract medical theories without direct bedside verification.\n• Communication: Published meticulous clinical observation handbooks circulated across Europe."
+                    },
+                    {
+                        name: "Louis Pasteur",
+                        era: "industrial",
+                        eraLabel: "Industrial (1861)",
+                        role: "French Chemist & Microbiologist",
+                        icon: "fa-solid fa-bacterium",
+                        summaryDiscovery: "Germ Theory (1861): Disproved Spontaneous Generation & proved microbes cause disease.",
+                        discoveries: "• Germ Theory: Proved that airborne microscopic organisms cause decay and human disease, disproving Spontaneous Generation.\n• Designed the famous swan-neck flask experiments: heating liquids killed microorganisms and preserved liquids until exposed to air.\n• Developed pasteurization for wine, milk, and beer.\n• Developed laboratory vaccines for chicken cholera, anthrax (1881), and rabies (1885).",
+                        reaction: "• Early fierce opposition: Critics like Charlton Bastian argued microbes were too tiny to harm large humans and championed spontaneous generation.\n• Acceptance accelerated during the 1866 British Cattle Plague when Lionel Beale proved a specific microorganism was spreading via contact.",
+                        england: "• Joseph Lister studied Pasteur’s papers and applied Germ Theory to antiseptic surgery (Carbolic acid, 1867).\n• Prominent English physicist John Tyndall delivered public lectures backing Pasteur's Germ Theory.",
+                        impact: "• Revolutionized the understanding of disease causation, shifting medicine from miasma to microbiology.\n• Transformed hospital hygiene, antiseptic surgery, and preventative vaccination.",
+                        factors: "• War & National Rivalry: The Franco-Prussian War (1870–71) fueled intense scientific rivalry between Pasteur (France) and Robert Koch (Germany).\n• Technology: High-powered achromatic compound microscopes."
+                    },
+                    {
+                        name: "Robert Koch",
+                        era: "industrial",
+                        eraLabel: "Industrial (1880s)",
+                        role: "German Physician & 'Father of Medical Bacteriology'",
+                        icon: "fa-solid fa-microscope",
+                        summaryDiscovery: "Isolated specific disease microbes (Anthrax, TB, Cholera) & established Koch's Postulates.",
+                        discoveries: "• Proved that specific bacteria cause specific illnesses: isolated Anthrax (1876), Tuberculosis (1882), and Cholera (1883).\n• Perfected laboratory techniques: used agar jelly in flat petri dishes to culture pure colonies and chemical methyl violet dyes to stain and photograph bacteria under microscopes.\n• Established 'Koch’s Postulates' – a strict four-step scientific method to verify the exact causal agent of any infectious disease.",
+                        reaction: "• Rapidly accepted following his conclusive identification of the anthrax bacterium and spore life-cycle in 1876.\n• Overcame the remnants of miasma and anti-contagionist skepticism across Europe.",
+                        england: "• His research papers were rapidly translated into English, allowing British doctors to abandon miasma and target specific bacterial pathogens.",
+                        impact: "• Fundamentally transformed disease diagnosis, epidemiology, and public health water filtration.\n• Inspired other bacteriologists to discover the microbes for typhoid, pneumonia, tetanus, meningitis, and plague within two decades.",
+                        factors: "• War & National Rivalry: Franco-Prussian War competition against Louis Pasteur.\n• Science & Technology: Development of agar jelly, aniline chemical dyes, and Zeiss oil-immersion microscope lenses."
+                    },
+                    {
+                        name: "Edwin Chadwick",
+                        era: "industrial",
+                        eraLabel: "Industrial (1842)",
+                        role: "British Social Reformer & Sanitary Commissioner",
+                        icon: "fa-solid fa-toilet-portable",
+                        summaryDiscovery: "'Report on the Sanitary Condition of the Labouring Population' (1842) & 1848 Public Health Act.",
+                        discoveries: "• Published the landmark 1842 'Report on the Sanitary Condition of the Labouring Population of Great Britain'.\n• Proved through statistical data that squalid living conditions, foul filth, and impure water caused epidemic sickness, which directly created poverty and high Poor Law taxes.\n• Proposed nationwide public works reforms: clean piped water supplies, glazed underground drainage sewers, refuse disposal, and district Medical Officers of Health.",
+                        reaction: "• Resistance from local municipal councils who refused to spend ratepayers' money.\n• Property owners and laissez-faire politicians fiercely objected to state intervention as an infringement of individual liberties ('tyranny of the drain').",
+                        england: "• Published across Britain, generating immense public and parliamentary pressure.\n• Resulted in the First Public Health Act of 1848 establishing the General Board of Health.",
+                        impact: "• Chadwick personally believed in miasma theory (believed foul smells caused disease), yet his sanitary clean-up measures successfully saved thousands of lives.\n• Marked the historical beginning of state-enforced public health intervention in Britain.",
+                        factors: "• Chance: The catastrophic 1848 Cholera outbreak forced Parliament to enact his proposals.\n• Communication: Mass publication and widespread press coverage of his 1842 report.\n• Government Support: Shift away from strict laissez-faire, resulting in the 1848 Public Health Act."
+                    },
+                    {
+                        name: "Florence Nightingale",
+                        era: "industrial",
+                        eraLabel: "Industrial (1854)",
+                        role: "British Nursing Pioneer & Hospital Reformer",
+                        icon: "fa-solid fa-hospital-user",
+                        summaryDiscovery: "Sanitary hospital reform, statistical polar diagrams & modern nursing training.",
+                        discoveries: "• Discovered in the Crimean War (Scutari hospital, 1854) that vastly more soldiers died from hospital-acquired infections (cholera, typhus, gangrene) than battlefield bullet wounds.\n• Enforced rigorous hygiene: clean bedding, unblocked sewer drainage, fresh boiled water, ventilation, and nutritious food, slashing Scutari hospital mortality from ~42% to ~2%.\n• Introduced statistical diagrams (coxcomb / polar area graphs) to visibly demonstrate that sanitary reform preserved human lives.\n• Authored 'Notes on Nursing' (1859) and 'Notes on Hospitals' (1863).",
+                        reaction: "• Celebrated by the British public and soldiers as a national heroine ('The Lady with the Lamp').\n• Some military doctors and Victorian officials resented her authority and tried to minimize her impact as 'just a woman/nurse'.",
+                        england: "• Founded the Nightingale Training School for Nurses at St Thomas’ Hospital in London in 1860, establishing nursing as a respectable, trained profession for women.\n• Overhauled hospital design across Britain with the airy 'pavilion' ward layout.",
+                        impact: "• Transformed hospital cleanliness, hygiene standards, and professional nursing worldwide.\n• Pioneered public health statistics and visual epidemiology.",
+                        factors: "• War: The Crimean War created the horrific crisis that gave her the leadership opportunity.\n• Communication: Graphic statistical diagrams and bestselling books made the reality of hospital infections undeniable."
+                    },
+                    {
+                        name: "John Snow",
+                        era: "industrial",
+                        eraLabel: "Industrial (1854)",
+                        role: "British Doctor & Pioneer Epidemiologist",
+                        icon: "fa-solid fa-faucet-drinking",
+                        summaryDiscovery: "Proved cholera is waterborne (1854 Broad Street Pump) & calculated safe chloroform doses.",
+                        discoveries: "• Discovered the direct link between cholera and sewage-contaminated drinking water during the 1854 Soho epidemic.\n• Created the famous 'Ghost Map' charting cholera deaths around Broad Street, tracing the infection source to the street water pump.\n• Removed the Broad Street pump handle, stopping the local epidemic immediately and proving cholera was not airborne miasma.\n• Pioneered safe surgical anaesthesia: invented an inhaler to regulate safe chloroform dosages and administered it to Queen Victoria in 1853 and 1857.",
+                        reaction: "• Initial rejection: The General Board of Health and conservative doctors remained stubborn believers in miasma.\n• Critics noted that Snow could not scientifically explain what physical agent in water caused the illness, as Germ Theory had not yet been proven.",
+                        england: "• Provided the blueprint for London's Metropolitan Board of Works to commission Joseph Bazalgette's vast subterranean sewer system (1858–1875).",
+                        impact: "• Laid the foundation of modern epidemiology and public water safety.\n• Germ Theory (Koch isolating Vibrio cholerae in 1883) eventually vindicated his waterborne discovery completely.",
+                        factors: "• Communication: His iconic dot-map ('Ghost Map') provided undeniable visual evidence.\n• Publications: Published 'On the Mode of Communication of Cholera' (1849/1855) and 'On Ether' (1847).\n• Limits of Science: Immediate acceptance was delayed because bacteria were not yet accepted."
+                    },
+                    {
+                        name: "Charles Booth",
+                        era: "modern",
+                        eraLabel: "Modern (1886–1903)",
+                        role: "British Social Researcher & Reformer",
+                        icon: "fa-solid fa-map-location-dot",
+                        summaryDiscovery: "'Life and Labour of the People in London': Mapped poverty and proved link to poor health.",
+                        discoveries: "• Undertook massive empirical sociological research into poverty across East London starting in 1886.\n• Created color-coded street maps illustrating precise levels of poverty and deprivation.\n• Discovered that 30.7% (nearly one-third) of Londoners lived in severe poverty, debunking the official government estimate of only 25%.\n• Proved a direct causal link between poverty, inadequate diet, poor housing, and debilitating disease.",
+                        reaction: "• Shocked Victorian society; some conservative critics initially claimed his poverty percentages were exaggerated.",
+                        england: "His extensive multi-volume survey directly influenced the landmark Liberal Government Social Welfare Reforms (1906–1914).",
+                        impact: "• Ended the Victorian assumption that poverty was caused by moral laziness, proving it was driven by low wages, sickness, and unemployment.\n• Prompted state welfare legislation: Old Age Pensions (1908) and National Insurance (1911).",
+                        factors: "• Communication: Published the monumental 17-volume work 'Life and Labour of the People in London'.\n• Government & Politics: Piled pressure on Parliament to abandon laissez-faire and provide state welfare support."
+                    },
+                    {
+                        name: "Alexander Fleming",
+                        era: "modern",
+                        eraLabel: "Modern (1928)",
+                        role: "Scottish Biologist & Discoverer of Penicillin",
+                        icon: "fa-solid fa-prescription-bottle-medical",
+                        summaryDiscovery: "Discovered Penicillin (1928) from Penicillium notatum mould destroying staphylococcus bacteria.",
+                        discoveries: "• Returned from holiday in September 1928 to his laboratory at St Mary's Hospital, London, and noticed an unwashed petri dish had grown Penicillium notatum mould.\n• Discovered that the mould had created a clear bacteria-free zone around itself, destroying staphylococcus bacteria.\n• Identified the world's first natural antibiotic substance and published his findings in 1929.\n• However, he could not extract or purify penicillin to treat human patients.",
+                        reaction: "• Initially received little attention or funding; Fleming could not chemically purify or stabilize penicillin, so it was seen as a laboratory curiosity.",
+                        england: "Fleming preserved his mould culture samples, which were later discovered by Florey and Chain at Oxford in 1937.",
+                        impact: "• Discovered the world's first true antibiotic, setting the foundation for saving millions of lives from previously fatal bacterial infections.\n• Shared the 1945 Nobel Prize in Medicine with Florey and Chain.",
+                        factors: "• Chance: An open window and contaminated petri dish created the accidental mould growth.\n• War: His wartime experience in WWI treating soldiers with fatal wound gangrene motivated his relentless search for bacterial cures."
+                    },
+                    {
+                        name: "Howard Florey & Ernst Chain",
+                        era: "modern",
+                        eraLabel: "Modern (1937–1945)",
+                        role: "Oxford University Pathologists & Biochemists",
+                        icon: "fa-solid fa-boxes-packing",
+                        summaryDiscovery: "Purified and mass-produced penicillin with Norman Heatley & US factories for WWII.",
+                        discoveries: "• Read Fleming’s 1929 research paper at Oxford and successfully extracted and purified penicillin.\n• Proved penicillin’s miraculous efficacy on infected laboratory mice (1940) and human patient Albert Alexander (1941).\n• Norman Heatley devised improvised hospital milk-churn and bedpan culture apparatus to brew the mould.\n• Traveled to the USA in 1941; convinced the US government and pharmaceutical factories to mass-produce penicillin for military casualties.",
+                        reaction: "• Acclaimed internationally as one of the greatest medical breakthroughs in human history.",
+                        england: "• Penicillin transformed British wartime survival; by D-Day (June 1944), sufficient supplies existed to treat all Allied casualties.",
+                        impact: "• Transformed military and civilian mortality: only ~1% of wounded soldiers died from infection in WWII (compared to 15–18% in WWI).\n• Enabled troops to recover and return to service rapidly.\n• Launched the mass antibiotic era, making life-saving penicillin available to the global civilian public by 1945.",
+                        factors: "• Government Funding: The US government invested millions into mass industrial fermentation plants.\n• War: The urgent need to treat D-Day casualties was the primary catalyst for mass production.\n• Teamwork & Individual Genius: Built directly on Fleming's discovery."
+                    },
+                    {
+                        name: "Seebohm Rowntree",
+                        era: "modern",
+                        eraLabel: "Modern (1899–1901)",
+                        role: "British Sociologist & Chocolate Manufacturer",
+                        icon: "fa-solid fa-scale-balanced",
+                        summaryDiscovery: "'Poverty: A Study of Town Life' (1901) & defined the concept of the 'Poverty Line'.",
+                        discoveries: "• Conducted a comprehensive sociological survey of working-class families in York in 1899.\n• Discovered that 27.84% (nearly 28%) of the population of York was living in extreme poverty, proving squalor was not just an East London issue.\n• Established a scientific approach to measuring poverty, defining the concepts of 'Primary Poverty' (insufficient earnings for bare physical survival) and 'Secondary Poverty'.",
+                        reaction: "• Some conservative commentators argued his figures were overstated, but the rigorous statistical methodology proved difficult to refute.\n• Served as a profound national wake-up call to the British public.",
+                        england: "• His findings deeply influenced Liberal politicians David Lloyd George and Winston Churchill, sparking the 1906–1914 Liberal Welfare Reforms.",
+                        impact: "• Proved that poverty directly caused chronic malnutrition, low life expectancy, and disease.\n• Helped lay the foundation for Britain’s modern welfare state and minimum wage concepts.",
+                        factors: "• Communication: His book 'Poverty: A Study of Town Life' (1901) was widely circulated, read, and debated in Parliament."
+                    },
+                    {
+                        name: "William Beveridge",
+                        era: "modern",
+                        eraLabel: "Modern (1942)",
+                        role: "British Economist & Social Reformer",
+                        icon: "fa-solid fa-file-invoice",
+                        summaryDiscovery: "The Beveridge Report (1942): Blueprint for the Welfare State & NHS to defeat the 'Five Giants'.",
+                        discoveries: "• Authored the historic 1942 government report 'Social Insurance and Allied Services' (The Beveridge Report).\n• Identified the 'Five Giant Evils' plaguing British society: Want, Disease, Ignorance, Squalor, and Idleness.\n• Proposed a universal, compulsory, state-run social insurance system offering 'cradle to grave' protection, including a free national health service.",
+                        reaction: "• Immense public enthusiasm: citizens queued around the block to buy copies (over 630,000 copies sold).\n• Conservative critics and treasury officials worried about higher taxes, but public demand for postwar social reconstruction was overwhelming.",
+                        england: "• Served as the direct blueprint for the post-WWII Labour Government's social legislation, establishing the welfare state and the 1948 NHS.",
+                        impact: "• Replaced fragmented insurance schemes with a comprehensive safety net, dramatically reducing the burden of illness and poverty on the working class.\n• Created the social framework of modern post-war Britain.",
+                        factors: "• War: The shared hardships and bombing of WWII built a national consensus for a fairer postwar society.\n• Government Support: Commissioned by the wartime coalition and implemented by Clement Attlee's 1945 Labour government.\n• Communication: Over 630,000 copies were distributed and debated nationwide."
+                    },
+                    {
+                        name: "Aneurin Bevan",
+                        era: "modern",
+                        eraLabel: "Modern (1948)",
+                        role: "Minister for Health & Architect of the NHS",
+                        icon: "fa-solid fa-building-ngo",
+                        summaryDiscovery: "Established the National Health Service (NHS) on 5 July 1948 providing universal free healthcare.",
+                        discoveries: "• British Minister for Health (1945–1951) who spearheaded the creation of the National Health Service (NHS), launched on 5 July 1948.\n• Established universal healthcare: medical treatment free at the point of delivery based on clinical need, not ability to pay ('cradle to grave' care).\n• Nationalized 2,688 voluntary and municipal hospitals in Britain under state management.",
+                        reaction: "• Faced bitter, prolonged opposition from the British Medical Association (BMA) and doctors who feared losing income and independence.\n• Bevan famously compromised by 'stuffing their mouths with gold' (allowing senior hospital consultants to continue private practices while working for the NHS).\n• Critics claimed free healthcare would bankrupt Britain, but public uptake was overwhelming.",
+                        england: "Transformed British society by removing financial panic from medical treatment for millions of working-class families.",
+                        impact: "• British public health improved dramatically: infant mortality dropped, life expectancy rose, and preventable diseases were treated universally.\n• Eliminated financial barriers to GP visits, hospital surgeries, prescriptions, optometry, and dentistry.",
+                        factors: "• Government: Backed by the landslide 1945 Labour Government and financed entirely through central taxation.\n• Individual Determination: Bevan’s political resolve and tactical negotiations overcame fierce BMA resistance."
+                    }
+                ],
+
+                get filteredIndividuals() {
+                    let results = [...this.individuals];
+
+                    // Filter by era
+                    if (this.selectedEra !== 'all') {
+                        results = results.filter(p => p.era === this.selectedEra);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(p => 
+                            p.name.toLowerCase().includes(q) || 
+                            p.role.toLowerCase().includes(q) ||
+                            p.discoveries.toLowerCase().includes(q) ||
+                            p.reaction.toLowerCase().includes(q) ||
+                            (p.england && p.england.toLowerCase().includes(q)) ||
+                            p.impact.toLowerCase().includes(q) ||
+                            p.factors.toLowerCase().includes(q)
+                        );
+                    }
+
+                    // Sort alphabetical
+                    results.sort((a, b) => {
+                        const comp = a.name.localeCompare(b.name);
+                        return this.sortAscending ? comp : -comp;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
