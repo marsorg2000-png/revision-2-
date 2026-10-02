@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Exam Technique &amp; Essay Bluffer's Guide</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .question-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="examBlufferApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="index.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Main Hub">
+                    <i class="fa-solid fa-graduation-cap text-accent-gold text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Exam Technique &amp; Essay Bluffer's Guide</h1>
+                    <p class="text-xs text-beige-300">Question Types, Mark Schemes, Timing &amp; Model Sentence Formulas</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+                <a href="index.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-house text-[10px]"></i>
+                    <span>Main Hub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Top Guidance Banner -->
+        <section class="bg-beige-50 border border-beige-300 rounded-2xl p-5 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-beige-200">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-accent-gold/20 flex items-center justify-center text-brown-900 font-bold">
+                        <i class="fa-solid fa-stopwatch text-sm"></i>
+                    </span>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-brown-900">Exam Paper Navigation &amp; Timing Rules</h2>
+                        <p class="text-xs text-brown-700">Strictly allocate 1 to 1.25 minutes per mark. Never overwrite 4-markers at the expense of 16-markers.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="bg-brown-800/10 px-3.5 py-1.5 rounded-xl font-semibold text-brown-800" x-show="selectedPaper !== 'toolkit'">
+                        Total Questions: <span class="font-bold text-accent-ruby" x-text="filteredQuestions.length"></span>
+                    </span>
+                    <span class="bg-brown-800/10 px-3.5 py-1.5 rounded-xl font-semibold text-brown-800" x-show="selectedPaper === 'toolkit'">
+                        Mode: <span class="font-bold text-accent-gold">Essay Toolkit &amp; Glossary</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Paper Selection Tabs -->
+            <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                <span class="font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-bookmark text-brown-700"></i> Paper Module:
+                </span>
+                <button 
+                    @click="selectedPaper = 'all'" 
+                    :class="selectedPaper === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-200/80 text-brown-800 hover:bg-beige-300/80 border border-beige-300'" 
+                    class="px-3 py-1.5 rounded-lg font-semibold transition">
+                    All Papers (13 Question Types)
+                </button>
+                <button 
+                    @click="selectedPaper = 'conflict'" 
+                    :class="selectedPaper === 'conflict' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-200/80 text-brown-800 hover:bg-beige-300/80 border border-beige-300'" 
+                    class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-globe text-accent-navy text-[10px]"></i>
+                    <span>Conflict &amp; Tension (1945–1972)</span>
+                </button>
+                <button 
+                    @click="selectedPaper = 'germany'" 
+                    :class="selectedPaper === 'germany' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-200/80 text-brown-800 hover:bg-beige-300/80 border border-beige-300'" 
+                    class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-landmark-dome text-accent-ruby text-[10px]"></i>
+                    <span>Germany (1890–1945)</span>
+                </button>
+                <button 
+                    @click="selectedPaper = 'health'" 
+                    :class="selectedPaper === 'health' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-200/80 text-brown-800 hover:bg-beige-300/80 border border-beige-300'" 
+                    class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-staff-snake text-accent-forest text-[10px]"></i>
+                    <span>Health &amp; the People</span>
+                </button>
+                <button 
+                    @click="selectedPaper = 'toolkit'" 
+                    :class="selectedPaper === 'toolkit' ? 'bg-amber-600 text-white shadow-sm font-bold' : 'bg-amber-100 text-amber-950 hover:bg-amber-200 border border-amber-300'" 
+                    class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 ml-auto">
+                    <i class="fa-solid fa-screwdriver-wrench text-xs"></i>
+                    <span>Command Words &amp; Toolkit</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Command Words & Essay Toolkit View (Dedicated Tab) -->
+        <section x-show="selectedPaper === 'toolkit'" x-cloak class="space-y-6">
+            <!-- Toolkit Banner -->
+            <div class="bg-beige-50 border border-beige-300 rounded-2xl p-5 shadow-sm space-y-2">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-xl bg-accent-gold/20 flex items-center justify-center text-brown-900 font-bold">
+                        <i class="fa-solid fa-spell-check text-base"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-brown-900">Exam Command Words &amp; Essay Writing Toolkit</h3>
+                        <p class="text-xs text-brown-700">Examiner vocabulary definitions, paragraph formulas (PEEL &amp; JEON), and source ingredients.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Command Words Grid -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 sm:p-6 shadow-sm space-y-4">
+                <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                    <i class="fa-solid fa-bullseye text-accent-ruby text-sm"></i>
+                    <h4 class="font-bold text-brown-900 text-sm uppercase tracking-wider">Command Words &amp; Question Stems Decoder</h4>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Compare:</strong>
+                        <p class="text-brown-800">Identify direct similarities (and differences where prompted) across eras or events.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Convincing:</strong>
+                        <p class="text-brown-800">Assess historical <strong>accuracy</strong> against your own knowledge—what does it get right, exaggerate, or omit?</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Describe a problem:</strong>
+                        <p class="text-brown-800">Explain <strong>why</strong> something was a difficulty or obstacle, supported by precise factual details.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Explain:</strong>
+                        <p class="text-brown-800">Set out clear reasons <strong>why</strong> or <strong>how</strong> an outcome occurred using causal connectives.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">How far do you agree:</strong>
+                        <p class="text-brown-800">To what extent do you agree or disagree? Construct a balanced argument with a sustained, justified conclusion.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">How useful:</strong>
+                        <p class="text-brown-800">To what extent does the source add to a historian's understanding? Evaluate content, provenance (NOP), and limits.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">In what ways:</strong>
+                        <p class="text-brown-800">Explore <strong>different aspects</strong> or areas that changed over time (e.g. social, economic, or groups).</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Interpretation:</strong>
+                        <p class="text-brown-800">The historical <strong>opinion / perspective</strong> of someone looking back on an issue, leader, or period.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Significance:</strong>
+                        <p class="text-brown-800">The historical importance and impact of something in the <strong>short term</strong> and the <strong>long term</strong>.</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Source:</strong>
+                        <p class="text-brown-800">A piece of historical evidence produced at the time or shortly after (text, photo, cartoon, report).</p>
+                    </div>
+                    <div class="p-3 bg-beige-100 rounded-xl border border-beige-200 space-y-1 md:col-span-2 lg:col-span-2">
+                        <strong class="text-brown-900 block font-bold text-sm text-accent-navy">Write an account:</strong>
+                        <p class="text-brown-800">Explain <strong>how</strong> a sequence of events unfolded and escalated chronologically from catalyst to outcome.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Structure Decoders (PEEL & JEON) and Source Ingredients -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- PEEL & JEON Formulas -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 sm:p-6 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                        <i class="fa-solid fa-pen-ruler text-accent-forest text-sm"></i>
+                        <h4 class="font-bold text-brown-900 text-sm uppercase tracking-wider">Structure Decoders (8, 12 &amp; 16 Marks)</h4>
+                    </div>
+                    
+                    <!-- PEEL -->
+                    <div class="p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs text-emerald-950 space-y-2">
+                        <strong class="text-emerald-900 font-bold block text-sm flex items-center gap-1.5">
+                            <span class="w-6 h-6 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px]">PEEL</span>
+                            <span>For Explanatory Paragraphs</span>
+                        </strong>
+                        <ul class="space-y-1 pl-1">
+                            <li><strong>P &bull; Point Sentence:</strong> Introduce the clear core argument of your paragraph.</li>
+                            <li><strong>E &bull; Evidence:</strong> Select precise factual historical knowledge (names, dates, figures).</li>
+                            <li><strong>E &bull; Explain:</strong> Demonstrate directly how your evidence proves the point sentence.</li>
+                            <li><strong>L &bull; Link:</strong> Connect your point back to the overall question or final judgement.</li>
+                        </ul>
+                    </div>
+
+                    <!-- JEON -->
+                    <div class="p-4 bg-amber-50/70 rounded-xl border border-amber-200 text-xs text-amber-950 space-y-2">
+                        <strong class="text-amber-900 font-bold block text-sm flex items-center gap-1.5">
+                            <span class="w-6 h-6 rounded bg-amber-700 text-white flex items-center justify-center text-[10px]">JEON</span>
+                            <span>For Concluding Paragraphs (12 &amp; 16 Marks)</span>
+                        </strong>
+                        <ul class="space-y-1 pl-1">
+                            <li><strong>J &bull; Judgement:</strong> State your decisive answer to the prompt immediately.</li>
+                            <li><strong>E &bull; Evidence:</strong> Provide your strongest comparative evidence justifying your choice.</li>
+                            <li><strong>O &bull; On the other hand:</strong> Acknowledge the significance of the alternative factor.</li>
+                            <li><strong>N &bull; Nevertheless:</strong> Explain why your chosen factor was ultimately more decisive.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Source-Based Question Ingredients -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 sm:p-6 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2 pb-2 border-b border-beige-200">
+                        <i class="fa-solid fa-file-lines text-accent-navy text-sm"></i>
+                        <h4 class="font-bold text-brown-900 text-sm uppercase tracking-wider">Ingredients for Source-Based Questions</h4>
+                    </div>
+                    
+                    <div class="space-y-3 text-xs">
+                        <div class="p-4 bg-blue-50/80 rounded-xl border border-blue-200 text-blue-950 space-y-1.5">
+                            <strong class="text-blue-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                                <span>1. Content (What It Says / Shows)</span>
+                            </strong>
+                            <p class="leading-relaxed">The explicit information and visual details shown in the source. Always make an <strong>inference</strong> from quotes or images and support it with your own contextual knowledge.</p>
+                        </div>
+
+                        <div class="p-4 bg-purple-50/80 rounded-xl border border-purple-200 text-purple-950 space-y-1.5">
+                            <strong class="text-purple-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-id-card-clip"></i>
+                                <span>2. Provenance (NOP: Origin &amp; Context)</span>
+                            </strong>
+                            <p class="leading-relaxed mb-1">The origin and background of the source. Examine how these factors shape its utility or viewpoint:</p>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li><strong>Nature:</strong> Type of source (e.g. private diary, speech, government report, cartoon).</li>
+                                <li><strong>Origin:</strong> Author, background, nationality, and date created.</li>
+                                <li><strong>Purpose:</strong> The aim or motive—designed to persuade, deceive, inform, or record privately?</li>
+                                <li><strong>Audience:</strong> Who was it created for (public citizens, voters, military, private record)?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar and Quick Toggles (Visible when not in toolkit mode) -->
+        <div x-show="selectedPaper !== 'toolkit'" class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Search question types, marks, PEEL structures, keywords (e.g. 16 marks, Utility, Interpretations, Similarities, Narrative)..."
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                >
+                <button 
+                    x-show="searchQuery.length > 0" 
+                    @click="searchQuery = ''" 
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                    title="Clear search"
+                >
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3 text-xs self-end md:self-auto">
+                <button 
+                    @click="toggleAllCards()"
+                    class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm whitespace-nowrap"
+                >
+                    <i class="fa-solid" :class="showFullDetails ? 'fa-compress' : 'fa-expand'"></i>
+                    <span x-text="showFullDetails ? 'Collapse All Structures' : 'Expand All Structures'"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Question Cards Stack (Visible when not in toolkit mode) -->
+        <div x-show="selectedPaper !== 'toolkit'" class="space-y-6">
+            <template x-for="q in filteredQuestions" :key="q.id">
+                <article class="question-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                    
+                    <!-- Header -->
+                    <div class="px-5 py-4 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b"
+                         :class="q.headerBg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-black/25 flex items-center justify-center font-bold text-sm shadow-inner border border-white/20">
+                                <span x-text="q.marksBadge"></span>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="font-bold text-base sm:text-lg tracking-tight text-white" x-text="q.title"></h3>
+                                    <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/15 border border-white/25 font-semibold" x-text="q.paperLabel"></span>
+                                </div>
+                                <p class="text-xs text-beige-200 font-medium italic mt-0.5" x-text="'Exam Prompt Example: ' + q.prompt"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 self-end sm:self-center">
+                            <!-- Timing Badge with Clock Icon -->
+                            <div class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/30 border border-white/20 text-xs font-mono font-bold text-amber-300">
+                                <i class="fa-solid fa-clock text-xs"></i>
+                                <span x-text="q.timing"></span>
+                            </div>
+                            <button 
+                                @click="toggleCard(q.id)" 
+                                class="text-xs px-3 py-1.5 rounded-lg border font-semibold transition flex items-center gap-1.5 bg-white text-brown-900 border-beige-300 hover:bg-beige-100">
+                                <span x-text="isCardOpen(q.id) ? 'Collapse' : 'Full Guide'"></span>
+                                <i class="fa-solid text-[10px]" :class="isCardOpen(q.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-5 sm:p-6 space-y-5 text-xs sm:text-sm">
+                        
+                        <!-- Top Summary Strip -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-3.5 bg-amber-50/70 rounded-xl border border-amber-200 text-amber-950 space-y-1">
+                                <strong class="text-amber-900 font-bold block text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fa-solid fa-bullseye text-accent-gold"></i> Examiner Core Expectation
+                                </strong>
+                                <p class="text-xs leading-relaxed" x-text="q.expectation"></p>
+                            </div>
+                            <div class="p-3.5 bg-rose-50/70 rounded-xl border border-rose-200 text-rose-950 space-y-1">
+                                <strong class="text-rose-900 font-bold block text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fa-solid fa-triangle-exclamation text-accent-ruby"></i> Golden Rule / Fatal Trap
+                                </strong>
+                                <p class="text-xs leading-relaxed" x-text="q.fatalTrap"></p>
+                            </div>
+                        </div>
+
+                        <!-- Expandable Details -->
+                        <div x-show="isCardOpen(q.id)" x-collapse.duration.250ms class="space-y-5 pt-1">
+                            
+                            <!-- Mark Scheme Level Bands Table -->
+                            <div class="space-y-1.5">
+                                <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fa-solid fa-chart-simple text-brown-700"></i> Mark Scheme Bands Breakdown
+                                </h4>
+                                <div class="overflow-x-auto rounded-xl border border-beige-300">
+                                    <table class="w-full text-left text-xs border-collapse">
+                                        <thead>
+                                            <tr class="bg-brown-900 text-beige-100 font-bold">
+                                                <th class="p-2.5 w-1/6 border-r border-brown-800">Band / Marks</th>
+                                                <th class="p-2.5 w-5/6">Examiner Criteria</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                            <template x-for="band in q.markBands" :key="band.marks">
+                                                <tr class="hover:bg-beige-100">
+                                                    <td class="p-2.5 font-bold font-mono text-brown-900 border-r border-beige-300" x-text="band.marks"></td>
+                                                    <td class="p-2.5 leading-relaxed" x-text="band.descriptor"></td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Step-by-Step Writing Structure -->
+                            <div class="p-4 bg-beige-100/80 rounded-xl border border-beige-300 space-y-3">
+                                <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fa-solid fa-pen-fancy text-accent-navy"></i> Step-by-Step Paragraph Structure (PEEL / Writing Formula)
+                                </h4>
+                                <div class="space-y-2.5 text-xs text-brown-800">
+                                    <template x-for="(step, idx) in q.structureSteps" :key="idx">
+                                        <div class="p-3 bg-beige-50 rounded-lg border border-beige-200/90 space-y-1">
+                                            <strong class="text-brown-900 font-bold block" x-text="step.heading"></strong>
+                                            <p class="leading-relaxed" x-html="step.content"></p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Model Sentence Openers -->
+                            <div class="p-3.5 bg-emerald-50/80 rounded-xl border border-emerald-200 text-emerald-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-quote-left text-accent-forest text-sm mt-0.5"></i>
+                                    <div>
+                                        <span class="font-bold text-emerald-900 block uppercase tracking-wider text-[11px]">Model Sentence Starters:</span>
+                                        <p class="text-emerald-900/90 italic" x-text="q.sentenceStarters"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </article>
+            </template>
+        </div>
+
+        <!-- Empty State -->
+        <div x-show="filteredQuestions.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No exam questions match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any questions matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <button 
+                @click="resetFilters()" 
+                class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+            >
+                Reset All Filters
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>Chronos History Revision &bull; GCSE Exam Technique &amp; Essay Mastery Guide 🎯</p>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-beige-200 hover:text-white underline">Main Hub</a>
+                <a href="germany-revision-summary.html" class="text-beige-200 hover:text-white underline">Germany Summary</a>
+                <a href="conflict-revision-summary.html" class="text-beige-200 hover:text-white underline">Conflict Summary</a>
+                <a href="health-revision-summary.html" class="text-beige-200 hover:text-white underline">Health Summary</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function examBlufferApp() {
+            return {
+                selectedPaper: 'all',
+                searchQuery: '',
+                showFullDetails: false,
+                openCards: {},
+
+                isCardOpen(id) {
+                    if (this.openCards[id] !== undefined) {
+                        return this.openCards[id];
+                    }
+                    return this.showFullDetails;
+                },
+
+                toggleCard(id) {
+                    this.openCards[id] = !this.isCardOpen(id);
+                },
+
+                toggleAllCards() {
+                    this.showFullDetails = !this.showFullDetails;
+                    this.openCards = {};
+                },
+
+                resetFilters() {
+                    this.selectedPaper = 'all';
+                    this.searchQuery = '';
+                },
+
+                questions: [
+                    // ==========================================
+                    // CONFLICT AND TENSION (1945–1972)
+                    // ==========================================
+                    {
+                        id: 'conflict-q1',
+                        paper: 'conflict',
+                        paperLabel: 'Conflict & Tension',
+                        marksBadge: '4 M',
+                        title: 'Question 1: Source Support / Oppose (4 Marks)',
+                        prompt: 'Source A opposes / supports [X]... How do you know? Use Source A and contextual knowledge.',
+                        timing: '5 minutes',
+                        headerBg: 'bg-accent-navy',
+                        expectation: 'Demonstrate developed analysis of the source combining both content (quotes/details) and provenance (origin, author, date, purpose) with contextual factual knowledge.',
+                        fatalTrap: 'Do NOT just describe the picture or repeat what the text says without making a direct inference and linking it to the author\'s purpose.',
+                        markBands: [
+                            { marks: '3–4 marks', descriptor: 'Developed analysis of source based on content and/or provenance; supported by factual knowledge.' },
+                            { marks: '1–2 marks', descriptor: 'Simple analysis of source based on content and/or provenance; supported with simple factual knowledge.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: '1. Content & Inference:',
+                                content: '<strong>Formula:</strong> <em>"The source shows / says... [quote or visual detail]. This suggests... [inference]. It means that... [use historical knowledge to explain context]."</em>'
+                            },
+                            {
+                                heading: '2. Provenance & Purpose:',
+                                content: '<strong>Formula:</strong> <em>"The source is... [reference WHAT: e.g. Soviet propaganda, WHO: author, WHEN: date, and WHY: purpose/aim], and therefore... [use contextual knowledge to explain why they oppose/support X]."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"The source opposes X because it depicts... which implies that... Furthermore, as this was published by [Author/Country] in [Year] with the purpose of..., they wanted to..."'
+                    },
+                    {
+                        id: 'conflict-q2',
+                        paper: 'conflict',
+                        paperLabel: 'Conflict & Tension',
+                        marksBadge: '12 M',
+                        title: 'Question 2: Utility of Sources B & C (12 Marks)',
+                        prompt: 'How useful are Sources B and C to a historian studying [X]? Use Sources B and C and your contextual knowledge.',
+                        timing: '15 minutes',
+                        headerBg: 'bg-accent-navy',
+                        expectation: 'Evaluate BOTH sources separately in depth regarding content, provenance (NOP: Nature, Origin, Purpose), and contextual knowledge, followed by a final evaluation of their utility together.',
+                        fatalTrap: 'Never write that a source is "useless because it is biased"! Every source is useful for showing attitudes, motives, or propaganda. Do NOT compare them in the conclusion; evaluate their utility together.',
+                        markBands: [
+                            { marks: '10–12 marks', descriptor: 'Complex evaluation of both sources based on content and provenance; considers the relationship between the sources.' },
+                            { marks: '7–9 marks', descriptor: 'Developed evaluation of both sources based on content and/or provenance; considers sources separately.' },
+                            { marks: '4–6 marks', descriptor: 'Simple evaluation of one or both sources based on content and/or provenance.' },
+                            { marks: '1–3 marks', descriptor: 'Shows support / understanding of one or both sources; basic inference or assertion.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Paragraph 1: Source B (Content + Provenance + Context)',
+                                content: '<em>"Source B is useful to a historian because it shows... [content/quote]. This suggests that... [historical inference]. In addition, [own knowledge context]. Furthermore, Source B is useful because it is a [Nature] produced by [Origin/Author] in [Date] to [Purpose]..."</em>'
+                            },
+                            {
+                                heading: 'Paragraph 2: Source C (Content + Provenance + Context)',
+                                content: 'Follow the exact same structure for Source C. Evaluate what it reveals, what limits it has, and how its author/purpose adds utility to an enquiry into X.'
+                            },
+                            {
+                                heading: 'Conclusion: Combined Utility',
+                                content: '<em>"Together, both sources are highly useful because they provide different perspectives: Source B provides the [Western/Soviet] viewpoint while Source C provides the [opposing/civilian] perspective..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"Source B is valuable because it illustrates... This is supported by facts such as... The provenance enhances its utility because as a private memorandum..."'
+                    },
+                    {
+                        id: 'conflict-q3',
+                        paper: 'conflict',
+                        paperLabel: 'Conflict & Tension',
+                        marksBadge: '8 M',
+                        title: 'Question 3: Write an Account (8 Marks)',
+                        prompt: 'Write an account of how [Event X] led to [Crisis/Consequence Y]...',
+                        timing: '10 minutes',
+                        headerBg: 'bg-accent-navy',
+                        expectation: 'Provide a chronological, cause-and-effect narrative that demonstrates how one event directly produced or catalyzed the next, supported by precise factual evidence.',
+                        fatalTrap: 'Do NOT just write two random paragraphs describing events in isolation. You MUST use linking connective phrases showing direct causal sequencing.',
+                        markBands: [
+                            { marks: '7–8 marks', descriptor: 'Complex analysis that demonstrates sequencing; supported by accurate and detailed knowledge.' },
+                            { marks: '5–6 marks', descriptor: 'Developed analysis of events in a well-ordered narrative; supported by accurate knowledge.' },
+                            { marks: '3–4 marks', descriptor: 'Description of simple sequence of events; supported by relevant knowledge.' },
+                            { marks: '1–2 marks', descriptor: 'Basic knowledge and understanding of the events.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Event 1 (PEE with Detail):',
+                                content: 'Explain the initial event/catalyst in full factual detail. State what happened, who was involved, and the immediate consequence.'
+                            },
+                            {
+                                heading: 'Causal Chain & Linking Phrase:',
+                                content: 'Use linking connectives: <strong>"This directly led to...", "As an immediate consequence...", "Because of this..."</strong>'
+                            },
+                            {
+                                heading: 'Event 2 (PEE with Escalation):',
+                                content: 'Explain how the second event escalated or concluded the crisis, connecting the chronological aspects together.'
+                            }
+                        ],
+                        sentenceStarters: '"The crisis began when... In response to this action, the United States... This directly provoked Khrushchev to... Consequently, this resulted in..."'
+                    },
+                    {
+                        id: 'conflict-q4',
+                        paper: 'conflict',
+                        paperLabel: 'Conflict & Tension',
+                        marksBadge: '16 M + 4 SPaG',
+                        title: 'Question 4: Statement Evaluation Essay (16 Marks + 4 SPaG)',
+                        prompt: '[Statement of causation / consequence]... How far do you agree with this statement? Explain your answer.',
+                        timing: '20 minutes',
+                        headerBg: 'bg-accent-navy',
+                        expectation: 'Construct a balanced, analytical argument examining the stated factor in depth alongside at least one alternative factor, concluding with a sustained, justified judgment that explores links between factors.',
+                        fatalTrap: 'You MUST write about the stated factor named in the prompt! If you ignore the stated factor, your mark will be capped at Level 2. Keep all examples within the dates specified.',
+                        markBands: [
+                            { marks: '13–16 marks', descriptor: 'Complex explanation of stated factor and one other; clear judgment about main factor with links between factors; very good knowledge.' },
+                            { marks: '9–12 marks', descriptor: 'Developed explanation of stated factor and one other; clear judgment about main factor; good knowledge.' },
+                            { marks: '5–8 marks', descriptor: 'Simple explanation of 1 factor; some knowledge.' },
+                            { marks: '1–4 marks', descriptor: 'Basic explanation of at least 1 factor with some knowledge.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Introduction & Clear Judgement Line:',
+                                content: 'State your thesis: <em>"X was the main factor, although Y was also critically important"</em> OR <em>"X was not the primary factor, as Y was more decisive because..."</em>'
+                            },
+                            {
+                                heading: 'PEEL 1: Stated Factor',
+                                content: '<strong>Point:</strong> X was important because... <strong>Evidence:</strong> Specific facts/dates. <strong>Explanation:</strong> Explain how it affected superpower relations. <strong>Link:</strong> Why this was (or wasn\'t) the decisive factor.'
+                            },
+                            {
+                                heading: 'PEEL 2: Alternative / Counter-Factor',
+                                content: 'Analyze the second factor with equal factual depth (e.g. Ideology, Berlin Wall, U-2 crisis).'
+                            },
+                            {
+                                heading: 'JEON Conclusion (Judgement + Evidence + Overall Navigation):',
+                                content: 'Conclude with a nuanced judgment: <em>"Overall, while X provided the initial catalyst, Y was the primary factor because without Y..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"On the one hand, [Stated Factor] was significant because... On the other hand, [Factor 2] was even more crucial because... In conclusion, while both were interlinked..."'
+                    },
+
+                    // ==========================================
+                    // GERMANY (1890–1945): DEMOCRACY & DICTATORSHIP
+                    // ==========================================
+                    {
+                        id: 'germany-q1',
+                        paper: 'germany',
+                        paperLabel: 'Germany (1890–1945)',
+                        marksBadge: '4 M',
+                        title: 'Question 1: How Interpretations Differ (4 Marks)',
+                        prompt: 'How does Interpretation B differ from Interpretation A about [X]?',
+                        timing: '5 minutes',
+                        headerBg: 'bg-accent-ruby',
+                        expectation: 'Identify and explain direct differences in content and message between the two interpretations using clear quotes or paraphrased points from both.',
+                        fatalTrap: 'Do NOT write about provenance, who wrote it, or why they differ here! That is Question 2. Question 1 is strictly about WHAT they say (content difference).',
+                        markBands: [
+                            { marks: '3–4 marks', descriptor: 'Developed analysis of interpretations to explain differences based on content.' },
+                            { marks: '1–2 marks', descriptor: 'Simple analysis of interpretations to identify differences based on content.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Direct Contrast Formula:',
+                                content: '<em>"Interpretation A suggests that... for example saying [quote/detail]... whereas Interpretation B focuses on... and says that [quote/detail]. Therefore, they differ because Interpretation A views X as... while Interpretation B presents X as..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"Interpretation A argues that Hitler\'s appeal was based on... whereas Interpretation B differs by suggesting that..."'
+                    },
+                    {
+                        id: 'germany-q2',
+                        paper: 'germany',
+                        paperLabel: 'Germany (1890–1945)',
+                        marksBadge: '4 M',
+                        title: 'Question 2: Why Authors Differ in Interpretation (4 Marks)',
+                        prompt: 'Why might the authors of Interpretations A and B have a different interpretation about [X]?',
+                        timing: '5 minutes',
+                        headerBg: 'bg-accent-ruby',
+                        expectation: 'Analyze the PROVENANCE of both authors (who they were, when they wrote, their perspective, purpose, access to information, and audience) to explain WHY their viewpoints diverge.',
+                        fatalTrap: 'Do NOT repeat the content differences from Question 1! Focus on the background, date, nationality, or purpose of the historians/witnesses.',
+                        markBands: [
+                            { marks: '3–4 marks', descriptor: 'Developed answer that analyses provenance to explain the difference.' },
+                            { marks: '1–2 marks', descriptor: 'Simple answer that analyses provenance to identify reasons for difference.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Provenance Analysis Formula:',
+                                content: 'Consider differences in <strong>NOP (Nature, Origin, Purpose)</strong>: <em>"The authors differ because Author A was a [contemporary German citizen/Nazi official] writing in [Year] who experienced..., meaning their purpose was to... In contrast, Author B is a [modern British historian] writing in [Year] with access to post-war archive documents..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"The reasons for the difference lie in their provenance. Author A wrote from the perspective of... whereas Author B, writing decades later, had access to..."'
+                    },
+                    {
+                        id: 'germany-q3',
+                        paper: 'germany',
+                        paperLabel: 'Germany (1890–1945)',
+                        marksBadge: '8 M',
+                        title: 'Question 3: Which Interpretation is More Convincing (8 Marks)',
+                        prompt: 'Which interpretation do you find more convincing about [X]? Explain your answer using Interpretations A and B and contextual knowledge.',
+                        timing: '10 minutes',
+                        headerBg: 'bg-accent-ruby',
+                        expectation: 'Evaluate BOTH interpretations against your own historical knowledge, assessing what each gets right or ignores, and conclude with a sustained judgment about which is more convincing.',
+                        fatalTrap: 'You must evaluate BOTH interpretations using own knowledge. Do not simply pick one and ignore the other.',
+                        markBands: [
+                            { marks: '7–8 marks', descriptor: 'Complex evaluation of both interpretations; sustained judgment about most convincing; considers relationship between both; very good knowledge.' },
+                            { marks: '5–6 marks', descriptor: 'Developed evaluation of both interpretations; judges one as more/less convincing; good knowledge.' },
+                            { marks: '3–4 marks', descriptor: 'Simple evaluation of one interpretation; some factual knowledge and understanding.' },
+                            { marks: '1–2 marks', descriptor: 'Basic analysis of interpretation(s).' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'PEE 1: Evaluate Interpretation A',
+                                content: '<em>"Interpretation A is convincing/unconvincing because it states... This matches what I know because [contextual facts]... However, it overlooks [counter-evidence]..."</em>'
+                            },
+                            {
+                                heading: 'PEE 2: Evaluate Interpretation B',
+                                content: '<em>"Interpretation B is convincing because it argues... This is supported by facts such as [contextual facts]..."</em>'
+                            },
+                            {
+                                heading: 'Judgement Paragraph:',
+                                content: '<em>"Overall, Interpretation [A/B] is more convincing because it reflects the broader historical reality that..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"Interpretation A is convincing to an extent because it accurately highlights... However, Interpretation B is ultimately more convincing because..."'
+                    },
+                    {
+                        id: 'germany-q4',
+                        paper: 'germany',
+                        paperLabel: 'Germany (1890–1945)',
+                        marksBadge: '4 M',
+                        title: 'Question 4: Describe Two Problems / Features (4 Marks)',
+                        prompt: 'Describe two problems / features of [X]...',
+                        timing: '5 minutes',
+                        headerBg: 'bg-accent-ruby',
+                        expectation: 'Identify two distinct problems or features and support each with specific factual details in two short, sharp paragraphs.',
+                        fatalTrap: 'Do not write a long essay! Two clear paragraphs (Point + Evidence/Detail) are sufficient for full marks.',
+                        markBands: [
+                            { marks: '3–4 marks', descriptor: 'Description of simple sequence or features; supported by relevant knowledge.' },
+                            { marks: '1–2 marks', descriptor: 'Basic knowledge and understanding of the events.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Problem 1:',
+                                content: '<em>"One problem was [State problem]. For example, [Give specific historical detail]..."</em>'
+                            },
+                            {
+                                heading: 'Problem 2:',
+                                content: '<em>"A second problem was [State problem]. For example, [Give specific historical detail]..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"One problem faced by the Weimar government was... Specifically... A second problem was..."'
+                    },
+                    {
+                        id: 'germany-q5',
+                        paper: 'germany',
+                        paperLabel: 'Germany (1890–1945)',
+                        marksBadge: '8 M',
+                        title: 'Question 5: In What Ways Did X Change (8 Marks)',
+                        prompt: 'In what ways did [X] change during [Period Y]? Explain your answer.',
+                        timing: '10 minutes',
+                        headerBg: 'bg-accent-ruby',
+                        expectation: 'Explain at least two specific changes over time, considering differences in groups, socioeconomic classes, or time periods with developed knowledge.',
+                        fatalTrap: 'Do NOT just describe conditions in one era. Use explicit change vocabulary ("transformed", "shifted", "previously... whereas by...") to demonstrate contrast.',
+                        markBands: [
+                            { marks: '7–8 marks', descriptor: 'Complex explanation of 2 changes/consequences; considers differences of time, group, or socioeconomic impact.' },
+                            { marks: '5–6 marks', descriptor: 'Developed explanation of 2 changes/consequences; good knowledge.' },
+                            { marks: '3–4 marks', descriptor: 'Simple explanation of change; some knowledge.' },
+                            { marks: '1–2 marks', descriptor: 'Identifies change(s).' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'PEE 1: Change One',
+                                content: '<strong>Point:</strong> One significant change was... <strong>Evidence:</strong> For example... <strong>Explanation:</strong> This meant that the lives/experience of [group] changed from... to...'
+                            },
+                            {
+                                heading: 'PEE 2: Change Two',
+                                content: '<strong>Point:</strong> Another key change was... <strong>Evidence:</strong> For example... <strong>Explanation:</strong> As a result, this transformed...'
+                            }
+                        ],
+                        sentenceStarters: '"One major change was in the employment of women. Under Weimar... whereas under Nazi rule... Another change occurred in..."'
+                    },
+                    {
+                        id: 'germany-q6',
+                        paper: 'germany',
+                        paperLabel: 'Germany (1890–1945)',
+                        marksBadge: '12 M',
+                        title: 'Question 6: Which Was the More Important Reason (12 Marks)',
+                        prompt: 'Which of the following was the more important reason why [X] happened? • [Bullet Point 1] • [Bullet Point 2]. Explain your answer with reference to both bullet points.',
+                        timing: '15 minutes',
+                        headerBg: 'bg-accent-ruby',
+                        expectation: 'Analyze BOTH provided bullet points with developed knowledge and provide a justified final judgment on which was more important and how they interlinked.',
+                        fatalTrap: 'You MUST write about BOTH bullet points! If you only evaluate one bullet, you cannot achieve above Level 2 (max 6 marks).',
+                        markBands: [
+                            { marks: '10–12 marks', descriptor: 'Complex explanation of both bullet points; clear judgment about main factor considering links between them; very good knowledge.' },
+                            { marks: '7–9 marks', descriptor: 'Developed explanation of both bullet points; clear judgment about main factor; good knowledge.' },
+                            { marks: '4–6 marks', descriptor: 'Simple explanation of both bullet points; some knowledge.' },
+                            { marks: '1–3 marks', descriptor: 'Basic explanation of one bullet point with some knowledge.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'PEEL 1: First Bullet Point',
+                                content: '<strong>Point:</strong> Bullet 1 was an important reason because... <strong>Evidence/Explanation:</strong> Without this factor, X would not have occurred because... <strong>Link:</strong> This contributed significantly because...'
+                            },
+                            {
+                                heading: 'PEEL 2: Second Bullet Point',
+                                content: '<strong>Point:</strong> Bullet 2 was also important because... <strong>Evidence/Explanation:</strong> Specifically... <strong>Link:</strong> This added critical pressure because...'
+                            },
+                            {
+                                heading: 'JEON Conclusion (Judgement + Evidence + Weighing Up):',
+                                content: '<em>"I think the more important reason was [Bullet 1/2] because [evidence explained]. While [the other bullet] was important for..., nevertheless [chosen bullet] was more decisive because without it..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"On the one hand, the Wall Street Crash was crucial because... On the other hand, Nazi propaganda played an essential role by... Ultimately, the economic crash was the more important reason because..."'
+                    },
+
+                    // ==========================================
+                    // HEALTH AND THE PEOPLE (c1000–PRESENT)
+                    // ==========================================
+                    {
+                        id: 'health-q1',
+                        paper: 'health',
+                        paperLabel: 'Health & the People',
+                        marksBadge: '8 M',
+                        title: 'Question 1: Source Utility (8 Marks)',
+                        prompt: 'How useful is Source A to a historian studying [X]? Use Source A and your contextual knowledge.',
+                        timing: '10 minutes',
+                        headerBg: 'bg-accent-forest',
+                        expectation: 'Evaluate both content and provenance (author, date, purpose, medium) with historical knowledge to reach a clear judgment on utility.',
+                        fatalTrap: 'Do NOT dismiss a source as useless just because it reflects miasma or incorrect medical beliefs! Sources are invaluable for showing contemporary understanding and attitudes.',
+                        markBands: [
+                            { marks: '7–8 marks', descriptor: 'Evaluation of content and provenance; clear judgment of utility; excellent knowledge.' },
+                            { marks: '5–6 marks', descriptor: 'Evaluation of content and/or provenance; judgment of utility; good factual knowledge.' },
+                            { marks: '3–4 marks', descriptor: 'Simple evaluation of content and/or provenance; basic factual knowledge.' },
+                            { marks: '1–2 marks', descriptor: 'Demonstrates understanding; states usefulness rather than explains.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Paragraph 1: Content & Inferences',
+                                content: '<em>"The source is very useful to a historian because it shows... [description/quote]. This suggests / tells us that... [inference]. In addition, [add contextual factual knowledge]..."</em>'
+                            },
+                            {
+                                heading: 'Paragraph 2: Provenance (2 Analytical Points)',
+                                content: '<em>"The source is also useful because it is by [WHO] who would have known... produced in [WHEN] reflecting knowledge at the time... in a [WHAT - e.g. medical treatise/satirical cartoon] designed to [WHY - inform/educate/persuade]..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"Source A is useful for showing contemporary attitudes toward... The content reveals that... Its provenance enhances its usefulness because as an official report by..."'
+                    },
+                    {
+                        id: 'health-q2',
+                        paper: 'health',
+                        paperLabel: 'Health & the People',
+                        marksBadge: '8 M',
+                        title: 'Question 2: Explain Significance (8 Marks)',
+                        prompt: 'Explain what was significant about [Discovery / Individual / Event X]...',
+                        timing: '10 minutes',
+                        headerBg: 'bg-accent-forest',
+                        expectation: 'Explain the short-term impact at the time AND the long-term historical significance over subsequent decades or eras.',
+                        fatalTrap: 'Do not just describe what the person discovered. You MUST evaluate why it was significant at the time AND how it shaped medical development in the long run.',
+                        markBands: [
+                            { marks: '7–8 marks', descriptor: 'Complex explanation of concept; detailed knowledge of short and long-term significance.' },
+                            { marks: '5–6 marks', descriptor: 'Explains at least 2 aspects; specific and relevant knowledge.' },
+                            { marks: '3–4 marks', descriptor: 'Explains at least 1 aspect; some relevant knowledge.' },
+                            { marks: '1–2 marks', descriptor: 'Basic explanation with some knowledge.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'PEE 1: Significance at the Time (Short-Term)',
+                                content: '<em>"X was significant at the time because... [identify development/contribution]. In the context of [period]... This led directly to..."</em>'
+                            },
+                            {
+                                heading: 'PEE 2: Long-Term Historical Significance',
+                                content: '<em>"A second reason it was significant was its long-term impact on... This is because subsequent pioneers [e.g. Harvey/Lister] built upon this by... This led to..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"In the short term, Vesalius\'s Fabric of the Human Body was significant because it disproved... In the long term, its significance lay in establishing empirical human dissection as..."'
+                    },
+                    {
+                        id: 'health-q3',
+                        paper: 'health',
+                        paperLabel: 'Health & the People',
+                        marksBadge: '8 M',
+                        title: 'Question 3: Explain Similarities Across Eras (8 Marks)',
+                        prompt: 'Explain two ways in which [X in Period 1] and [Y in Period 2] were similar...',
+                        timing: '10 minutes',
+                        headerBg: 'bg-accent-forest',
+                        expectation: 'Identify two distinct similarities (e.g. causes believed, treatments, role of government, opposition) and explain each using detailed knowledge from BOTH named periods.',
+                        fatalTrap: 'Do NOT write two separate mini-essays on each era! You MUST compare them directly within each paragraph: "Similarly in 1665...", "In both eras..."',
+                        markBands: [
+                            { marks: '7–8 marks', descriptor: 'Complex explanation of 2 similarities; links to broader historical context.' },
+                            { marks: '5–6 marks', descriptor: 'Developed explanation of at least two comparisons.' },
+                            { marks: '3–4 marks', descriptor: 'Explanation of one similarity.' },
+                            { marks: '1–2 marks', descriptor: 'Identification of similarities without explanation.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'PEE 1: Similarity One',
+                                content: '<strong>Point:</strong> One similarity between X and Y was [identify theme, e.g. miasma/religious treatments]. Detail about X [Period 1] and detail about Y [Period 2] to prove the similarity.'
+                            },
+                            {
+                                heading: 'PEE 2: Similarity Two',
+                                content: '<strong>Point:</strong> A second similarity was [identify theme, e.g. quarantine/government inaction]. Detail about X and detail about Y demonstrating the continuity.'
+                            }
+                        ],
+                        sentenceStarters: '"One similarity between responses to the Black Death (1348) and the Great Plague (1665) was the reliance on religious remedies. In 1348... Similarly, in 1665... A second similarity was..."'
+                    },
+                    {
+                        id: 'health-q4',
+                        paper: 'health',
+                        paperLabel: 'Health & the People',
+                        marksBadge: '16 M + 4 SPaG',
+                        title: 'Question 4: 16-Mark Thematic Factor Essay (16 Marks + 4 SPaG)',
+                        prompt: 'Has [Factor X - e.g. War/Government/Science] been the main factor in [medical development]? Explain your answer with reference to [Factor X] and other factors across at least two time periods.',
+                        timing: '20 minutes',
+                        headerBg: 'bg-accent-forest',
+                        expectation: 'Explain the stated factor in depth across at least two distinct historical time periods, evaluate at least one other factor, and construct a justified conclusion showing how factors interlink.',
+                        fatalTrap: 'You MUST cover at least TWO time periods (e.g. Renaissance and 20th Century) AND write extensively about the stated factor! Ignoring the stated factor caps your grade.',
+                        markBands: [
+                            { marks: '13–16 marks', descriptor: 'Complex explanation of stated factor and at least 1 other across 2 time periods; clear judgment with links between factors; very good knowledge.' },
+                            { marks: '9–12 marks', descriptor: 'Developed explanation of stated factor and at least 1 other across 2 time periods; clear judgment; good knowledge.' },
+                            { marks: '5–8 marks', descriptor: 'Simple explanation of 2 factors; some knowledge.' },
+                            { marks: '1–4 marks', descriptor: 'Basic explanation of at least 1 factor with some knowledge.' }
+                        ],
+                        structureSteps: [
+                            {
+                                heading: 'Introduction & Clear Judgement:',
+                                content: 'State your thesis: <em>"War has been a significant catalyst, but Science & Technology and Government were ultimately more decisive because..."</em>'
+                            },
+                            {
+                                heading: 'PEEL 1: Stated Factor Across 2 Eras',
+                                content: '<strong>Era 1:</strong> Paré treating gunshot wounds (1537) in the Renaissance. <strong>Era 2:</strong> WWI plastic surgery (Gillies) and WWII penicillin mass production. Explain why the stated factor drove these breakthroughs.'
+                            },
+                            {
+                                heading: 'PEEL 2: Alternative Factor 1 (e.g. Government / Science)',
+                                content: 'Evaluate a counter-factor with equal cross-era detail (e.g. 1875 Public Health Act and 1948 NHS, or Germ Theory and compound microscopes).'
+                            },
+                            {
+                                heading: 'JEON Conclusion & Interlinking Factors:',
+                                content: 'Synthesize how the factors interact: <em>"Overall, while War provided the urgent demand and casualties, without Government funding and Scientific technology, war alone could not develop medicine..."</em>'
+                            }
+                        ],
+                        sentenceStarters: '"On the one hand, War has been crucial in accelerating trauma surgery. For instance, in the Renaissance... and later in WWI... On the other hand, Government intervention was more fundamental because..."'
+                    }
+                ],
+
+                get filteredQuestions() {
+                    let results = [...this.questions];
+
+                    if (this.selectedPaper !== 'all') {
+                        if (this.selectedPaper === 'toolkit') {
+                            return [];
+                        }
+                        results = results.filter(q => q.paper === this.selectedPaper);
+                    }
+
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(item => 
+                            item.title.toLowerCase().includes(q) ||
+                            item.prompt.toLowerCase().includes(q) ||
+                            item.expectation.toLowerCase().includes(q) ||
+                            item.fatalTrap.toLowerCase().includes(q) ||
+                            item.sentenceStarters.toLowerCase().includes(q) ||
+                            item.paperLabel.toLowerCase().includes(q)
+                        );
+                    }
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
