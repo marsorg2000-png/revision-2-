@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health &amp; the People Revision Hub | GCSE History Revision Summary</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            teal: '#0f766e',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .summary-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .summary-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="healthSummaryApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="health-revision-hub.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Health Hub">
+                    <i class="fa-solid fa-staff-snake text-beige-200 text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Health &amp; the People Revision Hub</h1>
+                    <p class="text-xs text-beige-300">c1000 to the Present Day &bull; Complete GCSE Thematic Revision Summary</p>
+                </div>
+            </div>
+
+            <!-- Hub Quick Navigation Links -->
+            <div class="flex items-center gap-2">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-layer-group text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Modules:</span>
+                    <span class="font-bold text-beige-50">7 Core Themes</span>
+                </div>
+                <a href="health-timeline.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-timeline text-[10px]"></i>
+                    <span>Timeline</span>
+                </a>
+                <a href="health-factors.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-network-wired text-[10px]"></i>
+                    <span>Factors</span>
+                </a>
+                <a href="health-individuals.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-doctor text-[10px]"></i>
+                    <span>Pioneers</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto space-y-6">
+
+        <!-- Search & Filter Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- Search Input -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search health topics, epidemics, discoveries, acts (e.g. Black Death, 1665 Plague, Chadwick, Bazalgette, Germ Theory, Simpson, Lister, Penicillin, Bevan)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="visibleTopicsCount"></span> / 7 modules shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-beige-300/80 text-xs">
+                <span class="font-semibold text-brown-800 mr-1 flex items-center gap-1">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Theme:
+                </span>
+                <button @click="selectedTopicFilter = 'all'" :class="selectedTopicFilter === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">All 7 Modules</button>
+                <button @click="selectedTopicFilter = 'epidemics'" :class="selectedTopicFilter === 'epidemics' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">1. Black Death vs Great Plague</button>
+                <button @click="selectedTopicFilter = 'public-health'" :class="selectedTopicFilter === 'public-health' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">2. Public Health Across Eras</button>
+                <button @click="selectedTopicFilter = 'causes-treatments'" :class="selectedTopicFilter === 'causes-treatments' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">3. Causes, Treatments &amp; Prevention</button>
+                <button @click="selectedTopicFilter = 'surgery'" :class="selectedTopicFilter === 'surgery' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">4. Evolution of Surgery</button>
+                <button @click="selectedTopicFilter = 'factors'" :class="selectedTopicFilter === 'factors' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">5. Overarching Factors</button>
+                <button @click="selectedTopicFilter = 'individuals'" :class="selectedTopicFilter === 'individuals' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">6. Key Individuals Matrix</button>
+                <button @click="selectedTopicFilter = 'exam-guidance'" :class="selectedTopicFilter === 'exam-guidance' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">7. Exam Guidance &amp; Pitfalls</button>
+            </div>
+        </div>
+
+        <!-- Topics Stack -->
+        <div class="space-y-6">
+
+            <!-- ========================================== -->
+            <!-- TOPIC 1: Major Epidemics: Black Death vs Great Plague -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('epidemics')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center border-b border-accent-burgundy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-skull-crossbones text-beige-200"></i>
+                        <span>1. Major Epidemics: The Black Death (1348) vs The Great Plague (1665)</span>
+                    </h3>
+                    <span class="bg-red-950 border border-red-500/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 1</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <!-- Direct Comparison Table -->
+                    <div>
+                        <h4 class="font-bold text-brown-900 mb-3 flex items-center space-x-2 text-xs uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                            <span>Direct Comparative Breakdown: 1348 vs 1665</span>
+                        </h4>
+                        <div class="overflow-x-auto rounded-xl border border-beige-300">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-brown-900 text-beige-100 font-bold">
+                                        <th class="p-3 w-1/5">Event</th>
+                                        <th class="p-3 w-4/15 border-l border-brown-800">Causes &amp; Beliefs</th>
+                                        <th class="p-3 w-4/15 border-l border-brown-800">Treatments &amp; Remedies</th>
+                                        <th class="p-3 w-4/15 border-l border-brown-800">Prevention &amp; Public Health</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">
+                                            <strong class="block text-sm">Black Death</strong>
+                                            <span class="text-[11px] text-brown-700">1347–1348 (Medieval)</span>
+                                        </td>
+                                        <td class="p-3 border-l border-beige-300">
+                                            <p><strong>Believed:</strong> God's punishment for sins, misaligned planets/stars, miasma (bad air from filth and marshes), wells poisoned by Jews.</p>
+                                            <p class="mt-1 text-emerald-950 font-medium"><strong>Actual:</strong> <em>Yersinia pestis</em> bacterium living on fleas carried by black rats (*Rattus rattus*); exacerbated by famine and severe malnutrition.</p>
+                                        </td>
+                                        <td class="p-3 border-l border-beige-300">
+                                            <ul class="list-disc pl-3.5 space-y-1">
+                                                <li>Intense prayer, repentance, and pilgrimages.</li>
+                                                <li>Herbal infusions and unusual mixtures (drinking mercury or crushed emeralds).</li>
+                                                <li>Lancing painful buboes with heated knives.</li>
+                                                <li>Fleeing infected towns and avoiding contact.</li>
+                                            </ul>
+                                        </td>
+                                        <td class="p-3 border-l border-beige-300">
+                                            <ul class="list-disc pl-3.5 space-y-1">
+                                                <li>King Edward III sent street-cleaning orders to London's Mayor.</li>
+                                                <li>40-day quarantine imposed on arriving ships in ports (*quarantena*).</li>
+                                                <li>Public self-flagellation by brotherhoods whipping themselves to beg God's mercy.</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">
+                                            <strong class="block text-sm">Great Plague</strong>
+                                            <span class="text-[11px] text-brown-700">1665 (Renaissance)</span>
+                                        </td>
+                                        <td class="p-3 border-l border-beige-300">
+                                            <p><strong>Believed:</strong> Continued widespread belief in miasma (foul smells), unbalanced Four Humours, heavenly comets, and divine wrath.</p>
+                                            <p class="mt-1 text-emerald-950 font-medium"><strong>Actual:</strong> Same plague bacterium (*Yersinia pestis*), thriving in timber-framed, rat-infested urban slums during an unusually hot summer.</p>
+                                        </td>
+                                        <td class="p-3 border-l border-beige-300">
+                                            <ul class="list-disc pl-3.5 space-y-1">
+                                                <li>Bleeding with leeches to rebalance the bodily humours.</li>
+                                                <li>Smoking tobacco continuously to drive away poisoned air (children punished if refusing).</li>
+                                                <li>Sniffing vinegar-soaked sponges and pomanders.</li>
+                                                <li>King Charles II and his royal court fled London to Oxford/Salisbury.</li>
+                                            </ul>
+                                        </td>
+                                        <td class="p-3 border-l border-beige-300">
+                                            <ul class="list-disc pl-3.5 space-y-1">
+                                                <li><strong>Plague Orders:</strong> Infected homes padlocked from outside for 28 days with red crosses ("Lord have mercy upon us") and armed watchmen posted.</li>
+                                                <li>Banning public gatherings, theaters, fairs, and alley congregations.</li>
+                                                <li>Large street bonfires burned sweet resins for 3 days to purify air.</li>
+                                                <li>Mass night burial pits dug deep ("Bring out your dead!").</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Impact & Spread Breakdown -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-burst text-accent-ruby"></i> Impact of the Black Death (1348)
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Demographic Collapse:</strong> Killed between one-third and one-half of the population (1.5 to 2 million dead in England); entire villages were wiped out into ghost hamlets.</li>
+                                <li><strong>Socioeconomic Revolution:</strong> Acute labor shortages empowered surviving peasants to demand significantly higher wages and freedom of movement, fatally weakening the feudal serfdom system and setting the stage for the 1381 Peasants' Revolt.</li>
+                                <li><strong>Agricultural Shift:</strong> Landowners abandoned labor-intensive crop farming in favor of sheep farming; food prices soared initially.</li>
+                                <li><strong>Religious Authority Shaken:</strong> Devoted priests died in huge numbers or fled their parishes, severely damaging public respect for the Catholic Church.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-virus text-accent-navy"></i> Why Did the Black Death Spread So Rapidly?
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Filthy Streets &amp; Vermin:</strong> Unpaved, muck-filled medieval streets with open middens provided an ideal habitat for black rats to breed close to humans.</li>
+                                <li><strong>Total Medical Ignorance:</strong> Doctors had zero knowledge of microscopic pathogens, infection control, or fleas as vectors; fleeing populations inadvertently spread the plague deeper into rural shires.</li>
+                                <li><strong>Shallow Graves:</strong> Bodies buried in hasty, shallow mass trenches were dug up and scavenged by roaming dogs, pigs, and animals.</li>
+                                <li><strong>Unenforceable Quarantines:</strong> Village boundaries were open; medieval town councils lacked police forces or administrative machinery to enforce travel bans.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 2: Public Health Across Eras -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('public-health')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center border-b border-accent-navy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-faucet-drinking text-beige-200"></i>
+                        <span>2. Public Health Across Eras: From Medieval Cesspits to the Modern Welfare State</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 2</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        
+                        <!-- Medieval Public Health -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center justify-between pb-1 border-b border-beige-300">
+                                <strong class="text-brown-900 font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-accent-gold"></span>
+                                    <span>Medieval Public Health (c1000–c1450)</span>
+                                </strong>
+                                <span class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-mono font-semibold border border-amber-200">Local &amp; Reactive</span>
+                            </div>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Severe Problems:</strong> Open cesspits leaked into drinking wells; animal dung and butchery offal choked narrow unpaved alleys; human excrement was dumped straight into rivers like the Thames.</li>
+                                <li><strong>Town Measures:</strong> Town councils employed <em>"rakers"</em> to scrape street dung; <em>"gongfermiers" / "night carts"</em> emptied cesspools after dark; Newcastle introduced paved streets; Exeter built stone underground aqueducts for clean drinking water.</li>
+                                <li><strong>Monastery Hygiene:</strong> Monasteries enjoyed vastly superior cleanliness: fresh piped spring water, lavatoriums, separate infirmaries, and flushing water privies sited downstream due to great wealth, rural isolation, and religious rules of ritual purity.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Renaissance Public Health -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center justify-between pb-1 border-b border-beige-300">
+                                <strong class="text-brown-900 font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-accent-cobalt"></span>
+                                    <span>Renaissance Public Health (c1450–c1750)</span>
+                                </strong>
+                                <span class="text-[10px] bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-mono font-semibold border border-blue-200">Voluntary Hospitals</span>
+                            </div>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Hospital Expansion:</strong> Philanthropic funding established modern voluntary hospitals (50 built across Britain by 1720, treating over 20,000 Londoners annually by 1800), featuring specialized infectious wards and free dispensary pharmacies.</li>
+                                <li><strong>Dissolution of the Monasteries (1530s):</strong> King Henry VIII closed down Catholic monasteries, inadvertently shutting hundreds of religious infirmaries and leaving thousands of sick poor destitute.</li>
+                                <li><strong>Changing Perceptions:</strong> Disease was increasingly viewed as a natural physical condition requiring clinical intervention rather than direct divine vengeance.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Industrial Public Health -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center justify-between pb-1 border-b border-beige-300">
+                                <strong class="text-brown-900 font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-accent-wine"></span>
+                                    <span>Industrial Public Health (c1750–c1900)</span>
+                                </strong>
+                                <span class="text-[10px] bg-rose-100 text-rose-900 px-2 py-0.5 rounded font-mono font-semibold border border-rose-200">End of Laissez-Faire</span>
+                            </div>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Slum Crisis:</strong> Rapid factory urbanization spawned back-to-back tenements, overflowing shared privies leaking into pumps, and deadly waterborne cholera outbreaks (1831, 1848, 1854).</li>
+                                <li><strong>Edwin Chadwick's 1842 Report:</strong> Proved filth and polluted water caused epidemic illness, which trapped families in poverty. Urged national clean water and district Medical Officers; initial reforms resisted due to parliamentary <em>laissez-faire</em> and ratepayers' reluctance to pay taxes.</li>
+                                <li><strong>1848 Public Health Act:</strong> Permissive (voluntary); set up the General Board of Health, but only 103 towns adopted it by 1853.</li>
+                                <li><strong>The Great Stink (1858) &amp; Bazalgette:</strong> Scorching summer heat caused raw sewage in the Thames to ferment, driving MPs from Parliament. Parliament granted Joseph Bazalgette £3m (£1bn today) to build 83 miles of underground intercepting brick sewers carrying 420 million gallons of wastewater daily away from London.</li>
+                                <li><strong>1875 Public Health Act:</strong> Spurred by working-class male enfranchisement (1867 Reform Act); made clean piped water, covered drainage sewers, garbage collection, and Medical Officers legally compulsory for every council.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Modern Public Health -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center justify-between pb-1 border-b border-beige-300">
+                                <strong class="text-brown-900 font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-accent-forest"></span>
+                                    <span>Modern Public Health (c1900–Present)</span>
+                                </strong>
+                                <span class="text-[10px] bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded font-mono font-semibold border border-emerald-200">The Welfare State</span>
+                            </div>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Poverty Mapping:</strong> Charles Booth found 30.7% of London lived in poverty; Seebohm Rowntree found 27.8% of York lacked basic necessities, proving poverty was a nationwide systemic crisis.</li>
+                                <li><strong>Boer War Physical Decline (1899):</strong> Army generals discovered up to 40% of working-class recruits were medically unfit due to rickets and chronic malnutrition.</li>
+                                <li><strong>Liberal Welfare Reforms (1906–1911):</strong> Free School Meals (1906), School Medical Service (1907), Old Age Pensions (1908), Labour Exchanges (1909), and National Insurance Act (1911) providing sick pay and GP access for workers.</li>
+                                <li><strong>The Beveridge Report (1942):</strong> Bestseller selling 630,000 copies; pledged to defeat the "Five Giant Evils" (Want, Disease, Ignorance, Squalor, Idleness) through cradle-to-grave social security.</li>
+                                <li><strong>Creation of the NHS (5 July 1948):</strong> Minister of Health Aneurin Bevan founded the National Health Service, providing free universal healthcare at the point of delivery financed through taxation; cleared inner-city slums and constructed 12 planned new garden towns (e.g. Stevenage, Welwyn).</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 3: Causes, Treatments & Prevention -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('causes-treatments')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center border-b border-brown-700">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-virus-slash text-beige-200"></i>
+                        <span>3. Causes, Treatments &amp; Prevention: The Scientific Revolution of Medical Ideas</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 3</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+                        
+                        <!-- Medieval -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-gold"></span> Medieval Era
+                            </strong>
+                            <div class="space-y-1.5 text-brown-800">
+                                <div><strong class="text-brown-900">Causes:</strong> Divine punishment for sins, astrological planet alignments, miasma (corrupted air), and Four Humours imbalance (Blood, Phlegm, Black Bile, Yellow Bile).</div>
+                                <div><strong class="text-brown-900">Treatments:</strong> Bloodletting (phlebotomy) with leeches, purging/vomiting, herbal infusions in monastic herbals, prayers, matching treatments to Zodiac Man charts.</div>
+                                <div><strong class="text-brown-900">Prevention:</strong> Flagellation, burning herbs in streets, wearing protective charms, and 40-day port ship quarantines.</div>
+                            </div>
+                        </div>
+
+                        <!-- Renaissance -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-cobalt"></span> Renaissance Era
+                            </strong>
+                            <div class="space-y-1.5 text-brown-800">
+                                <div><strong class="text-brown-900">Causes:</strong> Continued humoral and miasma dominance, early chemical alchemy ideas, initial recognition of nutritional deficits (e.g. John Woodall noting citrus cured scurvy in 1617).</div>
+                                <div><strong class="text-brown-900">Treatments:</strong> Bloodletting, laudanum (opium dissolved in alcohol) popularized by Sydenham, royal touch for scrofula ("King's Evil"), and Culpeper's English wild herbals.</div>
+                                <div><strong class="text-brown-900">Prevention:</strong> Plague doctors in beak masks stuffed with spices, building specialized pest houses outside city walls, and municipal quarantine orders.</div>
+                            </div>
+                        </div>
+
+                        <!-- Industrial -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-wine"></span> Industrial Era
+                            </strong>
+                            <div class="space-y-1.5 text-brown-800">
+                                <div><strong class="text-brown-900">Causes:</strong> Decisive shift from Spontaneous Generation and miasma to <strong>Germ Theory</strong> (Louis Pasteur proved airborne microbes caused decay in 1861; Robert Koch isolated specific bacteria for anthrax, TB, and cholera).</div>
+                                <div><strong class="text-brown-900">Treatments:</strong> Chemical anaesthetics (ether 1846, Simpson's chloroform 1847), carbolic acid antiseptics (Joseph Lister 1867), and patent herbal medicines.</div>
+                                <div><strong class="text-brown-900">Prevention:</strong> Edward Jenner's cowpox vaccine (compulsory in 1853); John Snow mapped cholera deaths to the Broad Street pump in 1854, proving waterborne transmission.</div>
+                            </div>
+                        </div>
+
+                        <!-- Modern -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-forest"></span> Modern Era
+                            </strong>
+                            <div class="space-y-1.5 text-brown-800">
+                                <div><strong class="text-brown-900">Causes:</strong> Molecular microbiology, Watson and Crick's 1953 DNA double helix structure, genetic mutations, and lifestyle risk factors (smoking, obesity, carcinogens).</div>
+                                <div><strong class="text-brown-900">Treatments:</strong> Synthetic "magic bullets" (Ehrlich's Salvarsan 606 for syphilis), Alexander Fleming discovering penicillin (1928) mass-produced by Florey and Chain (1941), organ transplants, and cancer radiotherapy.</div>
+                                <div><strong class="text-brown-900">Prevention:</strong> Free mass state vaccination schemes (TB, polio, MMR), nationwide NHS screening mammograms, clean air acts, and public wellness campaigns ("5 A Day").</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 4: The Evolution of Surgery -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('surgery')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-ruby text-white px-6 py-4 flex justify-between items-center border-b border-accent-ruby/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-syringe text-beige-200"></i>
+                        <span>4. The Evolution of Surgery: Conquering Pain, Infection &amp; Blood Loss</span>
+                    </h3>
+                    <span class="bg-rose-950 border border-rose-500/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 4</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+                        
+                        <!-- Medieval Surgery -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Medieval (c1250–c1500)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Brutal Techniques:</strong> Cauterization using searing red-hot irons or boiling oil to seal severed blood vessels; trephining skulls to release pressure or evil spirits.</li>
+                                <li><strong>Barber-Surgeons:</strong> Untrained craftsmen who pulled teeth, lanced buboes, and amputated crushed limbs with saws; cleaned wounds with wine and vinegar.</li>
+                                <li><strong>Limitations:</strong> Zero effective anaesthetics or antiseptics; patient shock killed many; church bans and cultural taboos restricted human dissection.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Renaissance Surgery -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Renaissance (c1500–c1700)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Ambroise Paré (1537):</strong> Ran out of boiling oil at the Siege of Turin; improvised a soothing egg yolk, rose oil, and turpentine ointment; invented silk ligatures to tie blood vessels during amputations.</li>
+                                <li><strong>Anatomical Pioneers:</strong> Andreas Vesalius (1543) disproved 200+ Galenic errors via human dissection; William Harvey (1628) proved blood circulates in a closed loop pumped by the heart.</li>
+                                <li><strong>Limitations:</strong> Surgeries remained agonizing and perilous because chemical anaesthetics and germ theory did not yet exist.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Industrial Surgery -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Industrial (c1700–c1900)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Pain Conquered:</strong> James Simpson discovered chloroform in 1847; legitimized in 1853 when Queen Victoria used it during the birth of Prince Leopold.</li>
+                                <li><strong>Infection Conquered:</strong> Joseph Lister introduced carbolic acid spray in 1867, slashing surgical mortality from ~50% to 15%.</li>
+                                <li><strong>Aseptic Surgery:</strong> Shifted from killing germs in wounds to excluding them entirely: boiled surgical instruments, sterilized gowns, and rubber gloves.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Modern Surgery -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Modern (c1900–Present)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>High-Tech Precision:</strong> Keyhole (laparoscopic) surgery using fiber-optic cameras; laser surgery for delicate retinas; microsurgery for tiny nerve repair; robotic operations.</li>
+                                <li><strong>Transplants &amp; Blood:</strong> Karl Landsteiner discovered blood groups (1901); sodium citrate enabled stored blood banks (1914); first UK kidney transplant (1960); cyclosporine anti-rejection drug (1970).</li>
+                                <li><strong>Modern Challenges:</strong> Skyrocketing technology costs, hospital superbugs (MRSA), and complex organ allocation bioethics.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 5: Overarching Historical Factors -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('factors')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-forest text-white px-6 py-4 flex justify-between items-center border-b border-accent-forest/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-network-wired text-beige-200"></i>
+                        <span>5. Overarching Historical Factors: The Seven Drivers of Change and Continuity</span>
+                    </h3>
+                    <span class="bg-green-950 border border-green-500/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 5</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs">
+                        
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-red-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved text-red-700"></i> War
+                            </strong>
+                            <p class="text-brown-800">
+                                Accelerated battlefield trauma care: Paré’s 1537 wound ointments; Nightingale's hospital sanitation in Crimea (1854); Harold Gillies' Queen's Hospital plastic surgery in WWI; Marie Curie’s 1914 mobile X-rays; sodium citrate blood storage; WWII D-Day mass penicillin production for 250,000 soldiers.
+                            </p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-purple-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-church text-purple-700"></i> Religion &amp; Beliefs
+                            </strong>
+                            <p class="text-brown-800">
+                                <strong>Christianity:</strong> Preserved Roman texts, built ~500 monastic hospitals (Bedlam 1247), but dogmatically enforced Galen, jailed Roger Bacon, banned human dissection, and resisted anaesthesia in childbirth. <strong>Islam:</strong> Built Baghdad hospitals (805 AD), preserved classical texts, and enriched surgery via Avicenna.
+                            </p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-amber-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-building-columns text-amber-700"></i> Government &amp; Politics
+                            </strong>
+                            <p class="text-brown-800">
+                                Shift from medieval tax resistance and laissez-faire neglect to founding the College of Physicians (1518), Jenner's parliamentary grants, Bazalgette's £3m sewer funding, the compulsory 1875 Public Health Act, Liberal reforms, and Bevan founding the 1948 NHS.
+                            </p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-blue-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-microscope text-blue-700"></i> Science &amp; Technology
+                            </strong>
+                            <p class="text-brown-800">
+                                Provided physical instruments to reveal the invisible: Gutenberg's movable-type printing press (1440), high-powered achromatic microscopes proving Germ Theory, carbolic acid sprays, William Coolidge's reliable X-ray tubes (1913), and the 1953 DNA double helix.
+                            </p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-yellow-950 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-dice text-yellow-700"></i> Chance &amp; Luck
+                            </strong>
+                            <p class="text-brown-800">
+                                Accidental sparks that required prepared minds: Paré running out of boiling oil in 1537; Simpson knocking over chloroform at dinner (1847); the 1858 Great Stink hot summer forcing sewer funding; Fleming's contaminated staphylococcus petri dish in 1928.
+                            </p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-teal-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-comments text-teal-700"></i> Communication &amp; Genius
+                            </strong>
+                            <p class="text-brown-800">
+                                Silk Road trade translations of Avicenna's <em>Canon of Medicine</em>; Geminus translating Vesalius into English; Chadwick's 1842 Sanitary Report; John Snow's 1854 Soho cholera dot-map; and Beveridge's 1942 bestseller selling 630,000 copies.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 6: Key Individuals Summary Matrix -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('individuals')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-900 text-white px-6 py-4 flex justify-between items-center border-b border-brown-800">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-user-doctor text-beige-200"></i>
+                        <span>6. Key Individuals Summary Matrix (All 18 Medical Pioneers &amp; Reformers)</span>
+                    </h3>
+                    <span class="bg-brown-800 border border-brown-700 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 6</span>
+                </div>
+
+                <div class="p-6 space-y-4 text-sm">
+                    <p class="text-xs text-brown-800">
+                        Summary comparison of all eighteen essential medical figures from ancient Greece to the modern Welfare State:
+                    </p>
+                    <div class="overflow-x-auto rounded-xl border border-beige-300">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-brown-900 text-beige-100 font-bold">
+                                    <th class="p-3 w-1/6">Pioneer</th>
+                                    <th class="p-3 w-1/8 border-l border-brown-800">Period</th>
+                                    <th class="p-3 w-5/12 border-l border-brown-800">Major Breakthrough</th>
+                                    <th class="p-3 w-3/10 border-l border-brown-800">Impact &amp; Reception</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Hippocrates</td>
+                                    <td class="p-2.5 border-l border-beige-300">Ancient Greece</td>
+                                    <td class="p-2.5 border-l border-beige-300">Theory of the Four Humours; clinical symptom observation; Hippocratic Oath.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Guided Western diagnostic medicine for nearly 2,000 years; separated medicine from superstition.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Galen</td>
+                                    <td class="p-2.5 border-l border-beige-300">Ancient Rome</td>
+                                    <td class="p-2.5 border-l border-beige-300">Theory of Opposites; cut pig nerves to prove brain controls speech; proved arteries carry blood.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Dissected apes/pigs, creating 200+ errors; supported by Church as dogma for 1,400 years.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Andreas Vesalius</td>
+                                    <td class="p-2.5 border-l border-beige-300">Renaissance (1543)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Published <em>De Humani Corporis Fabrica</em>; dissected human cadavers; corrected 200+ Galenic errors.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Faced academic pushback; re-established direct human dissection as the basis of anatomy.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Ambroise Paré</td>
+                                    <td class="p-2.5 border-l border-beige-300">Renaissance (1575)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Replaced boiling oil with egg yolk/rose oil/turpentine salve; introduced silk ligatures.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Revolutionized battlefield surgery; elevated surgery from barber trade into a respected art.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">William Harvey</td>
+                                    <td class="p-2.5 border-l border-beige-300">Renaissance (1628)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Proved the heart acts as a pump circulating blood in a closed one-way loop (<em>De Motu Cordis</em>).</td>
+                                    <td class="p-2.5 border-l border-beige-300">Demolished Galen's liver theory; lacked microscopes to visually verify capillaries.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Nicholas Culpeper</td>
+                                    <td class="p-2.5 border-l border-beige-300">Renaissance (1652)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Published <em>The English Physician</em>; translated Latin pharmacopeias into everyday English.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Opposed by the College of Physicians for encouraging self-treatment; democratized herbal health.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Thomas Sydenham</td>
+                                    <td class="p-2.5 border-l border-beige-300">Renaissance (1676)</td>
+                                    <td class="p-2.5 border-l border-beige-300">"The English Hippocrates"; classified diseases as distinct species; popularized laudanum.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Replaced theoretical humours balancing with rigorous bedside clinical case-histories.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Edward Jenner</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1796)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Observed cowpox protected against smallpox; inoculated James Phipps (1796); coined "vaccination".</td>
+                                    <td class="p-2.5 border-l border-beige-300">Eradicated smallpox; received £30,000 in parliamentary grants; vaccine made compulsory in 1853.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">John Hunter</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1790s)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Trained leading surgeons (including Jenner); amassed 14,000 comparative anatomy specimens.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Transformed surgery into a rigorous academic science through careful experimentation.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">James Simpson</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1847)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Discovered the effective anaesthetic properties of chloroform during a dinner experiment.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Silenced religious objections after administering chloroform to Queen Victoria in 1853.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Florence Nightingale</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1854)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Sanitized Scutari hospital in Crimea; introduced coxcomb statistical mortality diagrams.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Slashed hospital deaths from ~42% to 2%; founded the Nightingale Training School at St Thomas'.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">John Snow</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1854)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Mapped Soho cholera deaths to the Broad Street pump; calculated safe chloroform doses.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Proved cholera was waterborne, disproving airborne miasma years before microbes were proven.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Louis Pasteur</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1861)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Disproved spontaneous generation with swan-neck flasks; published Germ Theory (1861).</td>
+                                    <td class="p-2.5 border-l border-beige-300">Revolutionized medicine, proving airborne microbes cause infectious decay and human diseases.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Robert Koch</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1880s)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Used agar jelly and chemical dyes to isolate specific bacteria for anthrax, TB, and cholera.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Established Koch's Postulates; enabled bacteriology to isolate and target specific disease pathogens.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Joseph Lister</td>
+                                    <td class="p-2.5 border-l border-beige-300">Industrial (1867)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Applied Pasteur's Germ Theory to surgery using carbolic acid spray and antiseptic dressings.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Reduced postoperative ward mortality from 45.7% to 15.0%, paving the way for aseptic surgery.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Alexander Fleming</td>
+                                    <td class="p-2.5 border-l border-beige-300">Modern (1928)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Discovered <em>Penicillium notatum</em> mould destroying staphylococcus bacteria in an open petri dish.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Discovered the world's first natural antibiotic, though unable to chemically purify it.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Florey &amp; Chain</td>
+                                    <td class="p-2.5 border-l border-beige-300">Modern (1941)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Purified penicillin with Norman Heatley; secured US factory funding to mass-produce for D-Day.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Treated 250,000 soldiers by 1945; only ~1% wounded died from infection (vs 18% in WWI).</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-2.5 font-bold text-brown-900">Aneurin Bevan</td>
+                                    <td class="p-2.5 border-l border-beige-300">Modern (1948)</td>
+                                    <td class="p-2.5 border-l border-beige-300">Minister for Health who overcame British Medical Association (BMA) resistance to establish the NHS.</td>
+                                    <td class="p-2.5 border-l border-beige-300">Provided universal free cradle-to-grave medical care funded by taxes, transforming British health.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 7: Exam Guidance & Common Pitfalls -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('exam-guidance')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center border-b border-accent-navy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-graduation-cap text-beige-200"></i>
+                        <span>7. Exam Guidance &amp; Common Pitfalls: Mastering GCSE Thematic Questions</span>
+                    </h3>
+                    <span class="bg-blue-950 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 7</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        
+                        <!-- Core Theme Separation -->
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2 text-amber-950">
+                            <strong class="font-bold block text-sm flex items-center gap-1.5 text-amber-900">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-700"></i> Critical Rule: Never Mix Up the Core Themes!
+                            </strong>
+                            <p class="leading-relaxed">Examiners penalize answers that confuse distinct syllabus strands. Ensure you clearly separate:</p>
+                            <ul class="list-disc pl-4 space-y-1.5">
+                                <li><strong>Public Health:</strong> Clean drinking water, sewers, town living conditions, government legislation (1848/1875 Acts), Chadwick, Snow's pump, and the 1948 NHS.</li>
+                                <li><strong>Surgery:</strong> Pain relief (chloroform), antiseptics (carbolic spray, asepsis), blood loss/storage (ligatures, Landsteiner), and operative techniques.</li>
+                                <li><strong>Causes, Treatments &amp; Prevention:</strong> Humours, miasma, Germ Theory (Pasteur/Koch), vaccines (Jenner cowpox, MMR), and antibiotics (penicillin).</li>
+                            </ul>
+                        </div>
+
+                        <!-- Chronological Framework & Traps -->
+                        <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 space-y-2 text-rose-950">
+                            <strong class="font-bold block text-sm flex items-center gap-1.5 text-rose-900">
+                                <i class="fa-solid fa-clock text-rose-700"></i> Standard Chronological Timeframes &amp; Common Traps
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1.5">
+                                <li><strong>Medieval (c1000–c1450):</strong> Dominated by religion, Four Humours, Galen, and the 1348 Black Death.</li>
+                                <li><strong>Renaissance (c1450–c1750):</strong> Vesalius, Harvey, Paré, and the 1665 Great Plague.</li>
+                                <li><strong>Industrial (c1750–c1900):</strong> Jenner, Chadwick, Simpson, Lister, Pasteur, Koch, Snow, and the 1875 Act.</li>
+                                <li><strong>Modern (c1900–Present):</strong> Magic bullets, Fleming/Florey/Chain, WWI/II surgery, NHS (1948), and DNA (1953).</li>
+                                <li><strong>Common Pitfall:</strong> <em>Edward Jenner did NOT discover or prove Germ Theory!</em> Jenner discovered smallpox vaccination in 1796 through observation without knowing bacteria existed; Germ Theory was published by Pasteur 65 years later in 1861.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="visibleTopicsCount === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No health revision topics match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any content matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>Health &amp; the People Revision Hub &bull; c1000 to the Present Day &bull; Built for GCSE Exam Success 🩺</p>
+            <div class="flex items-center gap-4">
+                <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Health Hub</a>
+                <a href="health-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+                <a href="health-factors.html" class="text-beige-200 hover:text-white underline">Factors</a>
+                <a href="health-individuals.html" class="text-beige-200 hover:text-white underline">Pioneers</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function healthSummaryApp() {
+            return {
+                selectedTopicFilter: 'all',
+                searchQuery: '',
+
+                // Metadata for search indexing
+                topicKeywords: {
+                    'epidemics': 'black death 1348 great plague 1665 epidemics causes beliefs treatments remedies prevention public health fleas yersinia pestis rats miasma stars god punishment leeches tobacco vinegar sponges watchmen red crosses mass burial pits flagellation peasants revolt',
+                    'public-health': 'public health medieval cesspools rakers night carts gongfermiers monasteries clean water renaissance voluntary hospitals dissolution monasteries henry viii industrial slums chadwick 1842 report laissez-faire 1848 public health act great stink 1858 bazalgette sewers 1875 public health act compulsory modern booth rowntree boer war 1899 liberal reforms free school meals pensions national insurance beveridge report 1942 five giants nhs 1948 aneurin bevan new towns',
+                    'causes-treatments': 'causes treatments prevention four humours blood phlegm black yellow bile hippocrates galen zodiac man astrology miasma renaissance laudanum sydenham culpeper scurvy citrus woodall industrial germ theory pasteur koch anthrax tb cholera anaesthetics davy morton simpson chloroform lister carbolic jenner smallpox cowpox snow broad street pump modern dna 1953 watson crick magic bullets salvarsan 606 penicillin fleming florey chain mass immunization cancer screening',
+                    'surgery': 'evolution of surgery pain infection bleeding blood loss medieval cauterization red-hot irons trephination barber-surgeons renaissance pare ligatures soothing ointment vesalius harvey circulation industrial simpson chloroform queen victoria lister carbolic spray aseptic rubber gloves gowns boiled instruments modern keyhole laparoscopic laser microsurgery robotic transplants kidney heart landsteiner blood groups sodium citrate cyclosporine 1970',
+                    'factors': 'overarching historical factors war battlefield trauma pare nightingale gillies plastic surgery curie x-rays sodium citrate florey chain penicillin religion christianity galen dissection roger bacon monasteries care islam baghdad 805 avicenna government laissez-faire 1848 1875 public health acts nhs 1948 science technology printing press 1440 microscopes swan-neck flask x-ray tubes coolidge dna 1953 chance pare boiling oil simpson chloroform great stink 1858 fleming 1928 mould communication trade canon of medicine geminus chadwick snow map beveridge 630000',
+                    'individuals': 'key individuals matrix hippocrates galen andreas vesalius ambroise pare william harvey nicholas culpeper thomas sydenham edward jenner john hunter james simpson florence nightingale john snow louis pasteur robert koch joseph lister alexander fleming florey chain aneurin bevan',
+                    'exam-guidance': 'exam guidance common pitfalls distinguish core themes public health clean water sewers vs surgery anaesthetics antiseptics vs causes treatments germ theory vaccines chronological timeframes medieval c1000 c1450 renaissance c1450 c1750 industrial c1750 c1900 modern c1900 present jenner germ theory trap'
+                },
+
+                isTopicVisible(topicId) {
+                    // Check filter button
+                    if (this.selectedTopicFilter !== 'all' && this.selectedTopicFilter !== topicId) {
+                        return false;
+                    }
+
+                    // Check search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        const keywords = this.topicKeywords[topicId] || '';
+                        return keywords.includes(q) || topicId.includes(q);
+                    }
+
+                    return true;
+                },
+
+                get visibleTopicsCount() {
+                    const allKeys = Object.keys(this.topicKeywords);
+                    return allKeys.filter(key => this.isTopicVisible(key)).length;
+                },
+
+                resetFilters() {
+                    this.selectedTopicFilter = 'all';
+                    this.searchQuery = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
