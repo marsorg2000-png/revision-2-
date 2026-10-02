@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Major Events &amp; Turning Points | Health &amp; the People</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            wine: '#782329',
+                            cobalt: '#1e3a5f',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive state, filters, searches, and view modes -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .event-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="healthEventsApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="health-revision-hub.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Health Hub">
+                    <i class="fa-solid fa-calendar-check text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Major Events &amp; Turning Points</h1>
+                    <p class="text-xs text-beige-300">Epidemics, Crises &amp; Epochal Shifts &bull; Health and the People (c1000–Present)</p>
+                </div>
+            </div>
+
+            <!-- Stats & Quick Hub Link -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-scale-balanced text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Exam Skill:</span>
+                    <span class="font-bold text-beige-50">Similarity &amp; Difference (8 Marks)</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Key Events:</span>
+                    <span class="font-bold text-accent-gold" x-text="eventsData.length"></span>
+                </div>
+                <a href="health-revision-hub.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span>Hub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Search Bar, Mode Switcher, and Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- Top Controls Row: View Mode Switcher & Global Analysis Toggle -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-beige-300/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-brown-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[12px] text-brown-700"></i> Mode:
+                    </span>
+                    <div class="inline-flex bg-beige-50 p-1 rounded-xl border border-beige-300 shadow-inner text-xs font-semibold">
+                        <button 
+                            @click="viewMode = 'by-event'"
+                            :class="viewMode === 'by-event' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>Detailed Events</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'comparison-matrix'"
+                            :class="viewMode === 'comparison-matrix' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>1348 vs 1665 Plague Comparison</span>
+                        </button>
+                        <button 
+                            @click="viewMode = 'exam-technique'"
+                            :class="viewMode === 'exam-technique' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'text-brown-800 hover:text-brown-900'"
+                            class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-pen-fancy"></i>
+                            <span>Exam Comparison Framework</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Full Analysis / Compact Summary Toggle -->
+                <div class="flex items-center gap-2 text-xs">
+                    <button 
+                        @click="toggleAllCards()"
+                        class="px-3 py-1.5 rounded-xl bg-beige-50 hover:bg-beige-300/50 border border-beige-300 text-brown-800 font-semibold transition flex items-center gap-1.5 shadow-sm"
+                        :title="showFullAnalysis ? 'Collapse cards to key bullet points' : 'Expand all event sections in full analytical detail'">
+                        <i class="fa-solid" :class="showFullAnalysis ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="showFullAnalysis ? 'Switch All to Quick View' : 'Show All Full Analysis'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar & Reset Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search events, causes, treatments, real science, watchmen, fleas, Renaissance art, leeches (e.g. Black Death, 1665, Printing, Miasma)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-1-9' : 'fa-arrow-up-9-1'"></i>
+                        <span x-text="sortAscending ? 'Chronological Order' : 'Reverse Chronological'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredEvents.length"></span> / <span x-text="eventsData.length"></span> events shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Filter Pills -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-beige-300/80">
+                <span class="text-xs font-semibold text-brown-800 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Event:
+                </span>
+                <button 
+                    @click="selectedEvent = 'all'" 
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    :class="selectedEvent === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                >
+                    All Events (<span x-text="eventsData.length"></span>)
+                </button>
+                <template x-for="ev in eventsData" :key="'pill-' + ev.id">
+                    <button 
+                        @click="selectedEvent = ev.id" 
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5"
+                        :class="selectedEvent === ev.id ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'"
+                    >
+                        <i :class="ev.icon"></i>
+                        <span x-text="ev.shortTitle"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+
+        <!-- VIEW 1: DETAILED EVENT STUDY CARDS (Default) -->
+        <div x-show="viewMode === 'by-event'" class="space-y-6">
+            <template x-for="ev in filteredEvents" :key="ev.id">
+                <article class="event-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden transition">
+                    
+                    <!-- Event Card Header -->
+                    <div class="p-4 sm:p-5 bg-beige-50 border-b border-beige-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-base shadow-inner"
+                                 :class="ev.badgeStyle">
+                                <i :class="ev.icon"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-base sm:text-lg font-bold text-brown-900 tracking-tight" x-text="ev.title"></h3>
+                                    <span class="text-xs px-2.5 py-0.5 rounded-md font-semibold font-mono border"
+                                          :class="ev.periodBadgeStyle"
+                                          x-text="ev.date">
+                                    </span>
+                                </div>
+                                <p class="text-xs text-brown-700 font-medium" x-text="ev.subtitle"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 self-end sm:self-center">
+                            <button 
+                                @click="toggleCardMode(ev.id)" 
+                                class="text-xs px-3 py-1.5 rounded-lg border font-semibold transition flex items-center gap-1.5 shadow-xs"
+                                :class="isFullAnalysis(ev.id) 
+                                    ? 'bg-beige-200/90 hover:bg-beige-300 border-beige-300 text-brown-800' 
+                                    : 'bg-brown-800 hover:bg-brown-700 border-brown-700 text-beige-50'">
+                                <span x-text="isFullAnalysis(ev.id) ? 'Quick View' : 'Full Analysis'"></span>
+                                <i class="fa-solid text-[10px]" :class="isFullAnalysis(ev.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Core Overview Callout -->
+                    <div class="p-4 sm:p-5 space-y-4">
+                        <div class="bg-beige-100/90 p-3.5 rounded-xl border border-beige-200 text-xs sm:text-sm text-brown-900 leading-relaxed">
+                            <div class="flex items-center gap-1.5 text-accent-forest font-bold text-[11px] uppercase tracking-wider mb-1">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>Core Event Significance</span>
+                            </div>
+                            <p class="text-brown-800" x-text="ev.overview"></p>
+                        </div>
+
+                        <!-- Full Analysis Grid (Visible by default in Full Analysis mode) -->
+                        <div x-show="isFullAnalysis(ev.id)" x-collapse.duration.250ms class="space-y-4 pt-1">
+                            
+                            <!-- If Event is Epidemic (Black Death or Great Plague), show multi-column breakdown -->
+                            <template x-if="ev.isEpidemic">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+                                    
+                                    <!-- 1. Causes: Believed vs Real -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-amber-200/80 space-y-2 flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center gap-1.5 text-amber-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-amber-200">
+                                                <i class="fa-solid fa-question text-accent-gold"></i>
+                                                <span>Causes: Believed vs Real</span>
+                                            </div>
+                                            <div class="mt-2 space-y-2">
+                                                <div>
+                                                    <span class="font-bold text-brown-900 text-[11px] block text-red-900">Believed Causes:</span>
+                                                    <ul class="list-disc list-inside space-y-1 text-brown-800 text-[11px]">
+                                                        <template x-for="item in ev.causesBelieved" :key="item">
+                                                            <li x-text="item"></li>
+                                                        </template>
+                                                    </ul>
+                                                </div>
+                                                <div class="pt-1.5 border-t border-amber-200/50">
+                                                    <span class="font-bold text-brown-900 text-[11px] block text-emerald-900">Real Scientific Causes:</span>
+                                                    <ul class="list-disc list-inside space-y-1 text-brown-800 text-[11px]">
+                                                        <template x-for="item in ev.causesReal" :key="item">
+                                                            <li x-text="item"></li>
+                                                        </template>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 2. Treatments & Remedies -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-rose-200/80 space-y-2 flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center gap-1.5 text-rose-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-rose-200">
+                                                <i class="fa-solid fa-prescription-bottle-medical text-accent-wine"></i>
+                                                <span>Treatments &amp; Remedies</span>
+                                            </div>
+                                            <div class="mt-2 space-y-1.5">
+                                                <ul class="list-disc list-inside space-y-1 text-brown-800 text-[11px]">
+                                                    <template x-for="item in ev.treatments" :key="item">
+                                                        <li x-text="item"></li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 pt-2 border-t border-rose-200/60 text-[10px] text-brown-700 italic font-medium">
+                                            <strong class="text-brown-900 font-semibold">Key Nature:</strong> <span x-text="ev.treatmentNature"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. Why It Spread So Quickly -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-blue-200/80 space-y-2 flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center gap-1.5 text-blue-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-blue-200">
+                                                <i class="fa-solid fa-virus text-accent-cobalt"></i>
+                                                <span>Why It Spread So Quickly</span>
+                                            </div>
+                                            <div class="mt-2 space-y-1.5">
+                                                <ul class="list-disc list-inside space-y-1 text-brown-800 text-[11px]">
+                                                    <template x-for="item in ev.spreadFactors" :key="item">
+                                                        <li x-text="item"></li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 pt-2 border-t border-blue-200/60 text-[10px] text-brown-700 italic font-medium">
+                                            <strong class="text-brown-900 font-semibold">Critical Flaw:</strong> <span x-text="ev.spreadSummary"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 4. Historical Impact & Consequences -->
+                                    <div class="p-3.5 bg-beige-100/60 rounded-xl border border-emerald-200/80 space-y-2 flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center gap-1.5 text-emerald-900 font-bold uppercase tracking-wider text-[11px] pb-1.5 border-b border-emerald-200">
+                                                <i class="fa-solid fa-flag text-accent-forest"></i>
+                                                <span>Impact &amp; Consequences</span>
+                                            </div>
+                                            <div class="mt-2 space-y-2 text-[11px] leading-relaxed">
+                                                <template x-for="imp in ev.impactCategories" :key="imp.name">
+                                                    <div>
+                                                        <strong class="text-brown-900" x-text="imp.name + ':'"></strong>
+                                                        <span class="text-brown-800" x-text="imp.desc"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 pt-2 border-t border-emerald-200/60 text-[10px] text-brown-700 italic font-medium">
+                                            <strong class="text-brown-900 font-semibold">Long-Term Legacy:</strong> <span x-text="ev.longTermLegacy"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </template>
+
+                            <!-- If Event is The Renaissance Cultural Shift, show structured thematic boxes -->
+                            <template x-if="!ev.isEpidemic">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                                    <template x-for="col in ev.renaissanceConsequences" :key="col.title">
+                                        <div class="p-3.5 bg-beige-100/60 rounded-xl border border-beige-300/80 space-y-1.5">
+                                            <div class="font-bold text-brown-900 flex items-center gap-1.5 text-sm">
+                                                <i :class="col.icon" class="text-accent-forest text-xs"></i>
+                                                <span x-text="col.title"></span>
+                                            </div>
+                                            <p class="text-brown-800 leading-relaxed text-[11px]" x-text="col.description"></p>
+                                            <div class="pt-1.5 border-t border-beige-200 text-[10px] text-brown-700 italic">
+                                                <strong class="text-brown-900 font-semibold">Medical Impact:</strong> <span x-text="col.medicalSignificance"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                        </div>
+
+                        <!-- Quick Summary Strip when in Quick View -->
+                        <div x-show="!isFullAnalysis(ev.id)" class="pt-2 border-t border-beige-200 flex flex-wrap gap-2 text-[11px]">
+                            <span class="px-2.5 py-1 rounded-md bg-beige-200/80 text-brown-800 font-semibold">
+                                <i class="fa-solid fa-skull mr-1"></i> Death Toll: <strong x-text="ev.deathToll"></strong>
+                            </span>
+                            <span class="px-2.5 py-1 rounded-md bg-beige-200/80 text-brown-800 font-semibold">
+                                <i class="fa-solid fa-stethoscope mr-1"></i> Prevailing Theory: <strong x-text="ev.prevailingTheory"></strong>
+                            </span>
+                            <span class="px-2.5 py-1 rounded-md bg-beige-200/80 text-brown-800 font-semibold">
+                                <i class="fa-solid fa-lightbulb mr-1"></i> Turning Point: <strong x-text="ev.turningPointSummary"></strong>
+                            </span>
+                        </div>
+
+                    </div>
+                </article>
+            </template>
+        </div>
+
+        <!-- VIEW 2: 1348 BLACK DEATH VS 1665 GREAT PLAGUE COMPARISON -->
+        <div x-show="viewMode === 'comparison-matrix'" class="space-y-6">
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-5">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-3 border-b border-beige-300">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent-gold/20 text-brown-900 border border-accent-gold/40 mb-1">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <span>Essential GCSE Exam Comparison</span>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-bold text-brown-900">Comparing The Black Death (1348) &amp; The Great Plague (1665)</h2>
+                        <p class="text-xs text-brown-700">Detailed breakdown of similarities (continuity) and differences (change) across causes, treatments, and public health action.</p>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Comparison Grid -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-brown-900 text-beige-100">
+                                <th class="p-3 rounded-tl-xl w-1/5">Category</th>
+                                <th class="p-3 w-2/5 border-r border-brown-800 bg-amber-950/40">The Black Death (1348) &bull; Medieval</th>
+                                <th class="p-3 w-2/5 rounded-tr-xl bg-blue-950/40">The Great Plague (1665) &bull; Renaissance</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-beige-300 bg-beige-100/50">
+                            <!-- Causes Believed -->
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900 align-top">
+                                    <i class="fa-solid fa-cloud-meatball text-accent-wine mr-1"></i> Causes Believed (Continuity)
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-amber-50/30 border-r border-beige-200">
+                                    • <strong>Punishment from God</strong> for widespread human sins.<br>
+                                    • <strong>Planetary alignment</strong> &amp; bad astrology.<br>
+                                    • <strong>Bad air (miasma)</strong> from rotting dung and swamps.<br>
+                                    • Scapegoating (falsely accusing Jews of poisoning water wells).
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-blue-50/30">
+                                    • Still widely believed to be <strong>God’s punishment</strong> (days of prayer/fasting declared).<br>
+                                    • <strong>Miasma (bad air)</strong> remained the dominant scientific explanation.<br>
+                                    • Alignment of planets and heavenly comets blamed.<br>
+                                    • Still zero understanding that fleas on rats carried bacteria.
+                                </td>
+                            </tr>
+
+                            <!-- Real Causes -->
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900 align-top">
+                                    <i class="fa-solid fa-bug text-accent-forest mr-1"></i> Real Scientific Cause
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-amber-50/30 border-r border-beige-200">
+                                    • <strong>Yersinia pestis</strong> bacterium living in the stomach of fleas (*Xenopsylla cheopis*) on black rats (*Rattus rattus*).<br>
+                                    • Fleas bit infected rats, stomach blocked, regurgitated plague into humans.<br>
+                                    • Population already malnourished from the Great Famine.
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-blue-50/30">
+                                    • Identical biological pathogen: <strong>Yersinia pestis</strong>.<br>
+                                    • Overcrowded wooden housing in London slums allowed massive black rat colonies to flourish.<br>
+                                    • Warmer summer enabled fleas to breed rapidly.
+                                </td>
+                            </tr>
+
+                            <!-- Treatments & Remedies -->
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900 align-top">
+                                    <i class="fa-solid fa-hand-holding-medical text-accent-gold mr-1"></i> Treatments &amp; Remedies
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-amber-50/30 border-r border-beige-200">
+                                    • Prayer, fasting, and extreme flagellation (whipping oneself).<br>
+                                    • Unusual remedies: drinking mercury, crushed emeralds.<br>
+                                    • Lancing painful buboes with heated knives.<br>
+                                    • Carrying sweet herbs to counteract the bad air.
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-blue-50/30">
+                                    • <strong>Bleeding with leeches</strong> to balance the humours.<br>
+                                    • <strong>Smoking tobacco</strong> to drive away poisoned air (children punished if they refused!).<br>
+                                    • <strong>Sniffing sponges soaked in vinegar</strong>.<br>
+                                    • Strapping plucked live chickens or dried toads to buboes.
+                                </td>
+                            </tr>
+
+                            <!-- Public Health & Quarantine -->
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900 align-top">
+                                    <i class="fa-solid fa-building-shield text-accent-cobalt mr-1"></i> Public Health Action (Significant Change!)
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-amber-50/30 border-r border-beige-200">
+                                    • <strong>Unorganised &amp; ineffective:</strong> Local councils had no formal emergency system.<br>
+                                    • Quarantine was virtually impossible to enforce in villages.<br>
+                                    • Bodies left unburied or in shallow ditches; animals dug up corpses.<br>
+                                    • Total collapse of municipal infrastructure.
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-blue-50/30">
+                                    • <strong>Far more organised municipal response:</strong><br>
+                                    • <strong>Strict Quarantine:</strong> Infected homes locked from outside for 28 days with red crosses ("Lord have mercy upon us") and armed watchmen posted.<br>
+                                    • <strong>Night Burial Pits:</strong> Dead collectors gathered corpses in carts after dark for mass deep burial pits.<br>
+                                    • <strong>Fires in Streets:</strong> Large street bonfires burned sweet resins for 3 days to purify air.<br>
+                                    • <strong>Banning Gatherings:</strong> Theatres, fairs, and alleyway congregations banned.
+                                </td>
+                            </tr>
+
+                            <!-- Learning & Progress -->
+                            <tr class="hover:bg-beige-100">
+                                <td class="p-3 font-bold text-brown-900 align-top">
+                                    <i class="fa-solid fa-graduation-cap text-accent-forest mr-1"></i> Learning Since 1348
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-amber-50/30 border-r border-beige-200">
+                                    • Very little understanding; people fled randomly, spreading the disease deeper into rural England.
+                                </td>
+                                <td class="p-3 text-brown-800 leading-relaxed align-top bg-blue-50/30">
+                                    • Authorities <strong>noticed the connection between dirt and disease</strong> (even without knowing why).<br>
+                                    • Trade was officially limited; certificates of health required.<br>
+                                    • King Charles II and Court evacuated London to protect governance.<br>
+                                    • Slaughter of 40,000 dogs and 200,000 cats (misguided, but demonstrated active state intervention).
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: EXAM COMPARISON FRAMEWORK -->
+        <div x-show="viewMode === 'exam-technique'" class="space-y-6">
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent-gold/20 text-brown-900 border border-accent-gold/40 mb-1">
+                            <i class="fa-solid fa-pen-nib"></i>
+                            <span>Exam Writing Mastery</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-brown-900">How to Answer the 8-Mark "Compare" Question on Medical Events</h2>
+                        <p class="text-xs text-brown-700 mt-1">"Explain two ways in which responses to the Black Death (1348) were similar to responses to the Great Plague (1665)." OR "...how they were different." (8 marks)</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+                    
+                    <!-- Similarity Structure -->
+                    <div class="p-4 bg-beige-100 rounded-xl border border-beige-200 space-y-2">
+                        <div class="flex items-center gap-2 text-brown-900 font-bold text-sm">
+                            <span class="w-6 h-6 rounded-lg bg-accent-gold/20 flex items-center justify-center text-brown-900 text-xs">1</span>
+                            <span>Paragraph 1: Clear Point of Similarity</span>
+                        </div>
+                        <p class="text-brown-800">
+                            <strong>Formula:</strong> <em>"One way in which responses were similar was the continuing belief that pestilence was caused by supernatural/miasmatic factors and the resulting religious treatments."</em>
+                        </p>
+                        <ul class="list-disc list-inside space-y-1 text-brown-700 text-[11px] pl-1">
+                            <li><strong>In 1348:</strong> People believed God sent the plague as punishment for sins; prayed, held religious processions, and took posies of herbs against bad air (miasma).</li>
+                            <li><strong>In 1665:</strong> People still believed it was divine wrath; observed national days of prayer/fasting, smoked tobacco and carried vinegar sponges against miasma.</li>
+                            <li><strong>Comparison link:</strong> In both events, lack of germ knowledge meant people relied on spiritual repentance and sweet-smelling air treatments.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Difference Structure -->
+                    <div class="p-4 bg-beige-100 rounded-xl border border-beige-200 space-y-2">
+                        <div class="flex items-center gap-2 text-brown-900 font-bold text-sm">
+                            <span class="w-6 h-6 rounded-lg bg-accent-forest/20 flex items-center justify-center text-accent-forest text-xs">2</span>
+                            <span>Paragraph 2: Clear Point of Difference</span>
+                        </div>
+                        <p class="text-brown-800">
+                            <strong>Formula:</strong> <em>"One way in which responses differed was that public health measures and state-enforced quarantine were far more organized in 1665 than in 1348."</em>
+                        </p>
+                        <ul class="list-disc list-inside space-y-1 text-brown-700 text-[11px] pl-1">
+                            <li><strong>In 1348:</strong> Councils were powerless; street cleaning failed, corpses were dug up from shallow pits, and quarantine broke down completely.</li>
+                            <li><strong>In 1665:</strong> London enacted official Plague Orders: infected houses boarded shut with red crosses and armed watchmen, bodies buried in night pits, gatherings banned, street fires maintained for 3 days.</li>
+                            <li><strong>Comparison link:</strong> While 1348 was chaotic and reactive, 1665 showed municipal governments actively attempting organized containment.</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Exam Checklist -->
+                <div class="p-3.5 bg-brown-900 text-beige-100 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-circle-check text-accent-gold text-lg"></i>
+                        <div>
+                            <span class="font-bold block text-beige-50">Top Examiner Tip for 8-Mark Questions:</span>
+                            <span class="text-beige-300">Always spend equal time on BOTH periods. Never write two separate essays; integrate direct comparison words: <em>"Similarly...", "In contrast...", "Whereas in 1348..."</em></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="filteredEvents.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-calendar-xmark text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No historical events match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any event records matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="searchQuery = ''; selectedEvent = 'all'" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-6 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>GCSE History Revision Hub &bull; Health and the People: Major Events &amp; Epidemics 📜</p>
+            <div class="flex items-center gap-4">
+                <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Back to Health Hub</a>
+                <a href="health-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+                <a href="health-factors.html" class="text-beige-200 hover:text-white underline">Detailed Factors</a>
+                <a href="health-individuals.html" class="text-beige-200 hover:text-white underline">Key Figures</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic & Dataset from Events.docx -->
+    <script>
+        function healthEventsApp() {
+            return {
+                searchQuery: '',
+                selectedEvent: 'all',
+                viewMode: 'by-event', // 'by-event', 'comparison-matrix', or 'exam-technique'
+                sortAscending: true,
+                showFullAnalysis: true,
+                cardModes: {},
+
+                isFullAnalysis(id) {
+                    if (this.cardModes[id] !== undefined) {
+                        return this.cardModes[id] === 'full';
+                    }
+                    return this.showFullAnalysis;
+                },
+
+                toggleCardMode(id) {
+                    const current = this.isFullAnalysis(id);
+                    this.cardModes[id] = current ? 'quick' : 'full';
+                },
+
+                toggleAllCards() {
+                    this.showFullAnalysis = !this.showFullAnalysis;
+                    this.cardModes = {};
+                },
+
+                // Extracted strictly and faithfully from "Events.docx"
+                eventsData: [
+                    {
+                        id: "black-death",
+                        title: "The Black Death",
+                        shortTitle: "Black Death (1348)",
+                        date: "1347–1348",
+                        order: 1348,
+                        subtitle: "Catastrophic Medieval Plague Pandemic that decimated one-third of England",
+                        icon: "fa-solid fa-skull-crossbones",
+                        badgeStyle: "bg-amber-500/15 text-amber-900 border border-amber-500/30",
+                        periodBadgeStyle: "bg-amber-100 text-amber-900 border-amber-300",
+                        overview: "The Black Death arrived in southern England in the summer of 1348, killing between one-third and one-half of the population. With no biological knowledge of microbes, people relied on religious and supernatural explanations, while the catastrophic mortality shattered the feudal socioeconomic system.",
+                        isEpidemic: true,
+                        deathToll: "1.5m to 2m in England (30–45% of population)",
+                        prevailingTheory: "God's Wrath, Astrology & Miasma",
+                        turningPointSummary: "Weakened feudalism; farm workers demanded higher wages",
+                        causesBelieved: [
+                            "Punishment from God for human sins, wickedness, and vanity.",
+                            "Unusual position and alignment of the planets and stars.",
+                            "Bad air (miasma) rising from swamps, unpaved dung streets, and corpses.",
+                            "Wells deliberately poisoned by Jews (anti-Semitic scapegoating)."
+                        ],
+                        causesReal: [
+                            "Yersinia pestis bacterium living inside fleas (*Xenopsylla cheopis*).",
+                            "Fleas fed off the blood of black rats (*Rattus rattus*) living close to humans.",
+                            "Fleas passed the deadly disease to humans when their rat hosts died.",
+                            "Pre-existing food shortages left populations severely malnourished and biologically vulnerable."
+                        ],
+                        treatments: [
+                            "Intense prayer, fasting, repenting, and pilgrimages.",
+                            "Extreme self-flagellation (whipping oneself with spiked cords).",
+                            "Unusual remedies: drinking mercury, arsenic, or crushed emeralds.",
+                            "Moving away immediately when hearing of the plague in nearby towns.",
+                            "Avoiding contact with infected households and lancing painful buboes.",
+                            "Carrying sweet posies and burning herbs to purify the foul air."
+                        ],
+                        treatmentNature: "Completely ineffective due to total ignorance of pathogens; flight spread the disease deeper into rural England.",
+                        spreadFactors: [
+                            "Quarantine was completely ineffective and impossible to enforce in open villages.",
+                            "Filthy, unpaved streets where black rats and vermin bred unchecked.",
+                            "Unhygienic living conditions with thatched roofs, mud floors, and open middens.",
+                            "Scavenging animals dug up bodies that had been buried in hasty, shallow mass pits.",
+                            "Laws on municipal cleanliness were virtually impossible to enforce.",
+                            "Street cleaning was practically non-existent.",
+                            "Total medical ignorance of germs and cross-infection."
+                        ],
+                        spreadSummary: "Failure of village quarantine and rampant black rat infestation in unpaved, dirty settlements.",
+                        impactCategories: [
+                            {
+                                name: "Social",
+                                desc: "Entire villages wiped out, leaving deserted ghost hamlets; breakdown of community, law, and family bonds as relatives abandoned infected kin."
+                            },
+                            {
+                                name: "Political",
+                                desc: "Labor shortages empowered peasants to demand higher wages and mobility; the feudal system weakened permanently, culminating in the 1381 Peasants' Revolt."
+                            },
+                            {
+                                name: "Religious",
+                                desc: "Scores of devoted parish priests died or fled their posts, severely undermining public respect for Church infallibility."
+                            },
+                            {
+                                name: "Economic",
+                                desc: "Severe food shortages and soaring food prices; landowners switched from labor-intensive crop farming to sheep farming; surviving farm workers demanded higher wages."
+                            }
+                        ],
+                        longTermLegacy: "Eroded feudal serfdom, boosted peasant wages, and began the collapse of traditional medieval labor hierarchy."
+                    },
+                    {
+                        id: "the-renaissance",
+                        title: "The Renaissance",
+                        shortTitle: "The Renaissance (c1450–c1750)",
+                        date: "c1450–c1750",
+                        order: 1450,
+                        subtitle: "Rebirth of Learning, Humanism, Printing, and Empirical Scientific Inquiry",
+                        icon: "fa-solid fa-compass-drafting",
+                        badgeStyle: "bg-blue-500/15 text-blue-900 border border-blue-500/30",
+                        periodBadgeStyle: "bg-blue-100 text-blue-900 border-blue-300",
+                        overview: "The Renaissance ('rebirth') was a revolutionary cultural movement beginning in Florence, Italy, that promoted education, empirical research, and questioning received wisdom. It transformed medicine by encouraging pioneers like Vesalius, Paré, and Harvey to challenge ancient Galenic dogma.",
+                        isEpidemic: false,
+                        deathToll: "N/A (Intellectual & Cultural Revolution)",
+                        prevailingTheory: "Humanism & Direct Observation",
+                        turningPointSummary: "Challenged Galen; introduced movable-type printing & scientific method",
+                        renaissanceConsequences: [
+                            {
+                                title: "Exploration & Global Trade",
+                                icon: "fa-solid fa-earth-americas",
+                                description: "Global exploration generated vastly more accurate maps, expanded maritime trade routes, and brought back previously unknown medicinal plants, herbs, and drugs (e.g. Peruvian cinchona bark for malaria, tobacco, and opium).",
+                                medicalSignificance: "Enriched European pharmacopeias with new herbal drugs and showed that the ancients did not possess all knowledge."
+                            },
+                            {
+                                title: "The Movable-Type Printing Press (1440s/1455)",
+                                icon: "fa-solid fa-print",
+                                description: "Johannes Gutenberg’s printing press allowed medical textbooks, research treatises, and anatomical drawings to be mass-produced accurately without monastic Church scribes altering or censoring content.",
+                                medicalSignificance: "Vesalius’s Fabrica was mass-produced across Europe; Thomas Geminus translated it into English, democratizing anatomy."
+                            },
+                            {
+                                title: "Art & Realistic Anatomical Precision",
+                                icon: "fa-solid fa-palette",
+                                description: "Renaissance artists studied the human body through direct dissection to capture true muscular and skeletal proportions in realistic detail, creating stunning visual anatomical illustrations.",
+                                medicalSignificance: "Surgeons and physicians studied exact visual woodcuts of human muscles, nerves, and organs rather than stylized medieval drawings."
+                            },
+                            {
+                                title: "New Military Inventions & Gunpowder Wounds",
+                                icon: "fa-solid fa-burst",
+                                description: "The widespread battlefield adoption of cannons and gunpowder muskets inflicted horrific shattered bones, bullet trauma, and severe powder burns that ancient Roman authors like Galen had never encountered.",
+                                medicalSignificance: "Forced Ambroise Paré in 1537 to abandon searing boiling oil cautery, invent soothing ointments, and design silk ligatures."
+                            },
+                            {
+                                title: "New Learning & The Scientific Method",
+                                icon: "fa-solid fa-microscope",
+                                description: "Humanism emphasized direct individual inquiry, quantitative calculation, and clinical observation over blind obedience to ancient authorities like Galen and Aristotle.",
+                                medicalSignificance: "William Harvey mechanically calculated blood volume to prove circulation (1628); Vesalius corrected 200+ Galenic errors (1543)."
+                            },
+                            {
+                                title: "Challenging Traditional Authority",
+                                icon: "fa-solid fa-hand-fist",
+                                description: "The Protestant Reformation and Renaissance spirit fostered an intellectual culture where scholars had the courage to test, question, and disprove established church and university dogmas.",
+                                medicalSignificance: "Broke the 1,400-year stranglehold of Galen and laid the empirical foundations for the Scientific Revolution."
+                            }
+                        ]
+                    },
+                    {
+                        id: "great-plague",
+                        title: "The Great Plague of London",
+                        shortTitle: "Great Plague (1665)",
+                        date: "1665",
+                        order: 1665,
+                        subtitle: "The Final Devastating Wave of Bubonic Pestilence in English History",
+                        icon: "fa-solid fa-biohazard",
+                        badgeStyle: "bg-rose-500/15 text-rose-900 border border-rose-500/30",
+                        periodBadgeStyle: "bg-rose-100 text-rose-900 border-rose-300",
+                        overview: "The Great Plague struck London in 1665, killing almost 100,000 citizens—nearly a quarter of the capital's population. While understanding of pathogens remained unchanged from 1348, public health responses were vastly more organized, featuring mandatory municipal quarantines, watchmen, and night burial pits.",
+                        isEpidemic: true,
+                        deathToll: "Approx. 100,000 in London (25% of city population)",
+                        prevailingTheory: "Miasma & God's Punishment",
+                        turningPointSummary: "First organized municipal quarantine (red crosses & watchmen)",
+                        causesBelieved: [
+                            "Miasma (poisoned, corrupted air) generated by filth, waste, and damp unpaved streets.",
+                            "Divine punishment sent by God; public days of prayer, fasting, and repentance were declared.",
+                            "Unfavorable alignment of stars, fiery comets, and heavy autumn weather.",
+                            "Still no scientific understanding that fleas on rats carried bacteria."
+                        ],
+                        causesReal: [
+                            "Yersinia pestis bacteria carried by fleas living on black rats.",
+                            "Severe overcrowding in timber-framed London tenement slums provided an ideal breeding habitat for rats.",
+                            "An exceptionally warm summer in 1665 caused flea reproduction to surge exponentially."
+                        ],
+                        treatments: [
+                            "Bleeding with leeches to balance the Four Humours.",
+                            "Smoking tobacco continuously to drive away poisoned miasma (schoolboys were beaten if they refused to smoke!).",
+                            "Sniffing a sponge soaked in vinegar or carrying aromatic pomanders/posies.",
+                            "Fleeing to the countryside (King Charles II, his court, and wealthy physicians evacuated to Oxford/Salisbury).",
+                            "Strapping live plucked chickens to buboes to 'draw out the venom'.",
+                            "Applying dried toads and ointments of egg yolk, honey, and herbs to swollen glands."
+                        ],
+                        treatmentNature: "Maintained classical humor-balancing and miasma-warding remedies, though fleeing the city successfully protected the rich.",
+                        spreadFactors: [
+                            "Dense, unsanitary urban slums in parish parishes outside London walls (St Giles-in-the-Fields).",
+                            "Order to slaughter 40,000 dogs and 200,000 cats—which tragically allowed the rat population to explode unhindered.",
+                            "Poor hygiene and wooden buildings that allowed rats to move easily between attics and walls.",
+                            "Delay by authorities in imposing full quarantine until thousands were already infected."
+                        ],
+                        spreadSummary: "Urban slum overcrowding and the catastrophic mass culling of domestic cats and dogs.",
+                        impactCategories: [
+                            {
+                                name: "Public Health Learning",
+                                desc: "Authorities noticed the connection between urban dirt and disease, leading to far more proactive municipal health orders."
+                            },
+                            {
+                                name: "Quarantine & Enforcement",
+                                desc: "Infected homes were padlocked from outside for 28 days with red crosses painted on doors ('Lord have mercy upon us') and armed watchmen posted outside day and night."
+                            },
+                            {
+                                name: "Mass Burials",
+                                desc: "Bodies were forbidden from church funerals; death carts operated after dark ('Bring out your dead!') and corpses were buried in massive deep lime pits."
+                            },
+                            {
+                                name: "Trade & Public Ban",
+                                desc: "All public gatherings, theatres, and fairs were banned; trade with infected regions was suspended, and health certificates were required to leave London."
+                            }
+                        ],
+                        longTermLegacy: "Demonstrated early municipal state intervention in epidemics; followed in 1666 by the Great Fire of London which destroyed rat-infested slums."
+                    }
+                ],
+
+                get filteredEvents() {
+                    let results = [...this.eventsData];
+
+                    if (this.selectedEvent !== 'all') {
+                        results = results.filter(e => e.id === this.selectedEvent);
+                    }
+
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(e => 
+                            e.title.toLowerCase().includes(q) ||
+                            e.subtitle.toLowerCase().includes(q) ||
+                            e.overview.toLowerCase().includes(q) ||
+                            (e.causesBelieved && e.causesBelieved.some(c => c.toLowerCase().includes(q))) ||
+                            (e.causesReal && e.causesReal.some(c => c.toLowerCase().includes(q))) ||
+                            (e.treatments && e.treatments.some(t => t.toLowerCase().includes(q))) ||
+                            (e.spreadFactors && e.spreadFactors.some(s => s.toLowerCase().includes(q)))
+                        );
+                    }
+
+                    results.sort((a, b) => {
+                        return this.sortAscending ? a.order - b.order : b.order - a.order;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
