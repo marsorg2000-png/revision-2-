@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health &amp; the People - Common Misconceptions &amp; Exam Traps Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            amber: '#b45309',
+                            crimson: '#881337',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for reactive interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        [x-cloak] { display: none !important; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ede3d0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbb389;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c5c3e;
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" 
+      x-data="healthMisconceptionsApp()" x-cloak>
+
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 flex items-center justify-center">
+                    <i class="fa-solid fa-notes-medical text-beige-200 text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Health &amp; The People</h1>
+                        <span class="bg-accent-crimson text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Exam Traps &amp; Misconceptions</span>
+                    </div>
+                    <p class="text-xs text-beige-300">c1000 to Present Day • Avoid Costly Errors Across Themes, Eras &amp; Technique</p>
+                </div>
+            </div>
+            
+            <!-- Quick View Mode Switcher -->
+            <div class="flex items-center gap-2">
+                <nav class="flex flex-wrap justify-center gap-1 bg-brown-800 p-1 rounded-xl border border-brown-700 text-xs">
+                    <button @click="activeSection = 'all'" :class="activeSection === 'all' ? 'bg-brown-600 text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">All</button>
+                    <button @click="activeSection = 'themes'" :class="activeSection === 'themes' ? 'bg-accent-forest text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">Themes</button>
+                    <button @click="activeSection = 'periods'" :class="activeSection === 'periods' ? 'bg-accent-navy text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">Periods</button>
+                    <button @click="activeSection = 'people'" :class="activeSection === 'people' ? 'bg-accent-amber text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">Key People</button>
+                    <button @click="activeSection = 'technique'" :class="activeSection === 'technique' ? 'bg-accent-burgundy text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">Technique</button>
+                    <button @click="activeSection = 'quiz'" :class="activeSection === 'quiz' ? 'bg-brown-600 text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">Fix-It Lab</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Banner Alert & Summary -->
+        <div class="bg-gradient-to-r from-brown-900 via-brown-800 to-accent-burgundy text-beige-50 p-5 rounded-3xl shadow-md border border-brown-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="bg-red-500/20 text-red-200 border border-red-400/40 text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <i class="fa-solid fa-triangle-exclamation text-red-400"></i> Examiner Warning
+                    </span>
+                    <h2 class="text-lg font-bold text-beige-100">Stop Dropping Easy Marks on AQA Health &amp; the People!</h2>
+                </div>
+                <p class="text-xs text-beige-300 max-w-2xl leading-relaxed">
+                    Examiner reports consistently reveal students lose grades by <strong>conflating themes</strong> (e.g. treating surgery as public health), <strong>drifting out of historical periods</strong>, <strong>swapping key scientists</strong>, and misapplying <strong>Q1, Q3, and Q4 exam technique</strong>.
+                </p>
+            </div>
+            <div class="flex items-center gap-2 bg-brown-950/50 p-3 rounded-2xl border border-brown-700/60 text-xs">
+                <i class="fa-solid fa-shield-halved text-accent-forest text-2xl"></i>
+                <div>
+                    <span class="block text-beige-300 text-[10px] uppercase font-bold tracking-wider">Target Skills</span>
+                    <span class="font-extrabold text-beige-100">4 Trap Categories • 10 Fix-It Tasks</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Filter & Search Bar -->
+        <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-brown-600 text-xs"></i>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Search misconceptions (e.g., Q1, Vesalius, Surgery, 1800)..." 
+                    class="w-full bg-beige-50 border border-beige-300 rounded-xl pl-9 pr-3 py-2 text-xs text-brown-900 focus:outline-none focus:ring-2 focus:ring-brown-600 shadow-inner">
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap text-xs">
+                <span class="text-brown-700 font-semibold text-[11px]">Filter by Trap Type:</span>
+                <button 
+                    @click="activeSection = 'all'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'all' ? 'bg-brown-800 text-beige-50 border-brown-800' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    Show All
+                </button>
+                <button 
+                    @click="activeSection = 'themes'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'themes' ? 'bg-accent-forest text-white border-accent-forest' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    Theme Traps
+                </button>
+                <button 
+                    @click="activeSection = 'periods'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'periods' ? 'bg-accent-navy text-white border-accent-navy' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    Period Eras
+                </button>
+                <button 
+                    @click="activeSection = 'technique'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'technique' ? 'bg-accent-burgundy text-white border-accent-burgundy' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    Technique (Q1, Q3, Q4)
+                </button>
+            </div>
+        </div>
+
+        <section x-show="isVisible('themes')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-forest text-white text-sm"><i class="fa-solid fa-shapes"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">1. Confusing The Three Medical Themes</h3>
+                </div>
+                <span class="text-xs bg-accent-forest/10 text-accent-forest font-bold px-2.5 py-1 rounded-full border border-accent-forest/20">Critical for Q4 Essays</span>
+            </div>
+
+            <!-- The Big 3 Comparison Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Theme A: Public Health -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-forest text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-faucet-droplet"></i> Public Health
+                            </span>
+                            <span class="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">Community / State</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            <strong>Definition:</strong> Measures taken by authorities, town councils, or national government to protect the health of the <em>whole community or population</em>.
+                        </p>
+                        <div class="mt-3 bg-red-50 border border-red-200 rounded-xl p-2.5 text-xs text-red-900 space-y-1">
+                            <span class="font-bold block text-[11px] text-accent-burgundy"><i class="fa-solid fa-xmark mr-1"></i> The Common Mistake:</span>
+                            Writing about a surgical operation, an individual herbal remedy, or penicillin pills given to one patient. That is <em>treatment</em>, NOT public health!
+                        </div>
+                        <div class="mt-2.5 bg-green-50 border border-green-200 rounded-xl p-2.5 text-xs text-green-900 space-y-1">
+                            <span class="font-bold block text-[11px] text-green-800"><i class="fa-solid fa-check mr-1"></i> What ALWAYS Counts:</span>
+                            Clean water supplies, sewers, quarantine laws, cesspools, street cleaning, Public Health Acts (1848, 1875), Clean Air Acts, and the National Health Service (NHS).
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600">
+                        <strong>Key Names:</strong> Chadwick, Snow, Bazalgette, Bevan, Beveridge.
+                    </div>
+                </div>
+
+                <!-- Theme B: Surgery & Anatomy -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-navy text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-scalpel"></i> Surgery &amp; Anatomy
+                            </span>
+                            <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">The Physical Body</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            <strong>Definition:</strong> Operating directly on the living human body and mapping internal anatomical structures. Centered on overcoming the <strong>Big Three Hazards of Surgery</strong>:
+                        </p>
+                        <div class="grid grid-cols-3 gap-1 my-2 text-center text-[10px] font-bold">
+                            <span class="bg-beige-200 py-1 rounded text-brown-900">1. Pain</span>
+                            <span class="bg-beige-200 py-1 rounded text-brown-900">2. Infection</span>
+                            <span class="bg-beige-200 py-1 rounded text-brown-900">3. Blood Loss</span>
+                        </div>
+                        <div class="mt-2 bg-red-50 border border-red-200 rounded-xl p-2.5 text-xs text-red-900 space-y-1">
+                            <span class="font-bold block text-[11px] text-accent-burgundy"><i class="fa-solid fa-xmark mr-1"></i> The Common Mistake:</span>
+                            Describing Edward Jenner’s smallpox vaccine or John Snow’s Broad Street pump as "surgical breakthroughs". They have zero to do with surgery!
+                        </div>
+                        <div class="mt-2 bg-green-50 border border-green-200 rounded-xl p-2.5 text-xs text-green-900 space-y-1">
+                            <span class="font-bold block text-[11px] text-green-800"><i class="fa-solid fa-check mr-1"></i> What ALWAYS Counts:</span>
+                            Dissection, ligatures (Paré), anesthetics (ether, Simpson's chloroform), antiseptics (Lister's carbolic spray), blood transfusions (Landsteiner), X-rays, and plastic surgery.
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600">
+                        <strong>Key Names:</strong> John Hunter, Vesalius, Paré, Simpson, Lister, Landsteiner, Gillies.
+                    </div>
+                </div>
+
+                <!-- Theme C: Causes, Treatment & Prevention -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-amber text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-virus"></i> Causes, Treatments &amp; Prevention
+                            </span>
+                            <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">Pathology</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            <strong>Definition:</strong> Why people get sick (understanding pathogens/theories) and how illness is cured (medicines/therapies) or prevented (vaccines/inoculation).
+                        </p>
+                        <div class="mt-3 bg-red-50 border border-red-200 rounded-xl p-2.5 text-xs text-red-900 space-y-1">
+                            <span class="font-bold block text-[11px] text-accent-burgundy"><i class="fa-solid fa-xmark mr-1"></i> The Common Mistake:</span>
+                            Confusing <em>prevention</em> (stopping people getting it, like a vaccine) with <em>treatment</em> (curing someone already infected, like an antibiotic).
+                        </div>
+                        <div class="mt-2.5 bg-green-50 border border-green-200 rounded-xl p-2.5 text-xs text-green-900 space-y-1">
+                            <span class="font-bold block text-[11px] text-green-800"><i class="fa-solid fa-check mr-1"></i> What ALWAYS Counts:</span>
+                            Humours, Miasma, Spontaneous Generation, Germ Theory (1861), Koch’s stained microbes, bloodletting, herbal remedies, Salvarsan 606, Penicillin, DNA genetics.
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600">
+                        <strong>Key Names:</strong> Hippocrates, Galen, Sydenham, Jenner, Pasteur, Koch, Ehrlich, Fleming.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section x-show="isVisible('periods')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-navy text-white text-sm"><i class="fa-solid fa-timeline"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">2. Historical Periods: Boundaries &amp; Era Traps</h3>
+                </div>
+                <span class="text-xs bg-accent-navy/10 text-accent-navy font-bold px-2.5 py-1 rounded-full border border-accent-navy/20">Crucial for Question 4</span>
+            </div>
+
+            <div class="bg-beige-50 rounded-3xl border border-beige-300 p-5 shadow-sm space-y-4">
+                <p class="text-xs text-brown-700">
+                    <i class="fa-solid fa-circle-exclamation text-accent-burgundy mr-1"></i>
+                    <strong>Exam Danger:</strong> In Question 4 essays, you must write about at least <strong>two distinct historical periods</strong>. If you place a Renaissance figure in the Medieval era, or Fleming in the 19th Century, examiners will not award period coverage marks!
+                </p>
+
+                <!-- 4 Era Horizontal Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    
+                    <!-- Medieval -->
+                    <div class="bg-beige-100/80 rounded-2xl p-4 border border-beige-300 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider bg-brown-800 text-beige-50 px-2 py-0.5 rounded">Era 1</span>
+                                <span class="text-xs font-bold text-brown-900">c1000 – c1450</span>
+                            </div>
+                            <h4 class="font-extrabold text-brown-900 text-base mt-2">Medieval Era</h4>
+                            <p class="text-[11px] text-brown-700 mt-1">From Norman conquest through the Black Death (1348) to the early Renaissance.</p>
+                            
+                            <div class="mt-3 text-xs space-y-1.5 text-brown-800">
+                                <div><strong>Dominant Theory:</strong> Four Humours (Hippocrates &amp; Galen), Miasma, God's punishment.</div>
+                                <div><strong>Treatments:</strong> Bloodletting, purging, prayers, zodiac charts, trepanning.</div>
+                                <div><strong>Key Event:</strong> Black Death 1348.</div>
+                            </div>
+                        </div>
+                        <div class="bg-red-100/80 p-2 rounded-xl border border-red-200 text-[10px] text-red-900">
+                            <strong>Trap:</strong> Never say they understood germs or contagion. The Church controlled universities and banned human dissection!
+                        </div>
+                    </div>
+
+                    <!-- Renaissance -->
+                    <div class="bg-beige-100/80 rounded-2xl p-4 border border-beige-300 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider bg-accent-forest text-white px-2 py-0.5 rounded">Era 2</span>
+                                <span class="text-xs font-bold text-brown-900">c1450 – 1800</span>
+                            </div>
+                            <h4 class="font-extrabold text-brown-900 text-base mt-2">Renaissance</h4>
+                            <p class="text-[11px] text-brown-700 mt-1">The "Rebirth" of scientific enquiry, printing press (1440s), Royal Society (1660).</p>
+                            
+                            <div class="mt-3 text-xs space-y-1.5 text-brown-800">
+                                <div><strong>Breakthroughs:</strong> Human dissection corrects Galen's errors; blood circulation mapped.</div>
+                                <div><strong>Key Figures:</strong> Vesalius (1543), Paré, Harvey (1628), Sydenham, John Hunter, Jenner (1796).</div>
+                                <div><strong>Key Event:</strong> Great Plague 1665.</div>
+                            </div>
+                        </div>
+                        <div class="bg-red-100/80 p-2 rounded-xl border border-red-200 text-[10px] text-red-900">
+                            <strong>Trap:</strong> Vesalius and Harvey improved anatomical <em>knowledge</em>, but treatments barely changed for ordinary people!
+                        </div>
+                    </div>
+
+                    <!-- Industrial -->
+                    <div class="bg-beige-100/80 rounded-2xl p-4 border border-beige-300 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider bg-accent-navy text-white px-2 py-0.5 rounded">Era 3</span>
+                                <span class="text-xs font-bold text-brown-900">1800 – 1899</span>
+                            </div>
+                            <h4 class="font-extrabold text-brown-900 text-base mt-2">19th C. Industrial</h4>
+                            <p class="text-[11px] text-brown-700 mt-1">Explosive urbanisation, overcrowded slums, cholera epidemics, scientific revolution.</p>
+                            
+                            <div class="mt-3 text-xs space-y-1.5 text-brown-800">
+                                <div><strong>Breakthroughs:</strong> Germ Theory (Pasteur 1861), Antiseptics (Lister 1867), Anesthetics (Simpson 1847).</div>
+                                <div><strong>Public Health:</strong> Chadwick Report (1842), Snow on Cholera (1854), 1875 Public Health Act.</div>
+                            </div>
+                        </div>
+                        <div class="bg-red-100/80 p-2 rounded-xl border border-red-200 text-[10px] text-red-900">
+                            <strong>Trap:</strong> Do not place Penicillin or the NHS in the 1800s! 19th Century was chloroform, carbolic spray, and cholera.
+                        </div>
+                    </div>
+
+                    <!-- Modern -->
+                    <div class="bg-beige-100/80 rounded-2xl p-4 border border-beige-300 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider bg-accent-burgundy text-white px-2 py-0.5 rounded">Era 4</span>
+                                <span class="text-xs font-bold text-brown-900">1900 – Today</span>
+                            </div>
+                            <h4 class="font-extrabold text-brown-900 text-base mt-2">Modern Era</h4>
+                            <p class="text-[11px] text-brown-700 mt-1">World Wars, welfare state, antibiotics, genetic code, high-tech microsurgery.</p>
+                            
+                            <div class="mt-3 text-xs space-y-1.5 text-brown-800">
+                                <div><strong>Breakthroughs:</strong> Magic bullets (Salvarsan 606), Penicillin (Fleming 1928, Florey &amp; Chain 1941), DNA (1953).</div>
+                                <div><strong>Welfare &amp; State:</strong> Liberal Reforms (1906–11), NHS founded (1948 by Aneurin Bevan).</div>
+                            </div>
+                        </div>
+                        <div class="bg-red-100/80 p-2 rounded-xl border border-red-200 text-[10px] text-red-900">
+                            <strong>Trap:</strong> Fleming <em>discovered</em> penicillin mould, but it took Florey and Chain (plus US mass production) to purify it into a medicine!
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section x-show="isVisible('people')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-amber text-white text-sm"><i class="fa-solid fa-user-doctor"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">3. Confusing Key People &amp; Their Contributions</h3>
+                </div>
+                <span class="text-xs bg-accent-amber/10 text-accent-amber font-bold px-2.5 py-1 rounded-full border border-accent-amber/20">Identity Collisions</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Pair 1: Vesalius vs Harvey vs Paré -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm">
+                    <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                        <h4 class="font-bold text-brown-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> The Renaissance Trio: Who Did What?
+                        </h4>
+                        <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">Renaissance</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-brown-800">
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Andreas Vesalius (1543):</strong> <em>Anatomy &amp; Dissection</em>. Wrote <em>The Fabric of the Human Body</em>. Proved Galen made over 200 errors (e.g. human jawbone is 1 bone, not 2; no holes in heart septum) because Galen dissected animals (pigs/apes), not humans.
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Ambroise Paré (1537):</strong> <em>Battlefield Surgery</em>. Ran out of boiling oil for gunshot wounds and used soothing ointment (egg yolk, rose oil, turpentine). Promoted silk <strong>ligatures</strong> to tie arteries instead of cautery irons.
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">William Harvey (1628):</strong> <em>Circulation of Blood</em>. Disproved Galen’s theory that the liver constantly makes new blood burned as fuel. Proved the heart acts as a pump circulating blood in one direction with mechanical valves.
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-2.5 rounded-xl border border-red-200 text-[11px] text-red-900">
+                        <strong>The Trap:</strong> Saying Harvey discovered dissection, or that Vesalius found ligatures. Keep their roles distinct: <em>Vesalius = Body map, Paré = Wounds &amp; ties, Harvey = Circulating blood</em>.
+                    </div>
+                </div>
+
+                <!-- Pair 2: Jenner vs Pasteur vs Koch vs Fleming -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm">
+                    <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                        <h4 class="font-bold text-brown-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> The Microbe &amp; Vaccine Confusion
+                        </h4>
+                        <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">1796 to 1928</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-brown-800">
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Edward Jenner (1796):</strong> Used cowpox to vaccinate against smallpox. <em>Did NOT know about germs!</em> It was empirical observation (dairymaids didn't get smallpox).
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Louis Pasteur (1861):</strong> Proved <strong>Germ Theory</strong> (microbes cause decay and disease, disproving Spontaneous Generation). Developed vaccines for chicken cholera, anthrax, and rabies.
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Robert Koch (1870s–80s):</strong> Stained specific bacteria with chemical dyes and photographed them. Identified the specific bacteria causing anthrax, tuberculosis (1882), and cholera (1883).
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Alexander Fleming (1928):</strong> Discovered Penicillin (an <em>antibiotic cure</em>, NOT a vaccine) from Penicillium notatum mould in a petri dish.
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-2.5 rounded-xl border border-red-200 text-[11px] text-red-900">
+                        <strong>The Trap:</strong> Saying Jenner proved germs, or that Pasteur invented penicillin, or that Fleming invented a vaccine! Vaccines = Prevention; Antibiotics = Treatment.
+                    </div>
+                </div>
+
+                <!-- Pair 3: Simpson vs Lister -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm">
+                    <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                        <h4 class="font-bold text-brown-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Pain vs Infection: Simpson vs Lister
+                        </h4>
+                        <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">19th Century</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-brown-800">
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">James Simpson (1847) = PAIN (Anesthetic):</strong> Discovered the anesthetic properties of <strong>chloroform</strong> after testing it with friends around a dining table. Revolutionized childbirth (used by Queen Victoria in 1853).
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Joseph Lister (1867) = INFECTION (Antiseptic):</strong> Read Pasteur's Germ Theory and used <strong>carbolic acid spray</strong> to sterilize hands, wounds, and instruments, reducing surgical gangrene/sepsis mortality from 46% to 15%.
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-2.5 rounded-xl border border-red-200 text-[11px] text-red-900">
+                        <strong>The "Black Period of Surgery" Trap:</strong> Anesthetics alone made surgery <em>more dangerous</em> between 1847 and 1867 because surgeons cut deeper without sterile conditions! Only Lister solved the infection problem.
+                    </div>
+                </div>
+
+                <!-- Pair 4: Chadwick vs Snow vs Bevan -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm">
+                    <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                        <h4 class="font-bold text-brown-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Public Health Reformers
+                        </h4>
+                        <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">Public Health</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-brown-800">
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Edwin Chadwick (1842):</strong> Wrote <em>Report on the Sanitary Conditions of the Labouring Population</em>. Believed in miasma! Argued clean water and sewers would cut poverty and council taxes, inspiring the 1848 Public Health Act.
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">John Snow (1854):</strong> Proved cholera was water-borne during the Soho epidemic by mapping deaths around the <strong>Broad Street pump</strong> and removing the pump handle.
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-beige-200">
+                            <strong class="text-brown-900">Aneurin Bevan (1948):</strong> Minister for Health who spearheaded the establishment of the <strong>NHS</strong>, overcoming stiff opposition from the British Medical Association (BMA) by "stuffing their mouths with gold" (allowing private practice).
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-2.5 rounded-xl border border-red-200 text-[11px] text-red-900">
+                        <strong>The Trap:</strong> Attributing the NHS to Edwin Chadwick, or saying John Snow proved Germ Theory (Snow proved cholera was water-borne 7 years <em>before</em> Pasteur published Germ Theory).
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section x-show="isVisible('technique')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-burgundy text-white text-sm"><i class="fa-solid fa-pen-nib"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">4. Question-Specific Exam Technique Traps</h3>
+                </div>
+                <span class="text-xs bg-accent-burgundy/10 text-accent-burgundy font-bold px-2.5 py-1 rounded-full border border-accent-burgundy/20">AQA Specification Technique</span>
+            </div>
+
+            <!-- 3 Technique Accordion Cards -->
+            <div class="space-y-3.5">
+                
+                <!-- Question 1 Technique -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-red-200 p-5 shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-beige-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-accent-burgundy text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">Question 1 (8 Marks)</span>
+                            <h4 class="font-bold text-brown-900 text-sm sm:text-base">“How useful is Source A to an historian studying...?”</h4>
+                        </div>
+                        <span class="text-xs font-extrabold text-red-700 bg-red-100 px-3 py-1 rounded-full border border-red-300">
+                            TRAP: Utility IS NOT Reliability!
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-red-50 p-3.5 rounded-xl border border-red-200 space-y-2">
+                            <span class="font-extrabold text-accent-burgundy block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-ban"></i> What Students Wrongly Do (Losing Half Marks):
+                            </span>
+                            <ul class="list-disc pl-4 space-y-1 text-red-950 leading-relaxed">
+                                <li>Writing: <em>“This source is not useful because it is biased and not reliable.”</em> <strong>THIS IS FATAL!</strong> All sources have utility.</li>
+                                <li>Writing that the source is "useless" because it is a cartoon, or because it only shows one person's point of view.</li>
+                                <li>Listing what the source <em>doesn't</em> mention (omissions) instead of analyzing what it actually provides.</li>
+                                <li>Treating it like an English comprehension or classic reliability critique.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 p-3.5 rounded-xl border border-green-200 space-y-2">
+                            <span class="font-extrabold text-green-900 block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> The Winning Golden Rule:
+                            </span>
+                            <ul class="list-disc pl-4 space-y-1 text-green-950 leading-relaxed">
+                                <li><strong>The question ONLY asks how useful the source is, NOT its limitations!</strong></li>
+                                <li>Even biased propaganda or satirical cartoons are <em>immensely useful</em> because they reveal <strong>attitudes, beliefs, and public perceptions</strong> of the era.</li>
+                                <li>Always structure around two things:
+                                    <ol class="list-decimal pl-4 mt-1 font-semibold">
+                                        <li><strong>Content &amp; Own Knowledge:</strong> What does the source show/say, and what historical context validates it?</li>
+                                        <li><strong>Provenance (NOP):</strong> How does <em>who wrote it, when, why, and who for</em> make it valuable to a historian?</li>
+                                    </ol>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 Technique -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-amber-200 p-5 shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-beige-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-accent-amber text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">Question 3 (8 Marks)</span>
+                            <h4 class="font-bold text-brown-900 text-sm sm:text-base">“Compare [Person/Event A] with [Person/Event B]. In what ways were they similar?”</h4>
+                        </div>
+                        <span class="text-xs font-extrabold text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+                            TRAP: DO NOT WRITE ABOUT DIFFERENCES!
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-red-50 p-3.5 rounded-xl border border-red-200 space-y-2">
+                            <span class="font-extrabold text-accent-burgundy block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-ban"></i> The Deadly Mistake:
+                            </span>
+                            <ul class="list-disc pl-4 space-y-1 text-red-950 leading-relaxed">
+                                <li>Writing a paragraph explaining how they were <em>different</em>! Any time spent on differences earns <strong>0 marks</strong> and wastes precious exam minutes.</li>
+                                <li>Writing two isolated biographical paragraphs (Paragraph 1 on Jenner, Paragraph 2 on Pasteur) without a connecting similarity bridge.</li>
+                                <li>Stating superficial similarities: <em>“Both were men who lived in Europe and did science.”</em></li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 p-3.5 rounded-xl border border-green-200 space-y-2">
+                            <span class="font-extrabold text-green-900 block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> The Winning Formula:
+                            </span>
+                            <ul class="list-disc pl-4 space-y-1 text-green-950 leading-relaxed">
+                                <li>Identify <strong>two distinct conceptual similarities</strong> (e.g., both faced initial religious/medical opposition; both used careful empirical observation; both relied on government backing or finance).</li>
+                                <li>Structure both paragraphs with a direct comparative opening:
+                                    <div class="p-2 bg-white rounded-lg border border-green-200 mt-1 italic">
+                                        “One way [Event A] and [Event B] were similar is that both encountered substantial conservative opposition from established medical authorities...”
+                                    </div>
+                                </li>
+                                <li>Support each half with precise factual detail from both historical contexts.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4 Technique -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-forest-200 p-5 shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-beige-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-accent-forest text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">Question 4 (16 Marks + 4 SPaG)</span>
+                            <h4 class="font-bold text-brown-900 text-sm sm:text-base">“Has [Factor X] been the main factor in the development of [Theme]...?”</h4>
+                        </div>
+                        <span class="text-xs font-extrabold text-green-800 bg-green-100 px-3 py-1 rounded-full border border-green-300">
+                            TRAP: The 3 Non-Negotiable Essay Rules
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        
+                        <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center gap-1.5 text-accent-navy font-bold text-sm">
+                                <span class="w-5 h-5 rounded-full bg-accent-navy text-white text-center leading-5 text-[11px]">1</span>
+                                <span>Stay in the Stated Theme!</span>
+                            </div>
+                            <p class="text-brown-800 leading-relaxed">
+                                If the essay asks about <strong>Public Health</strong>, do NOT drift into surgery (Simpson/Lister) or antibiotics (Fleming). If it asks about <strong>Surgery</strong>, do not write about Chadwick's sewers! Any off-theme paragraph is discarded by examiners.
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center gap-1.5 text-accent-forest font-bold text-sm">
+                                <span class="w-5 h-5 rounded-full bg-accent-forest text-white text-center leading-5 text-[11px]">2</span>
+                                <span>Cover AT LEAST 2 Periods!</span>
+                            </div>
+                            <p class="text-brown-800 leading-relaxed">
+                                You cannot achieve Level 4 without spanning across distinct historical eras. A great essay contrasts at least two: <strong>Medieval (1000–c1450)</strong>, <strong>Renaissance (c1450–1800)</strong>, <strong>Industrial (1800–1899)</strong>, or <strong>Modern (1900–present)</strong>.
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-2">
+                            <div class="flex items-center gap-1.5 text-accent-burgundy font-bold text-sm">
+                                <span class="w-5 h-5 rounded-full bg-accent-burgundy text-white text-center leading-5 text-[11px]">3</span>
+                                <span>Analyze 2+ Factors (Include Stated!)</span>
+                            </div>
+                            <p class="text-brown-800 leading-relaxed">
+                                One factor <strong>MUST be the factor named in the prompt</strong> (e.g. War, Government, Science/Technology, Individuals, Religion). You must dedicate balanced paragraphs to the named factor PLUS at least one other factor before concluding with a substantiated judgment.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section x-show="isVisible('quiz')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-brown-800 text-beige-100 text-sm"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">5. "Examiner Red Pen" Fix-It Lab</h3>
+                </div>
+                <span class="text-xs bg-brown-200 text-brown-900 font-bold px-3 py-1 rounded-full">Spot &amp; Correct The Student Blunders</span>
+            </div>
+
+            <p class="text-xs text-brown-700">
+                Click any real-life student exam quote below to see why it loses vital marks and read the model rewrite:
+            </p>
+
+            <div class="space-y-3">
+                <template x-for="(trap, index) in diagnosticTraps" :key="index">
+                    <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 transition shadow-sm space-y-2.5">
+                        <div class="flex justify-between items-start gap-2 cursor-pointer select-none" @click="trap.open = !trap.open">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded"
+                                          :class="getCategoryBadgeClass(trap.category)"
+                                          x-text="trap.category">
+                                    </span>
+                                    <span class="font-bold text-xs sm:text-sm text-brown-900" x-text="trap.title"></span>
+                                </div>
+                                <div class="text-xs italic text-red-900 bg-red-50 p-2.5 rounded-xl border border-red-200">
+                                    <span class="font-bold text-accent-burgundy not-italic">❌ What Student Wrote: </span>
+                                    “<span x-text="trap.studentQuote"></span>”
+                                </div>
+                            </div>
+                            <button class="text-brown-700 hover:text-brown-900 p-1">
+                                <i class="fa-solid text-sm transition-transform duration-200" :class="trap.open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            </button>
+                        </div>
+
+                        <!-- Revealed Correction Accordion -->
+                        <div x-show="trap.open" x-collapse class="pt-3 border-t border-beige-200 space-y-2 text-xs">
+                            <div class="bg-red-50/80 p-3 rounded-xl border border-red-200 text-red-950">
+                                <strong class="text-accent-burgundy block mb-0.5"><i class="fa-solid fa-triangle-exclamation"></i> Examiner Diagnosis &amp; Penalty:</strong>
+                                <span x-text="trap.diagnosis"></span>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-xl border border-green-200 text-green-950">
+                                <strong class="text-green-800 block mb-0.5"><i class="fa-solid fa-check"></i> High-Scoring Model Correction:</strong>
+                                <span x-text="trap.modelCorrection"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History: Health &amp; the People Common Misconceptions Hub • c1000 to the Present Day 🩺</p>
+    </footer>
+
+    <script>
+        function healthMisconceptionsApp() {
+            return {
+                activeSection: 'all',
+                searchQuery: '',
+
+                isVisible(sectionName) {
+                    if (this.searchQuery.trim() !== '') return true;
+                    if (this.activeSection === 'all') return true;
+                    return this.activeSection === sectionName;
+                },
+
+                getCategoryBadgeClass(category) {
+                    switch (category) {
+                        case 'Question 1 Technique': return 'bg-accent-burgundy text-white';
+                        case 'Question 3 Technique': return 'bg-accent-amber text-white';
+                        case 'Question 4 Technique': return 'bg-accent-forest text-white';
+                        case 'Theme Confusion': return 'bg-accent-navy text-white';
+                        case 'Period Confusion': return 'bg-brown-700 text-white';
+                        case 'People Mix-Up': return 'bg-red-700 text-white';
+                        default: return 'bg-brown-800 text-white';
+                    }
+                },
+
+                diagnosticTraps: [
+                    {
+                        category: "Question 1 Technique",
+                        title: "Conflating Utility with Reliability",
+                        studentQuote: "Source A is not useful because it is a biased cartoon published in Punch magazine and does not show the true facts, so it cannot be relied upon by historians.",
+                        diagnosis: "Capped at Level 1/2. The student has treated utility as reliability! In AQA Q1, all sources are useful regardless of bias, because cartoons reveal public perceptions and contemporary satirical reactions. Never reject a source for bias!",
+                        modelCorrection: "Source A is very useful to an historian studying 19th-century public health because, as a satirical Punch cartoon from 1858, it directly reflects upper- and middle-class outrage toward the Great Stink and government inaction regarding the Thames, demonstrating how public pressure was mounting for Bazalgette's sewer network.",
+                        open: false
+                    },
+                    {
+                        category: "Question 3 Technique",
+                        title: "Writing About Differences on Question 3",
+                        studentQuote: "One similarity between the Black Death (1348) and the Great Plague (1665) is that both killed many people. However, a major difference was that in 1665 the Mayor locked victims in their houses with red crosses, whereas in 1348 they fled or prayed.",
+                        diagnosis: "Zero marks awarded for the entire second half! Question 3 explicitly asks ONLY for similarities. Any explanation of differences gains no credit and wastes valuable writing time.",
+                        modelCorrection: "One clear similarity between the Black Death and the Great Plague is that both epidemics were attributed to supernatural or miasmatic causes by authorities due to a lack of understanding of germs. In both 1348 and 1665, townspeople lit barrels of pitch and carried herbs to ward off foul air, while King and clergy ordered days of public prayer to appease God's anger.",
+                        open: false
+                    },
+                    {
+                        category: "Question 4 Technique",
+                        title: "Theme Drift in Question 4 Essay",
+                        studentQuote: "Government was the most important factor in public health. For example, the government funded Joseph Lister to develop carbolic spray, which made operations cleaner, and James Simpson found chloroform for pain.",
+                        diagnosis: "Disregarded. Lister and Simpson are surgical breakthroughs addressing infection and pain during operations, NOT public health! Writing about surgery in a public health essay scores 0 for those paragraphs.",
+                        modelCorrection: "Government intervention was critical in improving public health because, following the 1875 Public Health Act, the state abandoned laissez-faire and made it compulsory for local councils across Britain to supply clean water, pave streets, collect refuse, and inspect sewage, drastically reducing water-borne epidemics across urban populations.",
+                        open: false
+                    },
+                    {
+                        category: "Question 4 Technique",
+                        title: "Missing the Stated Factor or Era Threshold",
+                        studentQuote: "War was important because in WW1 plastic surgery was developed by Gillies, and in WW2 penicillin was mass-produced for wounded soldiers, making war the only real reason medicine developed.",
+                        diagnosis: "Capped at Level 2. The student only covered one historical period (Modern Era: WW1 and WW2) and failed to evaluate any alternative factors (such as Technology or Science). AQA Question 4 demands at least two distinct eras and a second factor alongside the named one.",
+                        modelCorrection: "While war catalyzed rapid modern innovations such as Gillies' skin grafts in WW1 and penicillin mass production in WW2, individual scientific enquiry was equally transformative across earlier periods. In the Renaissance (c1450–1800), Vesalius dissected human cadavers to correct Galen's anatomical errors in peacetime, proving progress was not dependent on military conflict alone.",
+                        open: false
+                    },
+                    {
+                        category: "Theme Confusion",
+                        title: "Treating Jenner’s Smallpox Vaccine as a Surgical Discovery",
+                        studentQuote: "A major breakthrough in surgery was when Edward Jenner operated on James Phipps by inserting cowpox pus into his arm to cure smallpox.",
+                        diagnosis: "Completely inaccurate. Jenner's smallpox vaccination is disease prevention, not surgery! Vaccination prevents disease across a population; it is not an operative procedure on anatomical systems.",
+                        modelCorrection: "Edward Jenner's work in 1796 was a milestone in disease prevention. By demonstrating that deliberate inoculation with mild cowpox conferred immunity against deadly smallpox, he established the empirical basis of vaccination, protecting healthy individuals before infection could take hold.",
+                        open: false
+                    },
+                    {
+                        category: "Period Confusion",
+                        title: "Assigning Germ Theory to the Medieval or Early Modern Era",
+                        studentQuote: "During the Black Death in 1348, doctors tried to kill the bacteria and germs in the blood by bloodletting.",
+                        diagnosis: "Severe anachronism. Microbes and bacteria were completely unknown in 1348. The Four Humours and Miasma dominated medieval thought. Germ Theory was not formulated until Louis Pasteur in 1861!",
+                        modelCorrection: "During the 1348 Black Death, medieval physicians had no concept of microscopic bacteria. Operating under Galen's ancient humoral doctrine, they believed the plague stemmed from an imbalance of the four bodily humours or corrupt poisonous miasma sent as divine retribution.",
+                        open: false
+                    },
+                    {
+                        category: "People Mix-Up",
+                        title: "Crediting Fleming with Mass Production of Penicillin",
+                        studentQuote: "Alexander Fleming cured millions of soldiers in World War Two because he invented penicillin pills and distributed them to all Allied hospitals.",
+                        diagnosis: "Factually incorrect. Fleming published his 1928 findings on penicillin mould but could not purify or mass-produce it. It was Howard Florey and Ernst Chain at Oxford, supported by American industrial fermentation, who transformed penicillin into a usable medicine for WW2.",
+                        modelCorrection: "Although Alexander Fleming made the initial serendipitous discovery of penicillin mould in 1928, it was Howard Florey and Ernst Chain who successfully isolated and purified the drug in 1940. They then secured funding from the US government to mass-produce it in time for D-Day casualties in 1944.",
+                        open: false
+                    },
+                    {
+                        category: "People Mix-Up",
+                        title: "Swapping Vesalius and William Harvey",
+                        studentQuote: "William Harvey proved Galen made hundreds of mistakes about the skeleton by dissecting human bodies in 1543.",
+                        diagnosis: "Swapped names. Vesalius dissected human corpses and published 'The Fabric of the Human Body' in 1543. William Harvey came nearly a century later (1628) and discovered the circulation of blood through the heart.",
+                        modelCorrection: "In 1543, Andreas Vesalius published 'The Fabric of the Human Body', using direct human dissection to disprove Galen's anatomical claims. Nearly a century later, in 1628, William Harvey built on this empirical approach by proving that blood continuously circulates in a closed one-way loop pumped by the heart.",
+                        open: false
+                    },
+                    {
+                        category: "Theme Confusion",
+                        title: "Confusing Prevention (Vaccines) with Treatment (Cures)",
+                        studentQuote: "Penicillin was a revolutionary vaccine invented to prevent people from catching bacterial illnesses in modern Britain.",
+                        diagnosis: "Fatal category error. Penicillin is an antibiotic that treats/cures active bacterial infections. It is not a vaccine; vaccines are preventative measures administered prior to exposure.",
+                        modelCorrection: "Penicillin is an antibiotic treatment that destroys bacterial cell walls in patients already suffering from infection. It operates fundamentally differently from preventative vaccines, such as Jenner's smallpox inoculation or Salk's polio jab, which train the immune system prior to infection.",
+                        open: false
+                    },
+                    {
+                        category: "Question 4 Technique",
+                        title: "Conflating Edwin Chadwick with John Snow",
+                        studentQuote: "Edwin Chadwick proved that cholera came from contaminated water by taking the handle off the Broad Street pump in Soho in 1854.",
+                        diagnosis: "Confusing reformers. John Snow removed the Broad Street pump handle in 1854. Chadwick was a staunch believer in miasma (bad air) who advocated clean water solely to remove filthy stenches and reduce poor relief rates in his 1842 report!",
+                        modelCorrection: "While Edwin Chadwick campaigned for cleaner sanitary infrastructure in his 1842 report under the belief that foul miasmas bred disease, it was Dr. John Snow who conclusively demonstrated in 1854 that cholera was transmitted through contaminated drinking water by mapping deaths to the Broad Street pump.",
+                        open: false
+                    }
+                ]
+            }
+        }
+    </script>
+</body>
+</html>
