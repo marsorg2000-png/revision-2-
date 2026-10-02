@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Germany (1890–1945) Revision Hub | Democracy and Dictatorship</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .summary-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .summary-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="germanySummaryApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="germany-timeline.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Timeline View">
+                    <i class="fa-solid fa-landmark text-beige-200 text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Germany Revision Hub</h1>
+                    <p class="text-xs text-beige-300">Democracy &amp; Dictatorship (1890–1945) &bull; Complete Revision Summary</p>
+                </div>
+            </div>
+
+            <!-- Hub Quick Navigation Links -->
+            <div class="flex items-center gap-2">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-layer-group text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Units:</span>
+                    <span class="font-bold text-beige-50">11 Core Topics</span>
+                </div>
+                <a href="germany-timeline.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-timeline text-[10px]"></i>
+                    <span>Timeline</span>
+                </a>
+                <a href="germany-keywords.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-bookmark text-[10px]"></i>
+                    <span>Keywords</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto space-y-6">
+
+        <!-- Search & Filter Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- Search Input -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search Germany topics, events, crises (e.g. Kaiser, Versailles, Hyperinflation, Stresemann, Wall Street, Reichstag Fire, Gestapo, Nuremberg Laws)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="visibleTopicsCount"></span> / 11 topics shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-beige-300/80 text-xs">
+                <span class="font-semibold text-brown-800 mr-1 flex items-center gap-1">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Topic:
+                </span>
+                <button @click="selectedTopicFilter = 'all'" :class="selectedTopicFilter === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">All 11 Topics</button>
+                <button @click="selectedTopicFilter = 'systems'" :class="selectedTopicFilter === 'systems' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">1. Political Systems 1900 vs 1919</button>
+                <button @click="selectedTopicFilter = 'kaiser'" :class="selectedTopicFilter === 'kaiser' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">2. Kaiser's Rule &amp; Impact of WW1</button>
+                <button @click="selectedTopicFilter = 'versailles'" :class="selectedTopicFilter === 'versailles' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">3. Versailles &amp; 1923 Hyperinflation</button>
+                <button @click="selectedTopicFilter = 'weimar'" :class="selectedTopicFilter === 'weimar' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">4. Weimar Uprisings &amp; Stresemann</button>
+                <button @click="selectedTopicFilter = 'depression'" :class="selectedTopicFilter === 'depression' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">5. The Great Depression (1929–32)</button>
+                <button @click="selectedTopicFilter = 'growth'" :class="selectedTopicFilter === 'growth' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">6. Growth of the Nazi Party</button>
+                <button @click="selectedTopicFilter = 'dictatorship'" :class="selectedTopicFilter === 'dictatorship' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">7. Consolidation of Dictatorship</button>
+                <button @click="selectedTopicFilter = 'economy'" :class="selectedTopicFilter === 'economy' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">8. Nazi Economic Policies</button>
+                <button @click="selectedTopicFilter = 'social'" :class="selectedTopicFilter === 'social' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">9. Social Control &amp; Daily Life</button>
+                <button @click="selectedTopicFilter = 'persecution'" :class="selectedTopicFilter === 'persecution' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">10. Persecution &amp; The Holocaust</button>
+                <button @click="selectedTopicFilter = 'opposition'" :class="selectedTopicFilter === 'opposition' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">11. WW2 &amp; Resistance</button>
+            </div>
+        </div>
+
+        <!-- Topics Stack -->
+        <div class="space-y-6">
+
+            <!-- ========================================== -->
+            <!-- TOPIC 1: Political Systems 1900 vs 1919 -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('systems')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center border-b border-accent-navy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-scale-balanced text-beige-200"></i>
+                        <span>1. Unit 1: Political Systems Compared – Imperial Germany (1900) vs Weimar Republic (1919)</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 1</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div>
+                        <h4 class="font-bold text-brown-900 mb-3 flex items-center space-x-2 text-xs uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-accent-navy"></span>
+                            <span>Direct Constitutional Comparison Table</span>
+                        </h4>
+                        <div class="overflow-x-auto rounded-xl border border-beige-300">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-brown-900 text-beige-100 font-bold">
+                                        <th class="p-3 w-1/5">Feature</th>
+                                        <th class="p-3 w-2/5 border-l border-brown-800">Imperial Germany (1900)</th>
+                                        <th class="p-3 w-2/5 border-l border-brown-800">Weimar Republic (1919)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Head of State</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Kaiser:</strong> Hereditary monarch, ruled for life, commanded armed forces, declared war, could propose laws and dismiss Chancellor.</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>President:</strong> Democratically elected every 7 years, controlled army, held emergency decree powers under <strong>Article 48</strong> (first President was Friedrich Ebert).</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Head of Government</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Chancellor:</strong> Chosen personally by the Kaiser; answerable and responsible only to the Kaiser, not to parliament.</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Chancellor:</strong> Appointed by President from the Reichstag; required majority parliamentary support to govern.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Parliament</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Reichstag:</strong> Elected every 3 years; voted on laws and budget taxation, but could not initiate laws or dismiss the Chancellor.</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Reichstag:</strong> Elected every 4 years using <strong>Proportional Representation (PR)</strong>; debated and voted on all legislation and taxes.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Electorate &amp; Rights</td>
+                                        <td class="p-3 border-l border-beige-300">Men aged 25 and over had the vote. Bundesrat represented individual state princes.</td>
+                                        <td class="p-3 border-l border-beige-300">All men and women aged 20 and over; equal civil rights, free speech, freedom of religion, and right to assemble guaranteed.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 2: Kaiser's Rule & WW1 -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('kaiser')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center border-b border-brown-700">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-crown text-beige-200"></i>
+                        <span>2. The Kaiser's Rule, Industrial Pressures &amp; The Devastating Impact of WW1</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 2</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Kaiser Strengths & Pressures -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-industry text-accent-navy"></i> Kaiser’s Aims, Strengths &amp; Internal Pressures
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Industrial Boom:</strong> By 1914, Germany produced one-third of the world's electrical goods and surpassed Britain in steel production. Population surged from 49 to 65 million.</li>
+                                <li><strong>Militarism &amp; Junkers:</strong> Elite Prussian noble landowners (Junkers) dominated the civil service and army officer corps; strong national pride in the military.</li>
+                                <li><strong>Domestic Friction:</strong> Kaiser Wilhelm II constantly clashed with Chancellors and resented the Reichstag.</li>
+                                <li><strong>Rise of Socialism:</strong> Rapid urbanization caused mushrooming trade unions (3 million members by 1914) and the growth of the SPD, organizing disruptive industrial strikes against autocratic rule.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Impact of WW1 -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-skull-crossbones text-accent-ruby"></i> The Triple Impact of World War One (1914–1918)
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Economic Collapse:</strong> Industrial output plummeted to two-thirds of pre-war levels; national wealth was drained by four years of total war; national debt tripled.</li>
+                                <li><strong>Social Starvation:</strong> The British naval blockade caused catastrophic shortages (over 750,000 civilian deaths from malnutrition/hypothermia, e.g. the 1916–17 "Turnip Winter"). Workers suffered while industrialists earned state bonuses.</li>
+                                <li><strong>Political Revolution:</strong> Sailor mutinies at Kiel in October 1918 triggered workers' council revolts across cities; <strong>Kaiser Wilhelm II abdicated on 9 November 1918</strong> and fled to the Netherlands. Ebert formed a provisional republic.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 3: Versailles & Hyperinflation -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('versailles')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center border-b border-accent-burgundy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-file-contract text-beige-200"></i>
+                        <span>3. The Treaty of Versailles (1919) &amp; The Hyperinflation Crisis of 1923</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 3</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <!-- Versailles Breakdown -->
+                    <div class="bg-beige-100/90 p-4 rounded-xl border border-beige-300 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-hand-fist text-accent-ruby"></i>
+                            <span>The Terms of the Treaty of Versailles (Signed 28 June 1919 – Hated as a 'Diktat')</span>
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">1. Land Losses (10% / 13%)</strong>
+                                <p class="text-brown-800">Lost 10% of German land, 13% of population, and 26% of coal production. Alsace-Lorraine returned to France; Polish Corridor separated East Prussia.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">2. Military Restrictions</strong>
+                                <p class="text-brown-800">Army capped at 100,000 volunteers; conscription banned; navy limited to 6 battleships; no submarines, tanks, or air force. Rhineland demilitarized.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">3. Reparations (£6.6bn)</strong>
+                                <p class="text-brown-800">Total sum fixed at £6.6 billion ($33 billion) in 1921 to be paid to the Allies in annual financial and industrial installments over decades.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">4. War Guilt (Article 231)</strong>
+                                <p class="text-brown-800">Germany forced to accept sole blame for causing the war. Deeply resented by Germans as an insult to national honor, branding politicians "November Criminals".</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hyperinflation Crisis -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-trend-up text-accent-gold"></i>
+                            <span>The 1923 Hyperinflation Catastrophe: Mechanism &amp; Social Impact</span>
+                        </h4>
+                        <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 text-xs text-amber-950 space-y-1">
+                            <strong class="block font-bold">The Cause &amp; Mechanism:</strong>
+                            <p>Germany defaulted on timber/coal reparations in late 1922 &rarr; 60,000 French &amp; Belgian troops occupied the industrial Ruhr basin in Jan 1923 &rarr; Weimar government sponsored passive resistance (general strike) &rarr; Government printed billions of paper banknotes to pay striking workers &rarr; Currency spiraled out of control: in Jan 1919 $1 = 9 marks; by Nov 1923 $1 = 2 billion marks (a loaf of bread cost 201 billion marks).</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-rose-50 p-3 rounded-xl border border-rose-200 space-y-1 text-rose-950">
+                                <strong class="block font-bold">Wiped Out (Pensioners &amp; Savers):</strong>
+                                <p>Middle-class families who had spent lifetimes building savings, insurance policies, or bonds saw life savings become completely worthless in weeks.</p>
+                            </div>
+                            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 space-y-1 text-amber-950">
+                                <strong class="block font-bold">Severe Hardship (Workers):</strong>
+                                <p>Workers were paid twice daily and carried wages in wheelbarrows or laundry baskets before prices doubled again; starvation caused by wage lag.</p>
+                            </div>
+                            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 space-y-1 text-emerald-950">
+                                <strong class="block font-bold">Winners (Debtors &amp; Big Business):</strong>
+                                <p>Business owners, farmers, and wealthy industrialists who had mortgages or loans paid off massive debts overnight with essentially worthless paper currency.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 4: Weimar Republic & Stresemann -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('weimar')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-900 text-white px-6 py-4 flex justify-between items-center border-b border-brown-800">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-landmark-dome text-beige-200"></i>
+                        <span>4. The Weimar Constitution, Political Uprisings &amp; Stresemann’s Golden Era</span>
+                    </h3>
+                    <span class="bg-brown-800 border border-brown-700 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 4</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Constitutional Balance -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Weimar Constitutional Balance</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Strengths:</strong> Genuine democracy with universal suffrage (men &amp; women 20+); proportional representation ensured fair voice for all votes; Bill of Rights guaranteed freedom of speech and religion.</li>
+                                <li><strong>Fatal Weakness 1 (PR):</strong> Dozens of splinter parties won seats, making a single-party majority impossible and forcing fragile coalitions that collapsed frequently.</li>
+                                <li><strong>Fatal Weakness 2 (Article 48):</strong> The President could suspend the constitution and rule by emergency decree without Reichstag consent in a "crisis", paving the road to dictatorship.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Uprisings Breakdown -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Three Early Threats from Extremists</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Spartacist Uprising (Jan 1919):</strong> Left-wing communist revolt in Berlin led by Rosa Luxemburg and Karl Liebknecht. Ebert used the army and right-wing Freikorps to crush it; leaders murdered.</li>
+                                <li><strong>Kapp Putsch (March 1920):</strong> Right-wing Freikorps coup led by Wolfgang Kapp. Regular army refused to fire ("Troops do not fire on troops"); defeated by a city-wide general strike by Berlin workers.</li>
+                                <li><strong>Munich Putsch (Nov 1923):</strong> Hitler and Gen. Ludendorff hijacked a Munich beer hall attempting to march on Berlin; state police opened fire, killing 16 Nazis; Hitler arrested for treason.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Stresemann's Recovery -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-accent-gold"></span>
+                            <span>Gustav Stresemann’s Recovery Policies (1924–1929: The Golden Years)</span>
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">1. Currency Reform (1923)</strong>
+                                <p class="text-brown-800">Abolished the worthless mark and issued the temporary <strong>Rentenmark</strong> (backed by land), later the Reichsbank Reichsmark, killing hyperinflation.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">2. Dawes &amp; Young Plans</strong>
+                                <p class="text-brown-800"><strong>Dawes Plan (1924):</strong> $200m in US loans; Ruhr troops left. <strong>Young Plan (1929):</strong> Reduced reparations to £1.85bn over 59 years.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">3. Foreign Treaties</strong>
+                                <p class="text-brown-800">Signed <strong>Locarno Pact (1925)</strong> respecting western borders; secured German entry into <strong>League of Nations (1926)</strong>; signed Kellogg-Briand (1928).</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">4. Weimar Culture</strong>
+                                <p class="text-brown-800">Flourishing of avant-garde art (Otto Dix), Bauhaus architecture, cinema (Nosferatu, Metropolis), and cabaret. Traditionalists resented this as decadent.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 5: The Great Depression (1929–1932) -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('depression')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-ruby text-white px-6 py-4 flex justify-between items-center border-b border-accent-ruby/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-chart-line-down text-beige-200"></i>
+                        <span>5. Unit 2: The Great Depression (1929–1932) – Economic &amp; Political Collapse</span>
+                    </h3>
+                    <span class="bg-rose-950 border border-rose-500/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 5</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">1. The Economic Mechanism</strong>
+                            <p class="text-brown-800">
+                                In October 1929, the Wall Street Crash struck the US. American banks urgently recalled short-term loans under the Dawes Plan within 90 days.
+                            </p>
+                            <p class="text-brown-800">
+                                Without American capital, German businesses collapsed, factories shut, industrial output plunged by 40%, and tax receipts vanished.
+                            </p>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">2. Catastrophic Social Impact</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li>Unemployment skyrocketed from 1.3 million (Sept 1929) to <strong>6 million by 1932</strong> (1 in 3 workers jobless).</li>
+                                <li>Wages dropped by one-third; millions faced starvation, pawned belongings, and eviction into shantytowns.</li>
+                                <li>Mass youth unemployment fueled hopelessness and hatred toward the Weimar Republic.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">3. Political Paralysis &amp; Brüning</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li>The coalition collapsed over unemployment insurance funding; Chancellor Heinrich Brüning followed deflationary cuts.</li>
+                                <li>Brüning cut unemployment benefits by 60%, earning the nickname the "Hunger Chancellor".</li>
+                                <li>Unable to secure a Reichstag majority, Brüning bypassed parliament using President Hindenburg's <strong>Article 48 emergency decrees</strong>, destroying democracy before Hitler took office.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 6: Growth of the Nazi Party -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('growth')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center border-b border-accent-navy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-users-rays text-beige-200"></i>
+                        <span>6. The Growth &amp; Electoral Breakthrough of the Nazi Party (1929–1932)</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 6</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-brown-900 block font-bold text-sm">Hitler’s Oratory &amp; Image</strong>
+                            <p class="text-brown-800">Charismatic speeches tapped into national despair. In <em>Mein Kampf</em>, he offered scapegoats: Jews, communists, and the "November Criminals", promising to tear up the Versailles Treaty.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-brown-900 block font-bold text-sm">Goebbels’ Propaganda</strong>
+                            <p class="text-brown-800">Masterminded mass rallies, modern planes ("Hitler Over Germany"), loudspeakers, 120 party newspapers, and simple slogans tailored to specific audience fears.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-brown-900 block font-bold text-sm">Role of the SA (Stormtroopers)</strong>
+                            <p class="text-brown-800">400,000 brownshirts provided hot soup, uniforms, and purpose to jobless young men while physically beating up communists, projecting an illusion of disciplined order amid chaotic Weimar street fighting.</p>
+                        </div>
+                        <div class="bg-beige-100 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                            <strong class="text-brown-900 block font-bold text-sm">Broad Electoral Appeal</strong>
+                            <p class="text-brown-800">Promised higher crop prices to farmers, protection from big department stores to shopkeepers, anti-communist security to industrialists, and jobs to workers.</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 7: Consolidation of Dictatorship -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('dictatorship')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center border-b border-brown-700">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-gavel text-beige-200"></i>
+                        <span>7. Hitler’s Consolidation of Total Power &amp; Dictatorship (1930–1934)</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 7</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <p class="text-xs text-brown-800">
+                        Between 1930 and 1934, Hitler transformed Germany from a parliamentary democracy into a totalitarian one-party dictatorship via backroom political maneuvering, emergency decrees, terror, and legislative purges.
+                    </p>
+
+                    <div class="overflow-x-auto rounded-xl border border-beige-300">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-brown-900 text-beige-100 font-bold">
+                                    <th class="p-3 w-1/4">Date &amp; Event</th>
+                                    <th class="p-3 w-3/4 border-l border-brown-800">How It Helped Hitler Consolidate Total Power</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">1930–1932 Elections</td>
+                                    <td class="p-3 border-l border-beige-300">Nazis surged from 12 seats (1928) to 107 seats (1930), and became the largest party with <strong>230 seats (37.3%)</strong> in July 1932. Brüning, Papen, and Schleicher all failed to lead stable coalitions.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">30 January 1933: Appointment as Chancellor</td>
+                                    <td class="p-3 border-l border-beige-300">Franz von Papen convinced President Hindenburg to appoint Hitler Chancellor in a coalition cabinet, falsely boasting: <em>"Within two months we will have pushed Hitler so far into a corner that he'll squeak!"</em> with only 3 Nazis in cabinet.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">27 Feb 1933: Reichstag Fire</td>
+                                    <td class="p-3 border-l border-beige-300">Dutch communist Marinus van der Lubbe was blamed. Hitler persuaded Hindenburg to sign the <strong>Reichstag Fire Decree</strong>, suspending civil liberties, freedom of the press, and legalizing the arrest of 4,000 communist leaders.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">24 March 1933: The Enabling Act</td>
+                                    <td class="p-3 border-l border-beige-300">Passed 444 votes to 94 in the Kroll Opera House while SA armed guards intimidated deputies (communists banned, Centre Party bribed). Allowed Hitler to pass laws without the Reichstag or President for 4 years, ending democracy.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">May–July 1933: Gleichschaltung (Coordination)</td>
+                                    <td class="p-3 border-l border-beige-300">In May, independent trade unions were banned and replaced by the Nazi <strong>German Labour Front (DAF)</strong>. On 14 July 1933, the Law Against the Establishment of Parties made the NSDAP the sole legal party in Germany.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">30 June 1934: Night of the Long Knives</td>
+                                    <td class="p-3 border-l border-beige-300">Hitler used Himmler's black-shirt SS to murder SA leader Ernst Röhm and up to 200 political rivals. Röhm wanted the 3-million-strong SA to absorb the regular army and lead a socialist "second revolution". The purge won Hitler the army's loyalty.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-semibold text-brown-900">August 1934: Death of Hindenburg &amp; Army Oath</td>
+                                    <td class="p-3 border-l border-beige-300">President Hindenburg died. Hitler merged the offices of President and Chancellor into one supreme title: <strong>Der Führer</strong>. Every soldier swore a sacred personal oath of unconditional obedience to Adolf Hitler.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 8: Nazi Economy & Living Standards -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('economy')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-forest text-white px-6 py-4 flex justify-between items-center border-b border-accent-forest/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-wrench text-beige-200"></i>
+                        <span>8. Unit 3: Nazi Economic Policies, Reducing Unemployment &amp; Living Standards</span>
+                    </h3>
+                    <span class="bg-green-900/60 border border-green-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 8</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Methods to Reduce Unemployment -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Methods Used to Tackle Unemployment</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Public Works Projects:</strong> Massive state infrastructure spending built 2,000 miles of Autobahns (motorways), hospitals, schools, and railways.</li>
+                                <li><strong>National Labour Service (RAD):</strong> Compulsory 6-month manual labor service for men aged 19–25 (extended to women in 1939) planting forests and digging drainage ditches for pocket money.</li>
+                                <li><strong>Rearmament:</strong> Open military expansion after 1935 grew the army to 900,000; military spending consumed two-thirds of government expenditure by 1936.</li>
+                                <li><strong>"Invisible Unemployment":</strong> Hundreds of thousands were removed from official unemployment counts: married women forced out of jobs, Jews stripped of employment, political prisoners in camps, and military conscripts.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Impact on Groups -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Impact of Nazi Rule on Living Standards</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Big Business:</strong> Thrived under the ban on strikes and trade unions; earned record profits from state armaments contracts (e.g. Krupp, IG Farben).</li>
+                                <li><strong>Small Businesses:</strong> Hurt by Nazi focus on heavy rearmament and department store competition; over 300,000 small firms closed.</li>
+                                <li><strong>Farmers:</strong> Benefited initially from cleared debts and higher tariffs (incomes rose 41% by 1936), but later squeezed by strict state food price caps and agricultural labor shortages.</li>
+                                <li><strong>Industrial Workers:</strong> Achieved guaranteed full employment, but lost right to strike or negotiate wages. Working hours increased from 43 to 49 hours per week by 1939. Compensated with subsidized <strong>KdF (Strength Through Joy)</strong> cruises, cinema tickets, and <strong>Beauty of Labour (SdA)</strong> canteen improvements.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 9: Social Control & Daily Life -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('social')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-900 text-white px-6 py-4 flex justify-between items-center border-b border-brown-800">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-people-roof text-beige-200"></i>
+                        <span>9. Social Control &amp; Daily Life: Women, Youth, Churches &amp; The Police State</span>
+                    </h3>
+                    <span class="bg-brown-800 border border-brown-700 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 9</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Women -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-person-dress text-accent-burgundy"></i> Women in Nazi Germany
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Ideology:</strong> <em>Kinder, Küche, Kirche</em> (Children, Kitchen, Church); natural role was mother and homemaker; banned from judicial and senior civil service roles.</li>
+                                <li><strong>Policies:</strong> Marriage loans up to 1,000 marks (repayment reduced by 25% per child born); the <strong>Mother’s Cross</strong> awarded annually on Hitler's mother's birthday (Bronze 4, Silver 6, Gold 8 children); abortion criminalized.</li>
+                                <li><strong>Reality &amp; War Contradiction:</strong> As rearmament surged and men went to war, female employment actually grew from 4.2 million to 6.2 million in factories.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Youth & Education -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-graduation-cap text-accent-navy"></i> Youth &amp; Education
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Nazified Schools:</strong> PE time tripled (15% of timetable); History focused on Versailles betrayal and German victories; Biology taught Nazi racial purity (Eugenics); teachers forced to join the Nazi Teachers' League.</li>
+                                <li><strong>Youth Movements:</strong> <strong>Hitler Youth (HJ)</strong> drilled boys in physical toughness, marching, map-reading, and rifle-shooting; <strong>BDM (League of German Girls)</strong> prepared girls for motherhood and domesticity; made compulsory in 1939 (membership reached 7.3m).</li>
+                            </ul>
+                        </div>
+
+                        <!-- Churches -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-church text-accent-forest"></i> Churches: Cooperation &amp; Conflict
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Catholic Church:</strong> Signed the <strong>1933 Concordat</strong> with Pope Pius XI (agreeing non-interference in exchange for keeping Catholic schools); Hitler broke terms, shutting youth clubs and arresting priests.</li>
+                                <li><strong>Protestant Churches:</strong> Set up the pro-Nazi <strong>Reich Church</strong> led by Ludwig Müller; opposed by Pastor Martin Niemöller and Dietrich Bonhoeffer, who formed the anti-Nazi <strong>Confessional Church</strong> and were sent to concentration camps.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Police State & Propaganda -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved text-accent-ruby"></i> Police State Terror &amp; Propaganda
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>The SS (Schutzstaffel):</strong> Led by Heinrich Himmler; ruthless elite protection squads and racial purity overseers who ran the concentration camps (Dachau founded 1933).</li>
+                                <li><strong>The Gestapo:</strong> Secret state police that arrested and tortured suspects without trials or search warrants, heavily aided by civilian informers.</li>
+                                <li><strong>Propaganda &amp; Censorship:</strong> Joseph Goebbels enforced total control over media: cheap radios (People's Receiver), street loudspeakers, book burnings (May 1933), banning American jazz music, and labeling modern art "degenerate".</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 10: Persecution & The Holocaust -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('persecution')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center border-b border-accent-burgundy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-star-of-david text-beige-200"></i>
+                        <span>10. Persecution of Minorities &amp; The Escalation to the Holocaust</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 10</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Persecution of Other Minorities -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Persecution of Other Minority Groups</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Disabled People:</strong> Over 350,000 forcibly sterilized under the 1933 Sterilization Law; from 1939, over 70,000 mentally and physically disabled citizens were secretly gassed under the <strong>T4 Euthanasia program</strong>.</li>
+                                <li><strong>Romani People (Gypsies):</strong> Deemed racially impure; over 500,000 murdered in concentration and death camps across Europe.</li>
+                                <li><strong>Homosexuals:</strong> Approximately 15,000 sent to concentration camps (wearing pink triangles) to undergo forced hard labor.</li>
+                                <li><strong>Jehovah’s Witnesses &amp; "Asocials":</strong> Thousands imprisoned for refusing to swear the military oath to Hitler or perform military service.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Escalation of Anti-Semitic Policy -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">The Escalation of Anti-Semitic Persecution</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>1933:</strong> 1-day nationwide boycott of Jewish shops; Jews barred from civil service, teaching, and legal professions.</li>
+                                <li><strong>1935 Nuremberg Laws:</strong> Stripped Jews of German citizenship; banned marriage and sexual relationships between Jews and Aryans.</li>
+                                <li><strong>1938 Kristallnacht (9–10 Nov):</strong> State-sponsored pogrom; 1,000 synagogues burned, 7,000 Jewish businesses trashed, 91 Jews murdered, and 30,000 sent to camps. Jewish community fined 1 billion marks.</li>
+                                <li><strong>1939–1941 Ghettos &amp; Einsatzgruppen:</strong> Invasion of Poland and USSR trapped millions in sealed ghettos (Warsaw); SS death squads (Einsatzgruppen) carried out mass machine-gun executions.</li>
+                                <li><strong>1942 Wannsee Conference &amp; Final Solution:</strong> Senior Nazi officials coordinated industrial genocide using extermination death camps (Auschwitz-Birkenau, Treblinka); murdered <strong>6 million Jewish people</strong>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 11: WW2 & Internal Opposition -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('opposition')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center border-b border-brown-700">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-bomb text-beige-200"></i>
+                        <span>11. World War Two Realities on the Home Front &amp; Internal Opposition</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 11</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- War Realities -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Wartime Home Front Realities (1939–1945)</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Initial Euphoria (1939–1941):</strong> Early Blitzkrieg victories across Poland, France, and the West brought seized foreign food and goods, keeping civilian morale high.</li>
+                                <li><strong>Total War Turning Point (1942–1943):</strong> Catastrophic defeat at Stalingrad (Feb 1943) prompted Goebbels' "Total War" speech. Civilian life was militarized: non-essential shops closed and 60-hour workweeks mandated.</li>
+                                <li><strong>Allied Bombing:</strong> Round-the-clock bombing by the RAF and USAAF devastated cities (e.g. Dresden, Hamburg firestorms), destroying 2 million homes and killing 350,000 civilians. Severe rationing and refugees broke public morale.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Resistance Groups -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Internal Opposition &amp; Resistance Movements</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>The July Bomb Plot (20 July 1944):</strong> Army officers led by Colonel Claus von Stauffenberg planted a briefcase bomb inside Hitler's Rastenburg headquarters (Operation Valkyrie). Hitler survived; 5,000 plotters were executed.</li>
+                                <li><strong>The White Rose Group:</strong> Munich University students led by siblings Hans and Sophie Scholl distributed anti-Nazi and anti-war leaflets; arrested by Gestapo and beheaded in 1943.</li>
+                                <li><strong>Youth Rebellion:</strong> <strong>Edelweiss Pirates</strong> beat up Hitler Youth patrols and sheltered army deserters; <strong>Swing Youth</strong> listened to banned American jazz music and danced in defiance of Nazi rules.</li>
+                                <li><strong>Religious Resistance:</strong> Catholic <strong>Bishop von Galen</strong> publicly preached against the T4 euthanasia program, forcing its temporary pause; Protestant pastor <strong>Dietrich Bonhoeffer</strong> helped Jews escape and joined plots against Hitler before his execution in 1945.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="visibleTopicsCount === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No Germany revision topics match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any content matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>Germany Revision Hub &bull; Democracy and Dictatorship (1890–1945) &bull; Built for GCSE Exam Success 🦅</p>
+            <div class="flex items-center gap-4">
+                <a href="germany-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+                <a href="germany-keywords.html" class="text-beige-200 hover:text-white underline">Keywords</a>
+                <a href="conflict-revision-summary.html" class="text-beige-200 hover:text-white underline">Conflict Summary</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function germanySummaryApp() {
+            return {
+                selectedTopicFilter: 'all',
+                searchQuery: '',
+
+                // Metadata for search indexing
+                topicKeywords: {
+                    'systems': 'political systems 1900 1919 imperial germany kaiser weimar republic president chancellor reichstag proportional representation pr article 48 electorate ebert constitution',
+                    'kaiser': 'kaiser wilhelm rule strengths industrial economy population junkers trade unions spd strikes ww1 world war one naval blockade turnip winter abdication november 1918',
+                    'versailles': 'treaty of versailles 1919 diktat land population coal army 100000 conscription battleships reparations 6.6 billion war guilt clause 231 hyperinflation 1923 ruhr invasion passive resistance money printed mark',
+                    'weimar': 'weimar republic constitution uprisings spartacist luxemburg liebknecht freikorps kapp putsch munich beer hall 1923 stresemann recovery rentenmark locarno pact league of nations dawes young plan culture cabaret otto dix',
+                    'depression': 'great depression 1929 1932 wall street crash american loans recalled bankruptcy 6 million unemployed bruning hunger chancellor emergency decrees article 48 poverty shantytowns',
+                    'growth': 'growth of nazi party nsdap hitler oratory mein kampf goebbels propaganda posters newspapers rallies sa stormtroopers brownshirts farmers middle class shopkeepers broad appeal',
+                    'dictatorship': 'consolidation dictatorship 1930 1932 1933 1934 von papen hindenburg reichstag fire van der lubbe decree enabling act gleichschaltung trade unions daf political parties night of the long knives rohm ss fuhrer army oath',
+                    'economy': 'nazi economic policies unemployment public works autobahn rad national labour service rearmament invisible unemployment big business small business farmers kdf strength through joy sda beauty of labour',
+                    'social': 'social control daily life women kinder kuche kirche marriage loans mothers cross youth education hitler youth bdm curriculum churches concordat pope reich church confessional niemoller bonhoeffer police state ss gestapo goebbels censorship radio degenerate art',
+                    'persecution': 'persecution minorities holocaust disabled sterilization t4 euthanasia romani gypsies homosexuals jehovahs witnesses anti-semitic 1933 boycott 1935 nuremberg laws citizenship 1938 kristallnacht ghettos einsatzgruppen 1942 wannsee conference final solution extermination camps 6 million',
+                    'opposition': 'ww2 home front total war allied bombing stalingrad rationing 60 hour week resistance july bomb plot 1944 stauffenberg valkyrie white rose hans sophie scholl edelweiss pirates swing youth bishop von galen bonhoeffer'
+                },
+
+                isTopicVisible(topicId) {
+                    // Check filter button
+                    if (this.selectedTopicFilter !== 'all' && this.selectedTopicFilter !== topicId) {
+                        return false;
+                    }
+
+                    // Check search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        const keywords = this.topicKeywords[topicId] || '';
+                        return keywords.includes(q) || topicId.includes(q);
+                    }
+
+                    return true;
+                },
+
+                get visibleTopicsCount() {
+                    const allKeys = Object.keys(this.topicKeywords);
+                    return allKeys.filter(key => this.isTopicVisible(key)).length;
+                },
+
+                resetFilters() {
+                    this.selectedTopicFilter = 'all';
+                    this.searchQuery = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
