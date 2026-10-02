@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Revise GCSE History - Strategy &amp; Revision Masterclass</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            amber: '#b45309',
+                            crimson: '#881337',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        [x-cloak] { display: none !important; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ede3d0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbb389;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c5c3e;
+        }
+
+        .checklist-item input:checked + label {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="howToReviseApp()" x-cloak>
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 flex items-center justify-center">
+                    <i class="fa-solid fa-brain text-beige-200 text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">How to Revise History</h1>
+                        <span class="bg-accent-forest text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Exam Success Toolkit</span>
+                    </div>
+                    <p class="text-xs text-beige-300">Cognitive Science • High-Impact Techniques • The F.L.A.T. Framework</p>
+                </div>
+            </div>
+            
+            <!-- Quick View Mode Switcher -->
+            <div class="flex items-center gap-2">
+                <nav class="flex flex-wrap justify-center gap-1 bg-brown-800 p-1 rounded-xl border border-brown-700 text-xs">
+                    <button @click="activeSection = 'all'" :class="activeSection === 'all' ? 'bg-brown-600 text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">All</button>
+                    <button @click="activeSection = 'resources'" :class="activeSection === 'resources' ? 'bg-accent-navy text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">What to Use</button>
+                    <button @click="activeSection = 'methods'" :class="activeSection === 'methods' ? 'bg-accent-forest text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">How to Revise</button>
+                    <button @click="activeSection = 'flat'" :class="activeSection === 'flat' ? 'bg-accent-burgundy text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">F.L.A.T. Audit</button>
+                    <button @click="activeSection = 'practice'" :class="activeSection === 'practice' ? 'bg-accent-amber text-white font-bold shadow' : 'text-beige-300 hover:text-white'" class="px-2.5 py-1.5 rounded-lg transition">Exam Timer Loop</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Banner Alert & Summary -->
+        <div class="bg-gradient-to-r from-brown-900 via-brown-800 to-accent-navy text-beige-50 p-5 rounded-3xl shadow-md border border-brown-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="bg-accent-forest/30 text-green-200 border border-green-400/40 text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <i class="fa-solid fa-lightbulb text-yellow-300"></i> Evidence-Based Revision
+                    </span>
+                    <h2 class="text-lg font-bold text-beige-100">Stop Re-reading Notes — Revise Smarter for History!</h2>
+                </div>
+                <p class="text-xs text-beige-300 max-w-2xl leading-relaxed">
+                    Passive reading creates the <em>illusion of competence</em>. To lock massive historical chronologies, dates, factors, and causation into your long-term memory, combine trusted curriculum resources with <strong>active retrieval, dual coding, deliberate timed practice, and the F.L.A.T. system</strong>.
+                </p>
+            </div>
+            <div class="flex items-center gap-3 bg-brown-950/50 p-3.5 rounded-2xl border border-brown-700/60 text-xs">
+                <div class="w-10 h-10 rounded-xl bg-accent-forest text-white flex items-center justify-center text-lg font-bold shadow-inner">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <span class="block text-beige-300 text-[10px] uppercase font-bold tracking-wider">Target Habits</span>
+                    <span class="font-extrabold text-beige-100 text-sm">3–4 Hours / Week</span>
+                    <span class="block text-[11px] text-beige-300">Starting January of Year 11</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-brown-600 text-xs"></i>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Search tips, resources, or methods (e.g. Total recall, FLAT, Seneca)..." 
+                    class="w-full bg-beige-50 border border-beige-300 rounded-xl pl-9 pr-3 py-2 text-xs text-brown-900 focus:outline-none focus:ring-2 focus:ring-brown-600 shadow-inner">
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap text-xs">
+                <span class="text-brown-700 font-semibold text-[11px]">Jump to Section:</span>
+                <button 
+                    @click="activeSection = 'all'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'all' ? 'bg-brown-800 text-beige-50 border-brown-800' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    Show All
+                </button>
+                <button 
+                    @click="activeSection = 'resources'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'resources' ? 'bg-accent-navy text-white border-accent-navy' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    What to Use
+                </button>
+                <button 
+                    @click="activeSection = 'methods'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'methods' ? 'bg-accent-forest text-white border-accent-forest' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    How to Revise
+                </button>
+                <button 
+                    @click="activeSection = 'flat'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'flat' ? 'bg-accent-burgundy text-white border-accent-burgundy' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    F.L.A.T. Framework
+                </button>
+                <button 
+                    @click="activeSection = 'practice'" 
+                    class="px-3 py-1 rounded-xl font-semibold border transition"
+                    :class="activeSection === 'practice' ? 'bg-accent-amber text-white border-accent-amber' : 'bg-beige-50 text-brown-800 border-beige-300 hover:bg-beige-100'">
+                    Exam Timers
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= SECTION 1: REVISION: WHAT TO USE ================= -->
+        <section x-show="isVisible('resources')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-navy text-white text-sm"><i class="fa-solid fa-toolbox"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">1. Revision: What to Use</h3>
+                </div>
+                <span class="text-xs bg-accent-navy/10 text-accent-navy font-bold px-2.5 py-1 rounded-full border border-accent-navy/20">Essential Toolkit</span>
+            </div>
+
+            <!-- Golden Rule Callout -->
+            <div class="bg-beige-50 border-2 border-brown-700/30 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
+                <div class="p-2 rounded-xl bg-brown-800 text-beige-100 text-base mt-0.5">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div class="space-y-1 text-xs">
+                    <h4 class="font-extrabold text-brown-900 text-sm">Your #1 Most Important Resource: Classwork &amp; Homework</h4>
+                    <p class="text-brown-800 leading-relaxed">
+                        Nothing replaces your detailed class work, exercise books, teacher feedback, and completed homework tasks. All supplementary guides and apps should be used to test and refine the depth already in your books.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Resource Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Resource 1: Seneca Learning -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-forest text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-microchip"></i> Seneca Learning
+                            </span>
+                            <span class="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">Cognitive Science</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Designed by cognitive scientists to help students remember topics better, consolidate facts, and reduce exam stress levels.
+                        </p>
+                        <div class="mt-3 bg-green-50 border border-green-200 rounded-xl p-2.5 text-xs text-green-950 space-y-1">
+                            <strong class="block text-[11px] text-green-900"><i class="fa-solid fa-circle-check mr-1"></i> How to use it:</strong>
+                            Read through quick structured revision notes for your specific unit, then take instant retrieval tests to diagnose knowledge gaps.
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600 font-medium">
+                        <i class="fa-solid fa-clock-rotate-left mr-1"></i> Great for 10-minute daily memory warm-ups.
+                    </div>
+                </div>
+
+                <!-- Resource 2: BBC GCSE Bitesize -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-navy text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-tv"></i> BBC GCSE Bitesize
+                            </span>
+                            <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">AQA Aligned</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Direct, concise revision notes, visual infographics, and short explanatory videos tailored specifically to the AQA GCSE History specification.
+                        </p>
+                        <div class="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-2.5 text-xs text-blue-950 space-y-1">
+                            <strong class="block text-[11px] text-blue-900"><i class="fa-solid fa-circle-check mr-1"></i> How to use it:</strong>
+                            Watch videos for high-level overviews before creating dual-coded summary sheets or timelines for tricky events.
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600 font-medium">
+                        <i class="fa-solid fa-link mr-1"></i> Access via subject pages and topic links.
+                    </div>
+                </div>
+
+                <!-- Resource 3: Oxford University Press Guides -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-burgundy text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-book"></i> OUP Revision Guides
+                            </span>
+                            <span class="text-[10px] bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded">Core Textbooks</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Oxford University Press AQA GCSE History revision guides covering our 4 key units with concise outlines and mark schemes:
+                        </p>
+                        <ul class="mt-2 text-[11px] text-brown-900 space-y-1 list-disc pl-4">
+                            <li><strong>Britain: Health &amp; the People</strong> (1000–Today)</li>
+                            <li><strong>Elizabethan England</strong> (1568–1603)</li>
+                            <li><strong>Germany: 1890–1945</strong> (Democracy &amp; Dictatorship)</li>
+                            <li><strong>Conflict &amp; Tension</strong> (East &amp; West, 1945–1972)</li>
+                        </ul>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600 font-medium">
+                        <i class="fa-solid fa-pen-ruler mr-1"></i> Includes practice exam questions &amp; sample answers.
+                    </div>
+                </div>
+
+                <!-- Resource 4: Microsoft Teams -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <span class="font-bold text-accent-amber text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-users-rectangle"></i> Microsoft Teams
+                            </span>
+                            <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">School Hub</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            All departmental slides, knowledge organisers, past papers, mark schemes, and practice booklets are centralized online for your year group.
+                        </p>
+                        <div class="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-xs text-amber-950 space-y-1">
+                            <strong class="block text-[11px] text-amber-900"><i class="fa-solid fa-qrcode mr-1"></i> Where to find it:</strong>
+                            Located in the <strong>Y11 Pastoral Team &gt; History Channel</strong>. Scan the QR codes posted on classroom doors for direct access!
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-beige-200 text-[11px] text-brown-600 font-medium">
+                        <i class="fa-solid fa-folder-open mr-1"></i> Updated weekly with mock support materials.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: REVISION: HOW TO REVISE ================= -->
+        <section x-show="isVisible('methods')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-forest text-white text-sm"><i class="fa-solid fa-cubes-stacked"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">2. Revision: How to Revise (The 4 Active Pillars)</h3>
+                </div>
+                <span class="text-xs bg-accent-forest/10 text-accent-forest font-bold px-2.5 py-1 rounded-full border border-accent-forest/20">Active Methods</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Pillar 1: Flashcards -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2.5">
+                        <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                            <h4 class="font-bold text-brown-900 text-sm flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-accent-forest text-white flex items-center justify-center text-xs font-bold">1</span>
+                                Flashcards
+                            </h4>
+                            <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">Spaced Retrieval</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Create compact cards written on both sides. Use color-coding by topic or theme, and use them to quiz yourself or hand them to family and friends to test you.
+                        </p>
+                        
+                        <div class="bg-white p-3 rounded-xl border border-beige-200 space-y-2 text-xs">
+                            <strong class="text-brown-900 block text-[11px] font-bold"><i class="fa-solid fa-layer-group text-accent-forest mr-1"></i> High-Impact History Flashcard Formats:</strong>
+                            <ul class="space-y-1.5 text-brown-800 list-disc pl-4 text-[11px]">
+                                <li><strong>Key Individuals:</strong> Front: Name (e.g. <em>Vesalius</em>, <em>Stresemann</em>, <em>Dubček</em>) &rarr; Back: Exact significance and 2 key facts.</li>
+                                <li><strong>Events &amp; Causation:</strong> Front: Event &rarr; Back: Long-term causes, immediate catalyst, short &amp; long-term consequences.</li>
+                                <li><strong>Factors in Action:</strong> Front: Factor (e.g. <em>War</em>, <em>Government</em>, <em>Religion</em>) &rarr; Back: 3 concrete historical examples across eras.</li>
+                                <li><strong>Key Vocabulary:</strong> Front: Specific historical term (e.g. <em>Gleichschaltung</em>, <em>Miasma</em>, <em>Brinkmanship</em>) &rarr; Back: Precise definition.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 p-2.5 rounded-xl text-[11px] text-green-950">
+                        <strong>Top Tip:</strong> Don't just read the card. Say the answer out loud or write it on scrap paper <em>before</em> flipping!
+                    </div>
+                </div>
+
+                <!-- Pillar 2: Dual Coding -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2.5">
+                        <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                            <h4 class="font-bold text-brown-900 text-sm flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-accent-navy text-white flex items-center justify-center text-xs font-bold">2</span>
+                                Dual Coding
+                            </h4>
+                            <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">Words + Visuals</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Combining visual imagery and spatial organization with concise written annotations doubles your brain's processing pathways, making memory pathways far sturdier.
+                        </p>
+                        
+                        <div class="bg-white p-3 rounded-xl border border-beige-200 space-y-2 text-xs">
+                            <strong class="text-brown-900 block text-[11px] font-bold"><i class="fa-solid fa-diagram-project text-accent-navy mr-1"></i> History Dual Coding Ideas:</strong>
+                            <ul class="space-y-1.5 text-brown-800 list-disc pl-4 text-[11px]">
+                                <li><strong>Factor Web / Mind Maps:</strong> Draw connected nodes between events, historical actors, and overarching themes.</li>
+                                <li><strong>Living Graphs:</strong> Plot tension or living standards on the Y-axis against time on the X-axis (e.g. Superpower relations 1945–1972) with sketches of key flashpoints.</li>
+                                <li><strong>Visual Timelines:</strong> Draw icons beside landmark years (e.g. a syringe for Jenner 1796, carbolic spray for Lister 1867, a wall for Berlin 1961).</li>
+                                <li><strong>Flowcharts:</strong> Map step-by-step causal chains (e.g. Wall Street Crash &rarr; Unemployment &rarr; Brüning cuts &rarr; Extremist vote surge).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-xl text-[11px] text-blue-950">
+                        <strong>Top Tip:</strong> You don't need artistic talent! Simple symbols, boxes, arrows, and stick figures work just as effectively.
+                    </div>
+                </div>
+
+                <!-- Pillar 3: Retrieval Practice -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2.5">
+                        <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                            <h4 class="font-bold text-brown-900 text-sm flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-accent-burgundy text-white flex items-center justify-center text-xs font-bold">3</span>
+                                Retrieval Practice
+                            </h4>
+                            <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">Memory Strengthening</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            In exams, you must recall large amounts of information quickly without notes. The act of forcing your brain to pull memories out makes them significantly stronger and easier to recall under pressure.
+                        </p>
+                        
+                        <div class="bg-white p-3 rounded-xl border border-beige-200 space-y-2 text-xs">
+                            <strong class="text-brown-900 block text-[11px] font-bold"><i class="fa-solid fa-pen-nib text-accent-burgundy mr-1"></i> The "Total Recall" Brain Dump Routine:</strong>
+                            <ol class="space-y-1.5 text-brown-800 list-decimal pl-4 text-[11px]">
+                                <li>Take a completely <strong>blank sheet of paper</strong>.</li>
+                                <li>Choose a topic (e.g. <em>The 1923 Ruhr Crisis</em> or <em>Medieval Public Health</em>).</li>
+                                <li>Set a 5-minute timer and write down <strong>everything you know</strong> without looking at your notes.</li>
+                                <li>Open your class book: in a <strong>different coloured pen</strong>, write down everything you missed or got wrong.</li>
+                                <li>Repeat weekly — your colored pen additions will shrink rapidly!</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 p-2.5 rounded-xl text-[11px] text-red-950">
+                        <strong>Self-Quizzing:</strong> Give your exercise book to a friend or parent and have them fire random dates and questions at you!
+                    </div>
+                </div>
+
+                <!-- Pillar 4: Deliberate Practice -->
+                <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2.5">
+                        <div class="flex justify-between items-center border-b border-beige-200 pb-2">
+                            <h4 class="font-bold text-brown-900 text-sm flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-accent-amber text-white flex items-center justify-center text-xs font-bold">4</span>
+                                Deliberate Practice
+                            </h4>
+                            <span class="text-[10px] bg-beige-200 text-brown-800 px-2 py-0.5 rounded font-bold">Exam Timing Simulation</span>
+                        </div>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Set aside regular time to do exactly what you will be asked to do on exam day: write timed answers under strict conditions and self-assess against real mark schemes.
+                        </p>
+                        
+                        <div class="bg-white p-3 rounded-xl border border-beige-200 space-y-2 text-xs">
+                            <strong class="text-brown-900 block text-[11px] font-bold"><i class="fa-solid fa-stopwatch text-accent-amber mr-1"></i> The 4-Step Timed Question Loop:</strong>
+                            <div class="grid grid-cols-2 gap-2 text-[11px]">
+                                <div class="bg-beige-100/70 p-2 rounded-lg border border-beige-300">
+                                    <span class="font-bold text-brown-900 block">Step 1: Pick a Question</span>
+                                    <span>From workbooks, past papers, or revision guides.</span>
+                                </div>
+                                <div class="bg-beige-100/70 p-2 rounded-lg border border-beige-300">
+                                    <span class="font-bold text-brown-900 block">Step 2: 20-Min Topic Prep</span>
+                                    <span>Review key dates, factors &amp; structure for 20 mins.</span>
+                                </div>
+                                <div class="bg-beige-100/70 p-2 rounded-lg border border-beige-300">
+                                    <span class="font-bold text-brown-900 block">Step 3: Timed Answer</span>
+                                    <span>Strict exam time: 4 marks = 5m, 8 marks = 10m, 16 marks = 20m.</span>
+                                </div>
+                                <div class="bg-beige-100/70 p-2 rounded-lg border border-beige-300">
+                                    <span class="font-bold text-brown-900 block">Step 4: Mark Scheme Audit</span>
+                                    <span>Use official mark scheme criteria to grade your work.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-[11px] text-amber-950">
+                        <strong>Source Material:</strong> Use past assessment booklets, Oxford revision guides, or the practice prompts below.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: IS YOUR REVISION F.L.A.T.? ================= -->
+        <section x-show="isVisible('flat')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-burgundy text-white text-sm"><i class="fa-solid fa-list-check"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">3. Is Your Revision F.L.A.T.? (The 4-Part Quality Audit)</h3>
+                </div>
+                <span class="text-xs bg-accent-burgundy/10 text-accent-burgundy font-bold px-2.5 py-1 rounded-full border border-accent-burgundy/20">Self-Diagnosis</span>
+            </div>
+
+            <p class="text-xs text-brown-700">
+                Revision that is not F.L.A.T. is wasted time! Check off the criteria below to ensure your study sessions meet top-tier revision standards:
+            </p>
+
+            <!-- FLAT Grid: 4 Interactive Columns/Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- F: Focused -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-brown-300 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-brown-900 text-beige-50 flex items-center justify-center font-black text-sm">F</span>
+                                <span class="font-bold text-brown-900 text-base">Focused</span>
+                            </div>
+                            <span class="text-[10px] bg-brown-200 text-brown-900 font-bold px-2 py-0.5 rounded">Environment</span>
+                        </div>
+                        <p class="text-xs text-brown-700 mb-3">Eliminate cognitive clutter and establish the optimal physical &amp; mental study zone.</p>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="f1" class="mt-0.5 rounded border-beige-400 text-brown-800 focus:ring-brown-600">
+                                <label for="f1" class="text-brown-800 cursor-pointer"><strong>Put your phone away</strong> (in another room or on Do Not Disturb).</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="f2" class="mt-0.5 rounded border-beige-400 text-brown-800 focus:ring-brown-600">
+                                <label for="f2" class="text-brown-800 cursor-pointer"><strong>Turn off the music</strong> with lyrics (distracts working memory).</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="f3" class="mt-0.5 rounded border-beige-400 text-brown-800 focus:ring-brown-600">
+                                <label for="f3" class="text-brown-800 cursor-pointer"><strong>Avoid distractions</strong> and multi-tasking tabs.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="f4" class="mt-0.5 rounded border-beige-400 text-brown-800 focus:ring-brown-600">
+                                <label for="f4" class="text-brown-800 cursor-pointer"><strong>Right physical space:</strong> at a clear desk or quiet, well-lit space.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="f5" class="mt-0.5 rounded border-beige-400 text-brown-800 focus:ring-brown-600">
+                                <label for="f5" class="text-brown-800 cursor-pointer"><strong>Right frame of mind:</strong> set a distinct 25–40 minute mission.</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-beige-200 text-[11px] text-brown-600 italic">
+                        "Your phone is the #1 grade thief."
+                    </div>
+                </div>
+
+                <!-- L: Long-term -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-accent-navy/40 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-accent-navy text-white flex items-center justify-center font-black text-sm">L</span>
+                                <span class="font-bold text-accent-navy text-base">Long-term</span>
+                            </div>
+                            <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded">Pacing</span>
+                        </div>
+                        <p class="text-xs text-brown-700 mb-3">Spaced consistency over time beats last-minute frantic cramming every single time.</p>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="l1" class="mt-0.5 rounded border-beige-400 text-accent-navy focus:ring-accent-navy">
+                                <label for="l1" class="text-brown-800 cursor-pointer"><strong>Start early:</strong> reduce stress and anxiety later in the year.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="l2" class="mt-0.5 rounded border-beige-400 text-accent-navy focus:ring-accent-navy">
+                                <label for="l2" class="text-brown-800 cursor-pointer"><strong>Make a revision timetable</strong> and strictly commit to it.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="l3" class="mt-0.5 rounded border-beige-400 text-accent-navy focus:ring-accent-navy">
+                                <label for="l3" class="text-brown-800 cursor-pointer"><strong>Plan for 3–4 hours per week</strong> starting from January of Y11.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="l4" class="mt-0.5 rounded border-beige-400 text-accent-navy focus:ring-accent-navy">
+                                <label for="l4" class="text-brown-800 cursor-pointer"><strong>Interleave different topics:</strong> mix Germany, Medicine, and Cold War rather than blocking one topic for weeks.</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-beige-200 text-[11px] text-brown-600 italic">
+                        "Short daily habits build unstoppable recall."
+                    </div>
+                </div>
+
+                <!-- A: Active -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-accent-forest/40 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-accent-forest text-white flex items-center justify-center font-black text-sm">A</span>
+                                <span class="font-bold text-accent-forest text-base">Active</span>
+                            </div>
+                            <span class="text-[10px] bg-green-100 text-green-900 font-bold px-2 py-0.5 rounded">Effort</span>
+                        </div>
+                        <p class="text-xs text-brown-700 mb-3">Revision must make your brain sweat. If it feels too effortless, you aren't retaining it.</p>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="a1" class="mt-0.5 rounded border-beige-400 text-accent-forest focus:ring-accent-forest">
+                                <label for="a1" class="text-brown-800 cursor-pointer"><strong>Engage your brain:</strong> actively create tangible revision resources.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="a2" class="mt-0.5 rounded border-beige-400 text-accent-forest focus:ring-accent-forest">
+                                <label for="a2" class="text-brown-800 cursor-pointer"><strong>Test yourself regularly</strong> and get others to test you.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="a3" class="mt-0.5 rounded border-beige-400 text-accent-forest focus:ring-accent-forest">
+                                <label for="a3" class="text-brown-800 cursor-pointer"><strong>Practise exam technique</strong> by writing or bullet-planning full answers.</label>
+                            </div>
+                            <div class="flex items-start gap-2 checklist-item">
+                                <input type="checkbox" id="a4" class="mt-0.5 rounded border-beige-400 text-accent-forest focus:ring-accent-forest">
+                                <label for="a4" class="text-brown-800 cursor-pointer"><strong>Revise what you struggle with,</strong> not just what you already find easy and comfortable.</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-beige-200 text-[11px] text-brown-600 italic">
+                        "High effort equals durable memory."
+                    </div>
+                </div>
+
+                <!-- T: Transformed -->
+                <div class="bg-beige-50 rounded-2xl border-2 border-accent-burgundy/40 p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-beige-200 pb-2 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-accent-burgundy text-white flex items-center justify-center font-black text-sm">T</span>
+                                <span class="font-bold text-accent-burgundy text-base">Transformed</span>
+                            </div>
+                            <span class="text-[10px] bg-red-100 text-red-900 font-bold px-2 py-0.5 rounded">Repurposing</span>
+                        </div>
+                        <p class="text-xs text-brown-700 mb-3">Transform passive text into completely new creative, visual, or audio formats.</p>
+
+                        <div class="space-y-1.5 text-xs">
+                            <span class="font-bold text-[11px] text-brown-900 block mb-1">Pick 1 or 2 transformation formats today:</span>
+                            <div class="grid grid-cols-2 gap-1 text-[11px]">
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-clone text-accent-burgundy"></i> Flashcards</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-timeline text-accent-burgundy"></i> Timelines</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-podcast text-accent-burgundy"></i> Podcasts</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-spell-check text-accent-burgundy"></i> Mnemonics</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-diagram-project text-accent-burgundy"></i> Mind maps</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-arrow-down-short-wide text-accent-burgundy"></i> Flowcharts</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-chalkboard-user text-accent-burgundy"></i> Teach someone</span>
+                                <span class="bg-beige-100 px-2 py-1 rounded border border-beige-300 flex items-center gap-1.5"><i class="fa-solid fa-file-powerpoint text-accent-burgundy"></i> Slide decks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-beige-200 text-[11px] text-brown-600 italic">
+                        "Converting text forces cognitive processing."
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: EXAM TIMING & PRACTICE LOOP ================= -->
+        <section x-show="isVisible('practice')" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="p-2 rounded-xl bg-accent-amber text-white text-sm"><i class="fa-solid fa-stopwatch"></i></span>
+                    <h3 class="text-base sm:text-lg font-bold text-brown-900">4. Deliberate Exam Practice &amp; Mark-to-Minute Timing Guide</h3>
+                </div>
+                <span class="text-xs bg-accent-amber/10 text-accent-amber font-bold px-2.5 py-1 rounded-full border border-accent-amber/20">AQA Timing Rules</span>
+            </div>
+
+            <!-- Timing Calculator & Rules Matrix -->
+            <div class="bg-beige-50 rounded-2xl border border-beige-300 p-5 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-beige-200 pb-3">
+                    <div>
+                        <h4 class="font-extrabold text-brown-900 text-sm sm:text-base">AQA GCSE History Exam Timing Formula</h4>
+                        <p class="text-xs text-brown-700">The Golden Rule: roughly <strong>1 to 1.25 minutes per mark</strong>. Running out of time on Question 4 is the #1 reason students miss target grades!</p>
+                    </div>
+                    <span class="bg-brown-900 text-beige-50 text-xs font-bold px-3 py-1 rounded-xl">Formula: Marks + 1 to 2 mins</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                    
+                    <!-- 4 Mark Card -->
+                    <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-1.5 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-extrabold text-accent-navy text-sm">4 Marks</span>
+                            <span class="bg-blue-100 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded">5 Minutes</span>
+                        </div>
+                        <p class="text-brown-800">e.g. Q2 Source Describe or 4-mark short questions.</p>
+                        <div class="bg-beige-100 p-2 rounded-lg text-[11px] text-brown-700">
+                            <strong>Rule:</strong> 1 concise paragraph with 2 precise facts and direct explanation. Do not write an essay!
+                        </div>
+                    </div>
+
+                    <!-- 8 Mark Card -->
+                    <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-1.5 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-extrabold text-accent-forest text-sm">8 Marks</span>
+                            <span class="bg-green-100 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded">10 Minutes</span>
+                        </div>
+                        <p class="text-brown-800">e.g. Q1 Utility, Q2 Significance, Q3 Similarity.</p>
+                        <div class="bg-beige-100 p-2 rounded-lg text-[11px] text-brown-700">
+                            <strong>Rule:</strong> 2 balanced paragraphs (e.g. Q1 = Content/Knowledge + Provenance NOP; Q3 = 2 distinct similarities).
+                        </div>
+                    </div>
+
+                    <!-- 12 Mark Card -->
+                    <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-1.5 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-extrabold text-accent-amber text-sm">12 Marks</span>
+                            <span class="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded">15 Minutes</span>
+                        </div>
+                        <p class="text-brown-800">e.g. Why did X happen? (Germany / Conflict papers).</p>
+                        <div class="bg-beige-100 p-2 rounded-lg text-[11px] text-brown-700">
+                            <strong>Rule:</strong> 3 paragraphs explaining 2 to 3 distinct causal factors leading to the outcome.
+                        </div>
+                    </div>
+
+                    <!-- 16 Mark + SPaG Card -->
+                    <div class="bg-white p-3.5 rounded-xl border border-beige-300 space-y-1.5 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-extrabold text-accent-burgundy text-sm">16 Marks (+4)</span>
+                            <span class="bg-red-100 text-red-900 text-[10px] font-bold px-2 py-0.5 rounded">20–22 Minutes</span>
+                        </div>
+                        <p class="text-brown-800">e.g. Q4 Factor Essays across eras (Health &amp; People / Conflict).</p>
+                        <div class="bg-beige-100 p-2 rounded-lg text-[11px] text-brown-700">
+                            <strong>Rule:</strong> Stated factor + other factor + 2 historical periods + substantiated conclusion judgment.
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Interactive Practice Timer Simulation Widget -->
+                <div class="bg-beige-100/90 p-4 rounded-xl border border-beige-300 space-y-3" x-data="examTimerWidget()">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <div>
+                            <span class="font-bold text-brown-900 text-xs sm:text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-hourglass-half text-accent-amber"></i> Quick Timed Practice Launcher
+                            </span>
+                            <p class="text-[11px] text-brown-700">Pick a practice question length below to start a focused practice timer right now:</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button @click="setTimer(5)" class="px-2.5 py-1 text-xs rounded-lg font-bold border" :class="selectedMinutes === 5 ? 'bg-brown-900 text-white border-brown-900' : 'bg-white text-brown-900 border-beige-300'">4 Marks (5m)</button>
+                            <button @click="setTimer(10)" class="px-2.5 py-1 text-xs rounded-lg font-bold border" :class="selectedMinutes === 10 ? 'bg-brown-900 text-white border-brown-900' : 'bg-white text-brown-900 border-beige-300'">8 Marks (10m)</button>
+                            <button @click="setTimer(20)" class="px-2.5 py-1 text-xs rounded-lg font-bold border" :class="selectedMinutes === 20 ? 'bg-brown-900 text-white border-brown-900' : 'bg-white text-brown-900 border-beige-300'">16 Marks (20m)</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-beige-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="font-mono text-2xl sm:text-3xl font-extrabold text-brown-900 tracking-wider" x-text="formattedTime"></div>
+                            <span class="text-xs text-brown-600" x-text="timerRunning ? 'Timer active! Write your answer now...' : (timeRemaining === 0 ? 'Time is up! Grab the mark scheme.' : 'Ready when you are.')"></span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button @click="toggleTimer()" class="px-4 py-2 rounded-xl text-xs font-bold text-white shadow transition" :class="timerRunning ? 'bg-accent-burgundy hover:bg-red-900' : 'bg-green-700 hover:bg-green-800'">
+                                <i class="fa-solid mr-1" :class="timerRunning ? 'fa-pause' : 'fa-play'"></i>
+                                <span x-text="timerRunning ? 'Pause' : 'Start Timed Exam Writing'"></span>
+                            </button>
+                            <button @click="resetTimer()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-beige-200 hover:bg-beige-300 text-brown-900 border border-beige-300 transition">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800 mt-auto">
+        <p>GCSE History Revision Hub &bull; How to Revise &bull; AQA 8145 Specification Success &bull; F.L.A.T. Method 📚</p>
+    </footer>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function howToReviseApp() {
+            return {
+                activeSection: 'all',
+                searchQuery: '',
+
+                isVisible(sectionName) {
+                    if (this.searchQuery.trim() !== '') return true;
+                    if (this.activeSection === 'all') return true;
+                    return this.activeSection === sectionName;
+                }
+            }
+        }
+
+        function examTimerWidget() {
+            return {
+                selectedMinutes: 10,
+                timeRemaining: 600,
+                timerRunning: false,
+                timerInterval: null,
+
+                get formattedTime() {
+                    const mins = Math.floor(this.timeRemaining / 60);
+                    const secs = this.timeRemaining % 60;
+                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                },
+
+                setTimer(minutes) {
+                    this.stopTimer();
+                    this.selectedMinutes = minutes;
+                    this.timeRemaining = minutes * 60;
+                },
+
+                toggleTimer() {
+                    if (this.timerRunning) {
+                        this.stopTimer();
+                    } else {
+                        this.startTimer();
+                    }
+                },
+
+                startTimer() {
+                    if (this.timeRemaining <= 0) return;
+                    this.timerRunning = true;
+                    this.timerInterval = setInterval(() => {
+                        if (this.timeRemaining > 0) {
+                            this.timeRemaining--;
+                        } else {
+                            this.stopTimer();
+                        }
+                    }, 1000);
+                },
+
+                stopTimer() {
+                    this.timerRunning = false;
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                        this.timerInterval = null;
+                    }
+                },
+
+                resetTimer() {
+                    this.stopTimer();
+                    this.timeRemaining = this.selectedMinutes * 60;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
