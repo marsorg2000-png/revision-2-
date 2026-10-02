@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE History - Personalised Learning Checklist (PLC) & Revision Audit</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            amber: '#b45309',
+                            crimson: '#881337',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        [x-cloak] { display: none !important; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ede3d0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbb389;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c5c3e;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            .print-page { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="plcAuditApp()" x-cloak>
+
+    <!-- Navigation Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 flex items-center justify-center">
+                    <i class="fa-solid fa-list-check text-beige-200 text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">GCSE History PLC Auditor</h1>
+                        <span class="bg-accent-amber text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">RAG Diagnostic</span>
+                    </div>
+                    <p class="text-xs text-beige-300">Personalised Learning Checklists • Conflict & Tension (1945–1972) &amp; Germany (1890–1945)</p>
+                </div>
+            </div>
+
+            <!-- View Switcher -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button 
+                    @click="activeView = 'checklist'"
+                    :class="activeView === 'checklist' ? 'bg-brown-600 text-white shadow font-bold' : 'bg-brown-800 text-beige-300 hover:text-white'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 border border-brown-700">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>RAG Checklist</span>
+                </button>
+                <button 
+                    @click="activeView = 'plan'"
+                    :class="activeView === 'plan' ? 'bg-accent-forest text-white shadow font-bold' : 'bg-brown-800 text-beige-300 hover:text-white'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 border border-brown-700 relative">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Your Revision Plan</span>
+                    <span 
+                        class="px-1.5 py-0.2 rounded-full text-[10px] font-bold"
+                        :class="redCount > 0 ? 'bg-red-600 text-white' : 'bg-brown-700 text-beige-300'"
+                        x-text="redCount + amberCount">
+                    </span>
+                </button>
+                <button 
+                    @click="exportRevisionDocument()"
+                    class="bg-accent-burgundy hover:bg-red-900 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm border border-red-950">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Save Document</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Critical Data Persistence Notice Banner -->
+        <div class="bg-amber-500/15 border-2 border-amber-600/40 text-brown-900 p-4 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 no-print">
+            <div class="flex items-start sm:items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-lg flex-shrink-0 shadow-sm">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div class="space-y-0.5">
+                    <h3 class="font-extrabold text-sm text-brown-900 flex items-center gap-1.5">
+                        <span>Important Notice: Answers Are Not Saved Automatically on this Site!</span>
+                    </h3>
+                    <p class="text-xs text-brown-800 leading-relaxed">
+                        This site <strong>does not remember your answers</strong> if you refresh or close this tab. Once you complete your RAG self-assessment, click <strong>"Save as Document"</strong> or <strong>"Print Revision Plan"</strong> below to download or print your customized list of what to revise.
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+                <button 
+                    @click="exportRevisionDocument()"
+                    class="bg-amber-700 hover:bg-amber-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Export / Save Now</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 1: RAG CHECKLIST ================= -->
+        <div x-show="activeView === 'checklist'" class="space-y-6">
+
+            <!-- Progress & RAG Summary Metrics -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs no-print">
+                <div class="bg-beige-50 p-3.5 rounded-2xl border border-beige-300 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-brown-600 block">Total Topics</span>
+                        <span class="text-xl font-black text-brown-900" x-text="plcItems.length"></span>
+                    </div>
+                    <div class="text-right text-[11px] font-semibold text-brown-600">
+                        <span x-text="ratedCount"></span> Completed (<span x-text="Math.round((ratedCount / plcItems.length) * 100) + '%'"></span>)
+                    </div>
+                </div>
+
+                <!-- Red Score -->
+                <div class="bg-red-50 p-3.5 rounded-2xl border border-red-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-red-800 font-semibold block">RED (Urgent Need)</span>
+                        <span class="text-xl font-black text-red-900" x-text="redCount"></span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-xs">
+                        R
+                    </div>
+                </div>
+
+                <!-- Amber Score -->
+                <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-amber-800 font-semibold block">AMBER (Consolidate)</span>
+                        <span class="text-xl font-black text-amber-900" x-text="amberCount"></span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs">
+                        A
+                    </div>
+                </div>
+
+                <!-- Green Score -->
+                <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-green-800 font-semibold block">GREEN (Secure)</span>
+                        <span class="text-xl font-black text-green-900" x-text="greenCount"></span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs">
+                        G
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject & Unit Filter Controls -->
+            <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 shadow-sm space-y-3 no-print">
+                <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 text-xs">
+                    
+                    <!-- Subject Selector -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-bold text-brown-800"><i class="fa-solid fa-book-bookmark mr-1"></i> Paper / Unit:</span>
+                        <select 
+                            x-model="selectedSubject"
+                            class="bg-beige-50 border border-beige-300 text-brown-900 rounded-xl px-3 py-1.5 font-semibold focus:outline-none focus:ring-2 focus:ring-brown-600">
+                            <option value="all">All Topics (Conflict &amp; Tension + Germany)</option>
+                            <optgroup label="Conflict and Tension 1945–1972">
+                                <option value="conflict_all">All Conflict &amp; Tension Units</option>
+                                <option value="conflict_u1">Unit 1: The Origins of the Cold War</option>
+                                <option value="conflict_u2">Unit 2: The Development of the Cold War</option>
+                                <option value="conflict_u3">Unit 3: The Transformation of the Cold War</option>
+                            </optgroup>
+                            <optgroup label="Germany 1890–1945">
+                                <option value="germany_all">All Germany Units</option>
+                                <option value="germany_u1">Unit 1: Growth of Democracy (1890–1929)</option>
+                                <option value="germany_u2">Unit 2: Germany and the Depression</option>
+                                <option value="germany_u3">Unit 3: Germany under the Nazis</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <!-- Filter by Rating -->
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-brown-800 mr-1">Show:</span>
+                        <button @click="ratingFilter = 'all'" :class="ratingFilter === 'all' ? 'bg-brown-900 text-beige-50 font-bold' : 'bg-beige-50 text-brown-800 border border-beige-300'" class="px-2.5 py-1 rounded-lg transition font-medium">All</button>
+                        <button @click="ratingFilter = 'unrated'" :class="ratingFilter === 'unrated' ? 'bg-brown-900 text-beige-50 font-bold' : 'bg-beige-50 text-brown-800 border border-beige-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Unrated</button>
+                        <button @click="ratingFilter = 'red'" :class="ratingFilter === 'red' ? 'bg-red-700 text-white font-bold' : 'bg-red-100 text-red-900 border border-red-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Red Only</button>
+                        <button @click="ratingFilter = 'amber'" :class="ratingFilter === 'amber' ? 'bg-amber-600 text-white font-bold' : 'bg-amber-100 text-amber-900 border border-amber-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Amber Only</button>
+                        <button @click="ratingFilter = 'green'" :class="ratingFilter === 'green' ? 'bg-green-700 text-white font-bold' : 'bg-green-100 text-green-900 border border-green-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Green Only</button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-brown-600 text-xs"></i>
+                        <input 
+                            type="text" 
+                            x-model="searchQuery" 
+                            placeholder="Filter topics by keyword..." 
+                            class="w-full bg-beige-50 border border-beige-300 rounded-xl pl-8 pr-3 py-1.5 text-xs text-brown-900 focus:outline-none focus:ring-2 focus:ring-brown-600 shadow-inner">
+                    </div>
+                </div>
+
+                <!-- Bulk Set Options -->
+                <div class="flex items-center justify-between border-t border-beige-300/70 pt-2.5 text-xs text-brown-700">
+                    <span x-text="`Showing ${filteredItems.length} of ${plcItems.length} checklist items`"></span>
+                    <div class="flex items-center gap-2">
+                        <button 
+                            @click="resetAllRatings()"
+                            class="text-brown-700 hover:text-red-700 transition flex items-center gap-1 font-semibold">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Clear All Ratings</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grouped PLC Table List -->
+            <div class="space-y-6">
+                <template x-for="group in groupedChecklist" :key="group.title">
+                    <div class="bg-beige-50 rounded-3xl border border-beige-300 shadow-sm overflow-hidden" x-show="group.items.length > 0">
+                        
+                        <!-- Group Header -->
+                        <div class="bg-brown-900 text-beige-100 px-5 py-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full" :class="group.themeColor"></span>
+                                <h3 class="font-extrabold text-sm sm:text-base text-beige-50" x-text="group.title"></h3>
+                            </div>
+                            <span class="text-xs bg-brown-800 text-beige-300 px-2.5 py-1 rounded-lg border border-brown-700" 
+                                  x-text="`${group.items.filter(i => i.rating).length} of ${group.items.length} completed`">
+                            </span>
+                        </div>
+
+                        <!-- Topics List -->
+                        <div class="divide-y divide-beige-200">
+                            <template x-for="item in group.items" :key="item.id">
+                                <div class="p-4 sm:px-6 hover:bg-beige-100/50 transition flex flex-col md:flex-row md:items-center justify-between gap-3"
+                                     :class="item.rating === 'red' ? 'bg-red-50/30' : (item.rating === 'amber' ? 'bg-amber-50/30' : (item.rating === 'green' ? 'bg-green-50/20' : ''))">
+                                    
+                                    <!-- Topic Details -->
+                                    <div class="space-y-1 md:w-3/5">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-[10px] uppercase font-extrabold px-2 py-0.5 rounded"
+                                                  :class="getSubcategoryBadge(item.subject)"
+                                                  x-text="item.category">
+                                            </span>
+                                            <h4 class="font-bold text-brown-900 text-sm" x-text="item.topic"></h4>
+                                        </div>
+                                        <p class="text-xs text-brown-700 leading-relaxed" x-text="item.description"></p>
+                                    </div>
+
+                                    <!-- Interactive RAG Buttons -->
+                                    <div class="flex items-center gap-2 self-start md:self-center">
+                                        
+                                        <!-- Red Button -->
+                                        <button 
+                                            @click="setRating(item.id, 'red')"
+                                            :class="item.rating === 'red' ? 'bg-red-600 text-white ring-2 ring-red-400 font-black shadow-md scale-105' : 'bg-red-100 hover:bg-red-200 text-red-900 border border-red-300'"
+                                            class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                                            title="Need to revise this urgently">
+                                            <i class="fa-solid fa-circle text-[9px] text-red-500" :class="item.rating === 'red' ? 'text-white' : ''"></i>
+                                            <span>Red</span>
+                                        </button>
+
+                                        <!-- Amber Button -->
+                                        <button 
+                                            @click="setRating(item.id, 'amber')"
+                                            :class="item.rating === 'amber' ? 'bg-amber-500 text-white ring-2 ring-amber-300 font-black shadow-md scale-105' : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'"
+                                            class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                                            title="Some knowledge, needs consolidation">
+                                            <i class="fa-solid fa-circle text-[9px] text-amber-500" :class="item.rating === 'amber' ? 'text-white' : ''"></i>
+                                            <span>Amber</span>
+                                        </button>
+
+                                        <!-- Green Button -->
+                                        <button 
+                                            @click="setRating(item.id, 'green')"
+                                            :class="item.rating === 'green' ? 'bg-green-700 text-white ring-2 ring-green-400 font-black shadow-md scale-105' : 'bg-green-100 hover:bg-green-200 text-green-900 border border-green-300'"
+                                            class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                                            title="Confident and secure in this topic">
+                                            <i class="fa-solid fa-circle text-[9px] text-green-600" :class="item.rating === 'green' ? 'text-white' : ''"></i>
+                                            <span>Green</span>
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search Results -->
+            <div x-show="filteredItems.length === 0" class="text-center py-12 bg-beige-50 rounded-3xl border border-beige-300">
+                <i class="fa-solid fa-magnifying-glass text-3xl text-brown-400 mb-2"></i>
+                <h4 class="font-bold text-brown-900 text-base">No checklist items found</h4>
+                <p class="text-xs text-brown-700">Try adjusting your search query or subject filters.</p>
+                <button @click="searchQuery = ''; selectedSubject = 'all'; ratingFilter = 'all';" class="mt-3 px-4 py-1.5 bg-brown-800 text-beige-50 text-xs font-bold rounded-xl shadow">Reset Filters</button>
+            </div>
+
+            <!-- Bottom Navigation Bar to Revision Plan -->
+            <div class="bg-gradient-to-r from-brown-900 to-accent-navy text-beige-50 p-5 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4 no-print">
+                <div>
+                    <h3 class="font-extrabold text-base text-beige-100">Finished Rating Your Confidence?</h3>
+                    <p class="text-xs text-beige-300">Generate your personalized priority revision plan and export it as a revision checklist document.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button 
+                        @click="activeView = 'plan'"
+                        class="bg-accent-forest hover:bg-green-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>View What You Need to Revise (<span x-text="redCount + amberCount"></span>)</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= VIEW 2: REVISION PLAN (WHAT TO REVISE LIST) ================= -->
+        <div x-show="activeView === 'plan'" class="space-y-6">
+
+            <!-- Plan Header Actions -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 no-print">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-brown-900">Your Priority Revision Action Plan</h2>
+                    <p class="text-xs text-brown-700">Targeted checklist generated automatically from your RED and AMBER ratings.</p>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button 
+                        @click="activeView = 'checklist'"
+                        class="bg-beige-50 hover:bg-beige-200 text-brown-800 border border-beige-300 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back to Checklist</span>
+                    </button>
+                    <button 
+                        @click="window.print()"
+                        class="bg-brown-800 hover:bg-brown-900 text-beige-100 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Print Action Plan</span>
+                    </button>
+                    <button 
+                        @click="exportRevisionDocument()"
+                        class="bg-accent-burgundy hover:bg-red-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Save as Document</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Zero Priority State -->
+            <template x-if="redCount === 0 && amberCount === 0">
+                <div class="bg-beige-50 rounded-3xl border border-beige-300 p-8 text-center space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-3xl mx-auto">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3 class="font-extrabold text-lg text-brown-900">No Revision Items Flagged Yet!</h3>
+                    <p class="text-xs text-brown-700 max-w-md mx-auto">
+                        You have not marked any topics as <strong>Red</strong> or <strong>Amber</strong> yet, or all topics are rated Green. Head back to the checklist to audit your topics!
+                    </p>
+                    <button @click="activeView = 'checklist'" class="bg-brown-800 text-beige-50 px-4 py-2 rounded-xl text-xs font-bold shadow">
+                        Go to RAG Checklist
+                    </button>
+                </div>
+            </template>
+
+            <!-- Printable Summary Sheet -->
+            <div class="space-y-6" x-show="redCount > 0 || amberCount > 0">
+                
+                <!-- RED: Top Urgent Priorities -->
+                <div class="bg-beige-50 rounded-3xl border-2 border-red-300 shadow-sm overflow-hidden" x-show="redCount > 0">
+                    <div class="bg-red-700 text-white px-5 py-3.5 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-yellow-300"></i>
+                            <h3 class="font-black text-sm sm:text-base">1. Top Urgent Priority: RED Topics (<span x-text="redCount"></span>)</h3>
+                        </div>
+                        <span class="text-xs bg-red-800/80 px-2.5 py-1 rounded-lg font-bold border border-red-500">Revise First • Flashcards &amp; Practice Questions</span>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <p class="text-xs text-brown-700 italic">
+                            These are topics where your subject knowledge is currently weak. Use your exercise book, BBC Bitesize, and the 4-step timed question loop for these first:
+                        </p>
+
+                        <div class="space-y-3">
+                            <template x-for="item in redItems" :key="item.id">
+                                <div class="bg-red-50/60 border border-red-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start gap-2">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-red-200 text-red-950 uppercase" x-text="item.unitName"></span>
+                                            <span class="font-extrabold text-sm text-brown-900" x-text="item.topic"></span>
+                                        </div>
+                                        <p class="text-xs text-brown-800" x-text="item.description"></p>
+                                    </div>
+                                    <span class="text-[10px] bg-red-600 text-white font-black px-2.5 py-1 rounded-lg self-end sm:self-center flex-shrink-0">
+                                        URGENT REVISION
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AMBER: Consolidation Priorities -->
+                <div class="bg-beige-50 rounded-3xl border-2 border-amber-300 shadow-sm overflow-hidden" x-show="amberCount > 0">
+                    <div class="bg-amber-600 text-white px-5 py-3.5 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-200"></i>
+                            <h3 class="font-black text-sm sm:text-base">2. Consolidation Priority: AMBER Topics (<span x-text="amberCount"></span>)</h3>
+                        </div>
+                        <span class="text-xs bg-amber-700/80 px-2.5 py-1 rounded-lg font-bold border border-amber-400">Review &amp; Test • Dual Coding &amp; Total Recall</span>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <p class="text-xs text-brown-700 italic">
+                            You have some understanding here, but specific facts, dates, key names, and causation links need strengthening to guarantee full marks:
+                        </p>
+
+                        <div class="space-y-3">
+                            <template x-for="item in amberItems" :key="item.id">
+                                <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start gap-2">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-amber-200 text-amber-950 uppercase" x-text="item.unitName"></span>
+                                            <span class="font-extrabold text-sm text-brown-900" x-text="item.topic"></span>
+                                        </div>
+                                        <p class="text-xs text-brown-800" x-text="item.description"></p>
+                                    </div>
+                                    <span class="text-[10px] bg-amber-600 text-white font-black px-2.5 py-1 rounded-lg self-end sm:self-center flex-shrink-0">
+                                        CONSOLIDATE
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GREEN: Mastered / Secure -->
+                <div class="bg-beige-50 rounded-3xl border border-green-300 shadow-sm overflow-hidden" x-show="greenCount > 0">
+                    <div class="bg-green-700 text-white px-5 py-3.5 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-green-200"></i>
+                            <h3 class="font-black text-sm sm:text-base">3. Secure Topics: GREEN (<span x-text="greenCount"></span>)</h3>
+                        </div>
+                        <span class="text-xs bg-green-800/80 px-2.5 py-1 rounded-lg font-bold border border-green-500">Maintain • Quick Spaced Quiz</span>
+                    </div>
+
+                    <div class="p-5 space-y-2">
+                        <p class="text-xs text-brown-700">Topics you feel confident in. Review lightly every 2–3 weeks using 5-minute brain dumps so you don't forget them.</p>
+                        <div class="flex flex-wrap gap-1.5 pt-2">
+                            <template x-for="item in greenItems" :key="item.id">
+                                <span class="bg-green-100 text-green-900 border border-green-300 text-xs px-2.5 py-1 rounded-xl font-medium flex items-center gap-1">
+                                    <i class="fa-solid fa-check text-[10px] text-green-700"></i>
+                                    <span x-text="item.topic"></span>
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800 mt-auto no-print">
+        <p>GCSE History PLC Auditor &bull; AQA 8145 Revision Support &bull; Conflict &amp; Tension &bull; Germany 1890–1945 📚</p>
+    </footer>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function plcAuditApp() {
+            return {
+                activeView: 'checklist',
+                selectedSubject: 'all',
+                ratingFilter: 'all',
+                searchQuery: '',
+
+                // Full PLC Dataset compiled from the provided Conflict & Tension Unit 1, 2, 3 PLCs and Germany Unit 1, 2, 3 Knowledge Organisers
+                plcItems: [
+                    // ================= CONFLICT & TENSION: UNIT 1 (ORIGINS) =================
+                    {
+                        id: 1,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'WW2 & Ideologies',
+                        topic: 'End of WW2 & Ideological Contrast',
+                        description: 'Contrasting attitudes and core ideologies between the capitalist USA and communist USSR (economy, democracy, individual freedoms).',
+                        rating: null
+                    },
+                    {
+                        id: 2,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Pre-1945 Relations',
+                        topic: 'Superpower Relations Before 1945',
+                        description: 'Mistrust before WW2: Russian Civil War intervention, Red Scare, Stalin’s brutal purges, and the 1939 Nazi-Soviet Pact.',
+                        rating: null
+                    },
+                    {
+                        id: 3,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Conferences',
+                        topic: 'Yalta Conference & Division of Germany',
+                        description: 'Agreements on dividing Germany and Berlin into 4 zones, free elections in Eastern Europe, and founding of the United Nations.',
+                        rating: null
+                    },
+                    {
+                        id: 4,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Conferences',
+                        topic: 'Potsdam Conference (July–August 1945)',
+                        description: 'Deteriorating relationships between Yalta and Potsdam; confirmation of German division, reparations disagreements, and border shifts.',
+                        rating: null
+                    },
+                    {
+                        id: 5,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Leadership Aims',
+                        topic: 'Aims of Stalin, Churchill, Roosevelt, Attlee & Truman',
+                        description: 'Differing personalities and national security goals: Soviet sphere of influence vs Western self-determination and open trade.',
+                        rating: null
+                    },
+                    {
+                        id: 6,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Nuclear Weapons',
+                        topic: 'Impact of the Atomic Bomb on Relations',
+                        description: 'Hiroshima and Nagasaki (August 1945); Truman’s atomic diplomacy and heightened Soviet suspicion and insecurity.',
+                        rating: null
+                    },
+                    {
+                        id: 7,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Diplomacy & Rivalry',
+                        topic: 'The Iron Curtain & East-West Rivalry',
+                        description: 'George Kennan’s Long Telegram (Feb 1946) and Winston Churchill’s Fulton Missouri "Iron Curtain" speech (March 1946).',
+                        rating: null
+                    },
+                    {
+                        id: 8,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Soviet Expansion',
+                        topic: 'Soviet Expansion in Eastern Europe',
+                        description: 'Methods used to create satellite states (1945–48) in Albania, Bulgaria, Poland, Hungary (Rákosi & AVH), Romania, and Czechoslovakia.',
+                        rating: null
+                    },
+                    {
+                        id: 9,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'US Policies',
+                        topic: 'Truman Doctrine & Marshall Plan',
+                        description: 'Containment policy (March 1947), aid to Greece and Turkey, $13.15bn European Recovery Program, and Stalin’s hostile reaction.',
+                        rating: null
+                    },
+                    {
+                        id: 10,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Soviet Counter-Policies',
+                        topic: 'Cominform, Comecon & Yugoslavia',
+                        description: 'Establishment of Cominform (1947) and Comecon (1949); Tito’s defiance in Yugoslavia and expulsion from the Soviet bloc.',
+                        rating: null
+                    },
+                    {
+                        id: 11,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict Unit 1: Origins',
+                        category: 'Berlin 1948',
+                        topic: 'The Berlin Blockade and Airlift',
+                        description: 'Causes (Deutsche Mark, Trizonia), 24 June 1948 blockade, Operation Vittles airlift logistics, Easter Parade, and creation of FRG & GDR (1949).',
+                        rating: null
+                    },
+
+                    // ================= CONFLICT & TENSION: UNIT 2 (DEVELOPMENT) =================
+                    {
+                        id: 12,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'Cold War in Asia',
+                        topic: 'Communist Revolution in China (1949)',
+                        description: 'Mao Zedong’s victory, Western fears of failing containment, NSC-68 military build-up, and the 1950 Sino-Soviet Treaty of Friendship.',
+                        rating: null
+                    },
+                    {
+                        id: 13,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'Cold War in Asia',
+                        topic: 'The Korean War (1950–1953)',
+                        description: 'Invasion of South Korea, UN intervention, Inchon landings, MacArthur’s sacking over nuclear threats, and stalemate at the 38th Parallel.',
+                        rating: null
+                    },
+                    {
+                        id: 14,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'Cold War in Asia',
+                        topic: 'Military Campaigns in Vietnam (France & USA)',
+                        description: 'Viet Minh victory at Dien Bien Phu (1954), 17th parallel division, Domino Theory, Eisenhower’s New Look, Diem’s coup, and Vietcong guerrilla tactics.',
+                        rating: null
+                    },
+                    {
+                        id: 15,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'Military Alliances',
+                        topic: 'NATO (1949) and the Warsaw Pact (1955)',
+                        description: 'Collective defense structures, membership comparison, rearmament of West Germany (1955), and Soviet command dominance.',
+                        rating: null
+                    },
+                    {
+                        id: 16,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'Arms & Space Race',
+                        topic: 'The Nuclear Arms Race & MAD',
+                        description: 'Soviet A-bomb (1949), H-bombs (1952/53), ICBMs, Mutually Assured Destruction (MAD), Brinkmanship, and civil defense ("Duck and Cover").',
+                        rating: null
+                    },
+                    {
+                        id: 17,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'Arms & Space Race',
+                        topic: 'The Space Race (Sputnik to Apollo)',
+                        description: 'Propaganda & rocket weapons: Sputnik (1957), Laika, Yuri Gagarin (1961), Neil Armstrong Moon landing (1969), and Apollo-Soyuz (1975).',
+                        rating: null
+                    },
+                    {
+                        id: 18,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'The Thaw & Crises',
+                        topic: 'The Hungarian Uprising (1956)',
+                        description: 'Destalinisation, student protests, Imre Nagy’s reforms and Warsaw Pact withdrawal, Soviet tank invasion, and Western non-intervention.',
+                        rating: null
+                    },
+                    {
+                        id: 19,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict Unit 2: Development',
+                        category: 'The Thaw & Crises',
+                        topic: 'The 1960 U2 Spy Plane Incident',
+                        description: 'Gary Powers shot down, American weather plane cover story exposed, Eisenhower’s refusal to apologize, and collapse of the Paris Summit.',
+                        rating: null
+                    },
+
+                    // ================= CONFLICT & TENSION: UNIT 3 (TRANSFORMATION) =================
+                    {
+                        id: 20,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict Unit 3: Transformation',
+                        category: 'Berlin Crisis',
+                        topic: 'Construction of the Berlin Wall (1961)',
+                        description: 'Khrushchev’s Vienna Summit ultimatum, East German refugee "brain drain", overnight closure (13 Aug 1961), and Checkpoint Charlie tank standoff.',
+                        rating: null
+                    },
+                    {
+                        id: 21,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict Unit 3: Transformation',
+                        category: 'Cuban Crisis',
+                        topic: 'Cuban Missile Crisis: Causes & Events (1962)',
+                        description: 'Cuban Revolution (Castro 1959), Bay of Pigs failure (1961), U2 discovery of missile silos, naval quarantine, DEFCON 2, and Black Saturday (Arkhipov).',
+                        rating: null
+                    },
+                    {
+                        id: 22,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict Unit 3: Transformation',
+                        category: 'Cuban Crisis',
+                        topic: 'Outcomes of the Cuban Missile Crisis',
+                        description: 'Public removal of missiles from Cuba, secret deal on Turkish missiles, Washington-Moscow Hotline (1963), and Test Ban Treaty (PTBT 1963).',
+                        rating: null
+                    },
+                    {
+                        id: 23,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict Unit 3: Transformation',
+                        category: 'Prague Spring',
+                        topic: 'The Prague Spring & Brezhnev Doctrine (1968)',
+                        description: 'Alexander Dubček’s "Socialism with a human face", abolition of censorship, Warsaw Pact invasion (Aug 1968), and the Brezhnev Doctrine.',
+                        rating: null
+                    },
+                    {
+                        id: 24,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict Unit 3: Transformation',
+                        category: 'Détente & Treaties',
+                        topic: 'Détente & The Superpower Relationship',
+                        description: 'Motivations for relaxing tensions (economics, Vietnam strain, nuclear parity, Sino-Soviet split) and triangular diplomacy.',
+                        rating: null
+                    },
+                    {
+                        id: 25,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict Unit 3: Transformation',
+                        category: 'Détente & Treaties',
+                        topic: 'SALT 1 & Nixon/Brezhnev Summits (1972)',
+                        description: 'Nixon’s visits to Beijing and Moscow; signing of the ABM Treaty and Interim Agreement on offensive ICBMs/SLBMs.',
+                        rating: null
+                    },
+
+                    // ================= GERMANY: UNIT 1 (GROWTH OF DEMOCRACY) =================
+                    {
+                        id: 26,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Imperial Germany',
+                        topic: 'Kaiser Wilhelm II & Ruling Germany',
+                        description: 'Autocratic constitution (Kaiser, Chancellor, Bundesrat, Reichstag), Prussian militarism, Weltpolitik, and industrialization.',
+                        rating: null
+                    },
+                    {
+                        id: 27,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Imperial Germany',
+                        topic: 'Socialism & The Navy Laws',
+                        description: 'Growth of the SPD, trade unions, 1898–1912 Navy Laws to rival Britain, increasing national debt, and social tension.',
+                        rating: null
+                    },
+                    {
+                        id: 28,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'WW1 & Revolution',
+                        topic: 'Impact of WW1 & The Kaiser’s Abdication',
+                        description: 'British naval blockade, starvation and strikes, Kiel naval mutiny (Oct 1918), Kaiser’s abdication (9 Nov 1918), and armistice.',
+                        rating: null
+                    },
+                    {
+                        id: 29,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Weimar Republic',
+                        topic: 'The 1919 Weimar Constitution',
+                        description: 'Strengths (universal vote over 20, PR fairness, bill of rights) and weaknesses (coalitions, Article 48 emergency decree powers).',
+                        rating: null
+                    },
+                    {
+                        id: 30,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Versailles',
+                        topic: 'The Treaty of Versailles (1919)',
+                        description: 'Terms (10% land lost, 100k army, no air force/tanks/U-boats, £6.6bn reparations, Article 231 War Guilt), "diktat" & "stab in the back".',
+                        rating: null
+                    },
+                    {
+                        id: 31,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Early Unrest',
+                        topic: 'Political Uprisings (1919–1923)',
+                        description: 'Spartacist Revolt (Jan 1919: Luxemburg/Liebknecht & Freikorps), Kapp Putsch (March 1920: general strike), and Munich Putsch (Nov 1923).',
+                        rating: null
+                    },
+                    {
+                        id: 32,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: '1923 Crisis',
+                        topic: 'Occupation of the Ruhr & Hyperinflation',
+                        description: 'Default on reparations, French/Belgian invasion of the Ruhr, passive resistance, printing money, hyperinflation impact on middle class.',
+                        rating: null
+                    },
+                    {
+                        id: 33,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Stresemann Era',
+                        topic: 'Economic Recovery under Stresemann (1924–29)',
+                        description: 'Rentenmark/Reichsmark, Dawes Plan (1924: 800m gold marks loans), Young Plan (1929), and underlying dependence on US loans.',
+                        rating: null
+                    },
+                    {
+                        id: 34,
+                        subject: 'germany_u1',
+                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        category: 'Stresemann Era',
+                        topic: 'Foreign Policy Successes & Weimar Culture',
+                        description: 'Locarno Pact (1925), League of Nations entry (1926), Kellogg-Briand Pact (1928), and the "Golden Twenties" (Bauhaus, jazz, cabaret, cinema).',
+                        rating: null
+                    },
+
+                    // ================= GERMANY: UNIT 2 (DEPRESSION & RISE OF NAZIS) =================
+                    {
+                        id: 35,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Great Depression',
+                        topic: 'The 1929 Wall Street Crash & Impact on Germany',
+                        description: 'Recall of US loans, factory closures, 6 million unemployed by 1932, poverty, collapse of Weimar welfare, and rise of extremist votes.',
+                        rating: null
+                    },
+                    {
+                        id: 36,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Nazi Support',
+                        topic: 'Reasons for the Growth of the Nazi Party',
+                        description: 'Hitler’s personal appeal/speeches, discontent with Weimar failure, fear of communism, Goebbels’ propaganda, and SA intimidation.',
+                        rating: null
+                    },
+                    {
+                        id: 37,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Nazi Support',
+                        topic: 'Who Voted for the Nazis and Why?',
+                        description: 'Appeals to farmers (higher food prices), middle classes (anti-communism), women (family values), businesses, and youth.',
+                        rating: null
+                    },
+                    {
+                        id: 38,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Political Maneuvers',
+                        topic: 'Hitler’s Road to Chancellor (1930–1933)',
+                        description: 'Elections of 1930 and 1932 (Nazis largest party with 37%), Brüning’s cuts, failures of Von Papen and Von Schleicher, and Hindenburg’s deal.',
+                        rating: null
+                    },
+                    {
+                        id: 39,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Path to Dictatorship',
+                        topic: 'Reichstag Fire & Protection Decree (Feb 1933)',
+                        description: 'Van der Lubbe, blaming communists, emergency decree suspending civil liberties, arrest of 4,000 communists, and March 1933 election.',
+                        rating: null
+                    },
+                    {
+                        id: 40,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Path to Dictatorship',
+                        topic: 'The Enabling Act & Elimination of Opposition',
+                        description: 'Passing of the Enabling Act (23 March 1933: 444–94), banning trade unions (2 May 1933 / DAF), and banning rival political parties (July 1933).',
+                        rating: null
+                    },
+                    {
+                        id: 41,
+                        subject: 'germany_u2',
+                        unitName: 'Germany Unit 2: Depression',
+                        category: 'Path to Dictatorship',
+                        topic: 'The Night of the Long Knives (30 June 1934)',
+                        description: 'Purge of Ernst Röhm and SA leadership, SS execution of rivals, winning army loyalty, and Hitler becoming Führer upon Hindenburg’s death.',
+                        rating: null
+                    },
+
+                    // ================= GERMANY: UNIT 3 (NAZI RULE) =================
+                    {
+                        id: 42,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Economy & Work',
+                        topic: 'Reducing Unemployment & Economic Policy',
+                        description: 'RAD (National Labour Service), Autobahn construction, rearmament/conscription, invisible unemployment, Schacht vs Goering (4-Year Plan).',
+                        rating: null
+                    },
+                    {
+                        id: 43,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Economy & Work',
+                        topic: 'Workers and Control: DAF, SDA & KDF',
+                        description: 'German Labour Front (DAF), Beauty of Labour (SDA workplace upgrades), Strength Through Joy (KDF leisure/trips), and Volkswagen car scheme.',
+                        rating: null
+                    },
+                    {
+                        id: 44,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Social Policies',
+                        topic: 'Policies Towards Women and Families',
+                        description: 'Kinder, Küche, Kirche, marriage loans, Motherhood Medals, forced sterilization of "unfit", removal of female professionals, and wartime shift.',
+                        rating: null
+                    },
+                    {
+                        id: 45,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Social Policies',
+                        topic: 'Education and Schools in Nazi Germany',
+                        description: 'Control of teachers (National Socialist Teachers League), ideological curriculum (Race Studies, History, PE trebled), and universities.',
+                        rating: null
+                    },
+                    {
+                        id: 46,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Social Policies',
+                        topic: 'Youth Groups: Hitler Youth & BDM',
+                        description: 'Hitler Youth activities (military training), League of German Girls (domestic roles), compulsory membership (1939), and exclusion of Jewish youth.',
+                        rating: null
+                    },
+                    {
+                        id: 47,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Control & Terror',
+                        topic: 'The Police State: SS, Gestapo & Courts',
+                        description: 'Himmler’s SS (SD, Waffen SS, Death’s Head Units), Gestapo secret police & informers, Nazi control of judges, and concentration camps.',
+                        rating: null
+                    },
+                    {
+                        id: 48,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Control & Terror',
+                        topic: 'Propaganda, Censorship & Culture',
+                        description: 'Josef Goebbels, radio ("People’s Receivers"), film control, book burning, 1936 Berlin Olympics, banning modern "degenerate" art and jazz.',
+                        rating: null
+                    },
+                    {
+                        id: 49,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Religion',
+                        topic: 'Control of Churches and Religion',
+                        description: '1933 Concordat with Catholic Church, persecution of priests, Protestant Reich Church (Bishop Müller) vs Confessional Church (Martin Niemöller).',
+                        rating: null
+                    },
+                    {
+                        id: 50,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Racial Policy & Holocaust',
+                        topic: 'Racial Persecution & The Final Solution',
+                        description: 'Master race/Aryans, persecution of Roma, disabled (euthanasia), 1935 Nuremberg Laws, Kristallnacht (1938), Einsatzgruppen, and Wannsee Conference (1942).',
+                        rating: null
+                    },
+                    {
+                        id: 51,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Resistance',
+                        topic: 'Opposition and Resistance to the Nazis',
+                        description: 'Levels of opposition (grumbling, passive resistance, White Rose leaflets, Swing Youth, Edelweiss Pirates, and the July 1944 Bomb Plot).',
+                        rating: null
+                    },
+                    {
+                        id: 52,
+                        subject: 'germany_u3',
+                        unitName: 'Germany Unit 3: Nazi Rule',
+                        category: 'Wartime Impact',
+                        topic: 'Impact of the Second World War on Germany',
+                        description: 'Rationing (Nov 1939), female factory conscription, Allied bombing raids on cities, refugees, and Albert Speer’s 1942 Total War policy.',
+                        rating: null
+                    }
+                ],
+
+                get ratedCount() {
+                    return this.plcItems.filter(i => i.rating !== null).length;
+                },
+
+                get redCount() {
+                    return this.plcItems.filter(i => i.rating === 'red').length;
+                },
+
+                get amberCount() {
+                    return this.plcItems.filter(i => i.rating === 'amber').length;
+                },
+
+                get greenCount() {
+                    return this.plcItems.filter(i => i.rating === 'green').length;
+                },
+
+                get redItems() {
+                    return this.plcItems.filter(i => i.rating === 'red');
+                },
+
+                get amberItems() {
+                    return this.plcItems.filter(i => i.rating === 'amber');
+                },
+
+                get greenItems() {
+                    return this.plcItems.filter(i => i.rating === 'green');
+                },
+
+                setRating(id, rating) {
+                    const item = this.plcItems.find(i => i.id === id);
+                    if (item) {
+                        item.rating = (item.rating === rating) ? null : rating;
+                    }
+                },
+
+                resetAllRatings() {
+                    if (this.ratedCount === 0) return;
+                    this.plcItems.forEach(i => i.rating = null);
+                },
+
+                getSubcategoryBadge(subject) {
+                    if (subject.startsWith('conflict')) {
+                        return 'bg-blue-100 text-blue-900 border border-blue-200';
+                    } else {
+                        return 'bg-amber-100 text-amber-900 border border-amber-200';
+                    }
+                },
+
+                get filteredItems() {
+                    return this.plcItems.filter(item => {
+                        // Subject filter
+                        if (this.selectedSubject !== 'all') {
+                            if (this.selectedSubject === 'conflict_all' && !item.subject.startsWith('conflict')) return false;
+                            if (this.selectedSubject === 'germany_all' && !item.subject.startsWith('germany')) return false;
+                            if (this.selectedSubject !== 'conflict_all' && this.selectedSubject !== 'germany_all' && item.subject !== this.selectedSubject) return false;
+                        }
+
+                        // Rating filter
+                        if (this.ratingFilter === 'unrated' && item.rating !== null) return false;
+                        if (this.ratingFilter === 'red' && item.rating !== 'red') return false;
+                        if (this.ratingFilter === 'amber' && item.rating !== 'amber') return false;
+                        if (this.ratingFilter === 'green' && item.rating !== 'green') return false;
+
+                        // Search query
+                        if (this.searchQuery.trim() !== '') {
+                            const q = this.searchQuery.toLowerCase();
+                            return item.topic.toLowerCase().includes(q) || 
+                                   item.description.toLowerCase().includes(q) || 
+                                   item.category.toLowerCase().includes(q);
+                        }
+
+                        return true;
+                    });
+                },
+
+                get groupedChecklist() {
+                    const groups = [
+                        { key: 'conflict_u1', title: 'Conflict & Tension — Unit 1: The Origins of the Cold War', themeColor: 'bg-accent-navy' },
+                        { key: 'conflict_u2', title: 'Conflict & Tension — Unit 2: The Development of the Cold War', themeColor: 'bg-accent-navy' },
+                        { key: 'conflict_u3', title: 'Conflict & Tension — Unit 3: The Transformation of the Cold War', themeColor: 'bg-accent-navy' },
+                        { key: 'germany_u1', title: 'Germany 1890–1945 — Unit 1: Growth of Democracy (1890–1929)', themeColor: 'bg-accent-burgundy' },
+                        { key: 'germany_u2', title: 'Germany 1890–1945 — Unit 2: Germany & The Depression', themeColor: 'bg-accent-burgundy' },
+                        { key: 'germany_u3', title: 'Germany 1890–1945 — Unit 3: Germany Under the Nazis', themeColor: 'bg-accent-burgundy' }
+                    ];
+
+                    const visibleItems = this.filteredItems;
+
+                    return groups.map(g => ({
+                        ...g,
+                        items: visibleItems.filter(item => item.subject === g.key)
+                    })).filter(g => g.items.length > 0);
+                },
+
+                exportRevisionDocument() {
+                    const reds = this.redItems;
+                    const ambers = this.amberItems;
+                    const greens = this.greenItems;
+                    const unrated = this.plcItems.filter(i => i.rating === null);
+
+                    let docContent = "========================================================\n";
+                    docContent += "       GCSE HISTORY - PERSONALISED REVISION ACTION PLAN\n";
+                    docContent += "========================================================\n\n";
+                    docContent += "REMINDER: Your answers were compiled in active session memory.\n";
+                    docContent += `Generated: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}\n`;
+                    docContent += `Total Evaluated Topics: ${this.ratedCount} / ${this.plcItems.length}\n`;
+                    docContent += `• RED (Urgent Need): ${reds.length}\n`;
+                    docContent += `• AMBER (Consolidation): ${ambers.length}\n`;
+                    docContent += `• GREEN (Secure): ${greens.length}\n\n`;
+
+                    docContent += "--------------------------------------------------------\n";
+                    docContent += "1. TOP URGENT REVISION PRIORITIES (RED TOPICS)\n";
+                    docContent += "Strategy: Revise these first! Use exercise books, flashcards, and timed practice.\n";
+                    docContent += "--------------------------------------------------------\n";
+                    if (reds.length === 0) {
+                        docContent += "None! Excellent work.\n";
+                    } else {
+                        reds.forEach((item, index) => {
+                            docContent += `${index + 1}. [${item.unitName}] ${item.topic}\n`;
+                            docContent += `   Details: ${item.description}\n\n`;
+                        });
+                    }
+
+                    docContent += "\n--------------------------------------------------------\n";
+                    docContent += "2. CONSOLIDATION PRIORITIES (AMBER TOPICS)\n";
+                    docContent += "Strategy: Reinforce dates, specific names, key causation factors and mind maps.\n";
+                    docContent += "--------------------------------------------------------\n";
+                    if (ambers.length === 0) {
+                        docContent += "None! Excellent work.\n";
+                    } else {
+                        ambers.forEach((item, index) => {
+                            docContent += `${index + 1}. [${item.unitName}] ${item.topic}\n`;
+                            docContent += `   Details: ${item.description}\n\n`;
+                        });
+                    }
+
+                    docContent += "\n--------------------------------------------------------\n";
+                    docContent += "3. SECURE REVISION TOPICS (GREEN TOPICS)\n";
+                    docContent += "Strategy: Maintain through quick weekly quizzes and active brain dumps.\n";
+                    docContent += "--------------------------------------------------------\n";
+                    if (greens.length === 0) {
+                        docContent += "No green topics yet. Keep going!\n";
+                    } else {
+                        greens.forEach((item, index) => {
+                            docContent += `✓ [${item.unitName}] ${item.topic}\n`;
+                        });
+                    }
+
+                    if (unrated.length > 0) {
+                        docContent += `\n--------------------------------------------------------\n`;
+                        docContent += `* Note: You still have ${unrated.length} unrated topic(s) to check.\n`;
+                    }
+
+                    // Download trigger as .txt file (universally openable in Word, Pages, Notepad, Docs)
+                    const blob = new Blob([docContent], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `GCSE_History_Revision_Action_Plan_${new Date().toISOString().slice(0, 10)}.txt`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
