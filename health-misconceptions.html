@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict &amp; Tension Common Misconceptions | GCSE History Revision</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for interactive state, filters, searches, and view modes -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .misconception-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .misconception-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white"
+      x-data="conflictMisconceptionsApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="conflict-revision-summary.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Back to Conflict Hub">
+                    <i class="fa-solid fa-triangle-exclamation text-xl text-accent-gold bg-brown-900 p-1.5 rounded-lg"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Common Misconceptions &amp; Exam Traps</h1>
+                    <p class="text-xs text-beige-300">Conflict &amp; Tension in the Cold War (1945–1972) &bull; AQA / Edexcel GCSE History</p>
+                </div>
+            </div>
+
+            <!-- Stats & Quick Links -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-graduation-cap text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Exam Skill:</span>
+                    <span class="font-bold text-beige-50">Avoiding Factual Pitfalls</span>
+                </div>
+                <div class="flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <span class="text-beige-300">Key Traps:</span>
+                    <span class="font-bold text-accent-gold" x-text="traps.length"></span>
+                </div>
+                <a href="conflict-revision-summary.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span>Summary Hub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Top Guidance Banner -->
+        <section class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="max-w-3xl space-y-1">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-900 border border-amber-500/30">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-800"></i>
+                        <span>Examiner's Warning</span>
+                    </div>
+                    <h2 class="text-base sm:text-lg font-bold text-brown-900">Why Students Lose Marks in Cold War Papers</h2>
+                    <p class="text-xs text-brown-800 leading-relaxed">
+                        GCSE examiners consistently penalize responses that collapse chronologies together or confuse catalytic preludes with major showdowns. Use this guide to ensure your causal links and chronological frameworks are precise.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 self-start md:self-center">
+                    <button 
+                        @click="toggleAllCards()"
+                        class="px-3.5 py-2 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 text-brown-800 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+                        <i class="fa-solid" :class="showFullAnalysis ? 'fa-compress' : 'fa-expand'"></i>
+                        <span x-text="showFullAnalysis ? 'Switch All to Quick View' : 'Show All Full Analysis'"></span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar, Topic Filter & Sorting Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search misconceptions, events, dates, traps (e.g. Berlin Wall, Bay of Pigs, Hungary, Prague, Truman, Cuba)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <button 
+                        @click="sortAscending = !sortAscending" 
+                        class="px-3.5 py-2.5 rounded-xl bg-beige-50 hover:bg-beige-200 border border-beige-300 font-semibold text-brown-800 transition flex items-center gap-2 shadow-sm"
+                    >
+                        <i class="fa-solid" :class="sortAscending ? 'fa-arrow-down-1-9' : 'fa-arrow-up-9-1'"></i>
+                        <span x-text="sortAscending ? 'Chronological' : 'Reverse'"></span>
+                    </button>
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="filteredTraps.length"></span> / <span x-text="traps.length"></span> traps shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-beige-300/80 text-xs">
+                <span class="font-semibold text-brown-800 mr-1 flex items-center gap-1">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Category:
+                </span>
+                <button @click="selectedFilter = 'all'" :class="selectedFilter === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">All Pitfalls (<span x-text="traps.length"></span>)</button>
+                <button @click="selectedFilter = 'berlin'" :class="selectedFilter === 'berlin' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">Berlin Crises (1948 vs 1961)</button>
+                <button @click="selectedFilter = 'uprisings'" :class="selectedFilter === 'uprisings' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">Hungary 1956 vs Prague 1968</button>
+                <button @click="selectedFilter = 'cuba'" :class="selectedFilter === 'cuba' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">Bay of Pigs vs Missile Crisis</button>
+                <button @click="selectedFilter = 'doctrines'" :class="selectedFilter === 'doctrines' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">Doctrines &amp; Alliances</button>
+                <button @click="selectedFilter = 'arms'" :class="selectedFilter === 'arms' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">Arms Race &amp; Treaties</button>
+            </div>
+        </div>
+
+        <!-- Misconceptions Cards Stack -->
+        <div class="space-y-6">
+            <template x-for="trap in filteredTraps" :key="trap.id">
+                <article class="misconception-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                    
+                    <!-- Card Top Banner -->
+                    <div class="px-5 py-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                         :class="trap.headerBg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base shadow-inner bg-black/20 text-white border border-white/20">
+                                <i :class="trap.icon"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-bold text-base sm:text-lg text-white tracking-tight" x-text="trap.title"></h3>
+                                    <span class="text-xs px-2.5 py-0.5 rounded-md font-semibold font-mono border bg-black/25 text-beige-100 border-white/20" x-text="trap.dates"></span>
+                                </div>
+                                <p class="text-xs text-beige-200 font-medium" x-text="trap.subtitle"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 self-end sm:self-center">
+                            <span class="text-[11px] px-2.5 py-1 rounded-full font-semibold border bg-white/10 text-white border-white/20" x-text="trap.categoryLabel"></span>
+                            <button 
+                                @click="toggleCardMode(trap.id)" 
+                                class="text-xs px-3 py-1.5 rounded-lg border font-semibold transition flex items-center gap-1.5 shadow-xs bg-white text-brown-900 border-beige-300 hover:bg-beige-100">
+                                <span x-text="isFullAnalysis(trap.id) ? 'Quick View' : 'Full Analysis'"></span>
+                                <i class="fa-solid text-[10px]" :class="isFullAnalysis(trap.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-5 sm:p-6 space-y-5 text-xs sm:text-sm">
+                        
+                        <!-- The Common Myth vs The Historical Reality Side-by-Side -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            
+                            <!-- The Trap (Red) -->
+                            <div class="p-4 rounded-xl bg-red-50/80 border border-red-200 text-red-950 space-y-2">
+                                <div class="flex items-center gap-2 text-red-900 font-bold text-xs uppercase tracking-wider border-b border-red-200 pb-1.5">
+                                    <i class="fa-solid fa-circle-xmark text-accent-ruby text-sm"></i>
+                                    <span>The Common Student Misconception</span>
+                                </div>
+                                <p class="font-semibold text-xs sm:text-sm text-red-900" x-text="trap.myth"></p>
+                                <p class="text-[11px] sm:text-xs text-red-900/80 leading-relaxed" x-text="trap.mythDetail"></p>
+                            </div>
+
+                            <!-- The Accurate Reality (Green) -->
+                            <div class="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 text-emerald-950 space-y-2">
+                                <div class="flex items-center gap-2 text-emerald-900 font-bold text-xs uppercase tracking-wider border-b border-emerald-200 pb-1.5">
+                                    <i class="fa-solid fa-circle-check text-accent-forest text-sm"></i>
+                                    <span>The Accurate Historical Reality</span>
+                                </div>
+                                <p class="font-semibold text-xs sm:text-sm text-emerald-900" x-text="trap.reality"></p>
+                                <p class="text-[11px] sm:text-xs text-emerald-900/80 leading-relaxed" x-text="trap.realityDetail"></p>
+                            </div>
+
+                        </div>
+
+                        <!-- Full Analysis Deep Dive (Visible in Full Analysis mode) -->
+                        <div x-show="isFullAnalysis(trap.id)" x-collapse.duration.250ms class="space-y-4 pt-1">
+                            
+                            <!-- 3-Column Comparative Analytical Breakdown -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs">
+                                
+                                <!-- 1. Event 1 Breakdown -->
+                                <div class="p-3.5 bg-beige-100/70 rounded-xl border border-beige-300 space-y-1.5 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center justify-between border-b border-beige-300 pb-1.5 mb-2">
+                                            <strong class="text-brown-900 font-bold text-xs flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-accent-navy"></span>
+                                                <span x-text="trap.col1Title"></span>
+                                            </strong>
+                                            <span class="text-[10px] bg-beige-200 px-2 py-0.5 rounded font-mono font-bold" x-text="trap.col1Date"></span>
+                                        </div>
+                                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-[11px] leading-relaxed">
+                                            <template x-for="item in trap.col1Points" :key="item">
+                                                <li x-html="item"></li>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                    <div class="mt-2 pt-2 border-t border-beige-300/80 text-[10px] text-brown-700 italic">
+                                        <strong class="text-brown-900 font-semibold">Immediate Result:</strong> <span x-text="trap.col1Outcome"></span>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Event 2 Breakdown -->
+                                <div class="p-3.5 bg-beige-100/70 rounded-xl border border-beige-300 space-y-1.5 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center justify-between border-b border-beige-300 pb-1.5 mb-2">
+                                            <strong class="text-brown-900 font-bold text-xs flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                                                <span x-text="trap.col2Title"></span>
+                                            </strong>
+                                            <span class="text-[10px] bg-beige-200 px-2 py-0.5 rounded font-mono font-bold" x-text="trap.col2Date"></span>
+                                        </div>
+                                        <ul class="list-disc pl-4 space-y-1.5 text-brown-800 text-[11px] leading-relaxed">
+                                            <template x-for="item in trap.col2Points" :key="item">
+                                                <li x-html="item"></li>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                    <div class="mt-2 pt-2 border-t border-beige-300/80 text-[10px] text-brown-700 italic">
+                                        <strong class="text-brown-900 font-semibold">Immediate Result:</strong> <span x-text="trap.col2Outcome"></span>
+                                    </div>
+                                </div>
+
+                                <!-- 3. Accurate Link & Exam Technique -->
+                                <div class="p-3.5 bg-amber-50/70 rounded-xl border border-amber-200 text-amber-950 space-y-2 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center gap-1.5 text-amber-900 font-bold uppercase tracking-wider text-[11px] border-b border-amber-200 pb-1.5 mb-2">
+                                            <i class="fa-solid fa-lightbulb text-accent-gold"></i>
+                                            <span>How They Actually Interlink</span>
+                                        </div>
+                                        <p class="text-[11px] text-amber-950 leading-relaxed whitespace-pre-line" x-html="trap.interlinkAnalysis"></p>
+                                    </div>
+                                    <div class="mt-2 pt-2 border-t border-amber-200/80 text-[10px] text-amber-900 font-medium">
+                                        <strong class="text-amber-950 font-semibold">Examiner's Advice:</strong> <span x-text="trap.examinerTip"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Model Sentence for High Grades -->
+                            <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-300 text-xs text-brown-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-pen-fancy text-accent-navy text-sm mt-0.5"></i>
+                                    <div>
+                                        <span class="font-bold text-brown-900 block text-[11px] uppercase tracking-wider">Grade 8/9 Sentence Formula:</span>
+                                        <p class="text-brown-800 text-xs italic" x-text="trap.modelSentence"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Quick Summary Strip when in Quick View -->
+                        <div x-show="!isFullAnalysis(trap.id)" class="pt-2 border-t border-beige-200 flex flex-wrap gap-2 text-[11px]">
+                            <span class="px-2.5 py-1 rounded-md bg-beige-200/80 text-brown-800 font-semibold">
+                                <i class="fa-solid fa-clock mr-1 text-brown-700"></i> Time Gap: <strong x-text="trap.timeGap"></strong>
+                            </span>
+                            <span class="px-2.5 py-1 rounded-md bg-beige-200/80 text-brown-800 font-semibold">
+                                <i class="fa-solid fa-key mr-1 text-brown-700"></i> Crucial Distinction: <strong x-text="trap.keyDistinction"></strong>
+                            </span>
+                        </div>
+
+                    </div>
+                </article>
+            </template>
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="filteredTraps.length === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No misconceptions match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any traps matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Exam Technique Matrix Box -->
+        <section class="bg-beige-50 rounded-2xl border border-beige-300 p-5 sm:p-6 shadow-sm space-y-4">
+            <div class="flex items-center gap-2 border-b border-beige-300 pb-3">
+                <i class="fa-solid fa-clipboard-check text-accent-forest text-lg"></i>
+                <h3 class="text-base font-bold text-brown-900">Summary Checklist for GCSE Cold War Exams</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-brown-800 leading-relaxed">
+                <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                    <strong class="text-brown-900 block font-bold">1. Check the Leaders:</strong>
+                    <p>Always align the event with the correct superpower leaders. Truman &amp; Stalin governed the 1948 Blockade; Kennedy &amp; Khrushchev faced the 1961 Wall and 1962 Cuba Crisis; Johnson &amp; Brezhnev led during the 1968 Prague Spring.</p>
+                </div>
+                <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                    <strong class="text-brown-900 block font-bold">2. Distinguish Immediate vs Long-Term:</strong>
+                    <p>The Bay of Pigs was an immediate 1961 tactical disaster for the CIA, but its long-term consequence was convincing Castro that an American invasion was imminent, leading directly to the installation of Soviet nuclear missiles.</p>
+                </div>
+                <div class="p-3.5 bg-beige-100 rounded-xl border border-beige-200 space-y-1">
+                    <strong class="text-brown-900 block font-bold">3. Warsaw Pact Membership is Critical:</strong>
+                    <p>Remember why Hungary was brutally invaded in 1956 (Nagy tried to withdraw from the Warsaw Pact and declare neutrality), whereas in 1968 Dubček explicitly insisted Czechoslovakia would stay inside the Warsaw Pact, yet was invaded under the Brezhnev Doctrine.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>Conflict &amp; Tension Revision Hub &bull; Cold War Misconceptions &amp; Exam Traps (1945–1972) 🕊️</p>
+            <div class="flex items-center gap-4">
+                <a href="conflict-revision-summary.html" class="text-beige-200 hover:text-white underline">Conflict Summary</a>
+                <a href="conflict-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+                <a href="conflict-keywords.html" class="text-beige-200 hover:text-white underline">Keywords</a>
+                <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Health Hub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic & Dataset -->
+    <script>
+        function conflictMisconceptionsApp() {
+            return {
+                searchQuery: '',
+                selectedFilter: 'all',
+                sortAscending: true,
+                showFullAnalysis: true,
+                cardModes: {},
+
+                isFullAnalysis(id) {
+                    if (this.cardModes[id] !== undefined) {
+                        return this.cardModes[id] === 'full';
+                    }
+                    return this.showFullAnalysis;
+                },
+
+                toggleCardMode(id) {
+                    const current = this.isFullAnalysis(id);
+                    this.cardModes[id] = current ? 'quick' : 'full';
+                },
+
+                toggleAllCards() {
+                    this.showFullAnalysis = !this.showFullAnalysis;
+                    this.cardModes = {};
+                },
+
+                resetFilters() {
+                    this.selectedFilter = 'all';
+                    this.searchQuery = '';
+                },
+
+                // Structured traps based directly on the prompt and core specification errors
+                traps: [
+                    {
+                        id: 'berlin-crisis',
+                        category: 'berlin',
+                        categoryLabel: 'Berlin Crises',
+                        title: 'The Berlin Blockade (1948–49) did NOT create the Berlin Wall (1961)',
+                        subtitle: 'A 12-Year Chronological Gulf & Two Entirely Different Leaders',
+                        dates: '1948 vs 1961',
+                        order: 1948,
+                        icon: 'fa-solid fa-border-all',
+                        headerBg: 'bg-accent-navy',
+                        timeGap: '12 Years (1949–1961)',
+                        keyDistinction: 'Blockade = Western access cutoff; Wall = East German barrier to stop defection',
+                        myth: '“Stalin built the Berlin Wall in 1948 to cut off supplies to West Berlin during the Blockade.”',
+                        mythDetail: 'Students often compress the two Berlin crises into one event, claiming that the Allied airlift flew over the Berlin Wall, or that Stalin constructed the concrete wall after the airlift succeeded.',
+                        reality: 'The Berlin Blockade and the Berlin Wall are completely separate events separated by over a decade, different leaders, and opposing tactical objectives.',
+                        realityDetail: 'In 1948, Stalin closed land corridors into West Berlin to force the Western Allies out. The Berlin Wall was constructed in August 1961 by Khrushchev and Walter Ulbricht to prevent East Germans from fleeing into capitalist West Berlin (the "Brain Drain").',
+                        col1Title: 'Berlin Blockade & Airlift',
+                        col1Date: 'June 1948 – May 1949',
+                        col1Points: [
+                            '<strong>Key Leaders:</strong> Josef Stalin (USSR) vs Harry S. Truman (USA).',
+                            '<strong>Catalyst:</strong> The Western Allies merged zones into Trizonia and introduced the Deutsche Mark.',
+                            '<strong>What Happened:</strong> Stalin severed all road, rail, canal, and electrical links to starve West Berlin.',
+                            '<strong>Response:</strong> Anglo-American <em>Operation Vittles</em> flew in food and coal for 11 months until Stalin backed down.'
+                        ],
+                        col1Outcome: 'Created two separate German states (FRG & GDR, 1949) and NATO; no physical wall was built.',
+                        col2Title: 'The Berlin Wall Crisis',
+                        col2Date: 'August 1961',
+                        col2Points: [
+                            '<strong>Key Leaders:</strong> Nikita Khrushchev (USSR) vs John F. Kennedy (USA).',
+                            '<strong>Catalyst:</strong> Massive "Brain Drain": over 2.7 million skilled East Germans defected via West Berlin between 1949 and 1961.',
+                            '<strong>What Happened:</strong> Overnight on 12–13 August 1961, East German troops laid barbed wire, quickly replaced by concrete walls and minefields.',
+                            '<strong>US Reaction:</strong> JFK accepted it, declaring: <em>"A wall is a hell of a lot better than a war."</em>'
+                        ],
+                        col2Outcome: 'Permanently ended the refugee exodus and stabilized the East German state without triggering WW3.',
+                        interlinkAnalysis: 'The Blockade proved West Berlin could survive deep inside communist territory. West Berlin became an island of capitalist prosperity, which subsequently created the 1950s refugee crisis that drove Khrushchev to erect the Wall in 1961.',
+                        examinerTip: 'Never mention the Berlin Wall when answering questions on the Berlin Blockade, Truman, or the founding of NATO. The Wall was built 12 years later under JFK and Khrushchev.',
+                        modelSentence: '“Whereas the 1948 Berlin Blockade was an aggressive attempt by Stalin to starve the Allies out of West Berlin, the 1961 Berlin Wall was a defensive measure by Khrushchev to stop East Germans fleeing into the West.”'
+                    },
+                    {
+                        id: 'hungary-prague',
+                        category: 'uprisings',
+                        categoryLabel: 'Satellite Uprisings',
+                        title: 'Hungarian Uprising (1956) and Prague Spring (1968) are Separate Events',
+                        subtitle: 'Different Leaders, Opposing Reform Demands & Distinct Soviet Doctrines',
+                        dates: '1956 vs 1968',
+                        order: 1956,
+                        icon: 'fa-solid fa-person-military-pointing',
+                        headerBg: 'bg-accent-burgundy',
+                        timeGap: '12 Years (1956–1968)',
+                        keyDistinction: 'Hungary withdrew from Warsaw Pact; Czechoslovakia stayed in Warsaw Pact',
+                        myth: '“Alexander Dubček led the Hungarian Uprising in 1956 to introduce Socialism with a Human Face.”',
+                        mythDetail: 'Students frequently mix up the leaders (Nagy vs Dubček), confuse the countries (Hungary vs Czechoslovakia), or assert both crises happened simultaneously under Khrushchev.',
+                        reality: 'The 1956 Hungarian revolt and the 1968 Prague Spring took place in different nations, under different Soviet Premiers, with fundamentally different political goals.',
+                        realityDetail: 'Imre Nagy in Hungary crossed Moscow’s ultimate red line by announcing Hungary would withdraw from the Warsaw Pact and declare neutrality. Alexander Dubček in Czechoslovakia introduced domestic democratic freedoms ("Socialism with a human face") but repeatedly promised to stay in the Warsaw Pact.',
+                        col1Title: 'Hungarian Uprising',
+                        col1Date: 'October – November 1956',
+                        col1Points: [
+                            '<strong>Key Leaders:</strong> Imre Nagy (Hungary) vs Nikita Khrushchev (USSR).',
+                            '<strong>Inspiration:</strong> Khrushchev’s "Secret Speech" denouncing Stalin; hatred of Mátyás Rákosi and AVH secret police terror.',
+                            '<strong>Crucial Demands:</strong> Complete withdrawal from the Warsaw Pact, free democratic elections, and declared international neutrality.',
+                            '<strong>Soviet Action:</strong> 1,000 Soviet tanks crushed Budapest on 4 Nov 1956; Nagy executed; János Kádár installed.'
+                        ],
+                        col1Outcome: '3,000 Hungarians killed; 200,000 fled; proved the West would not intervene behind the Iron Curtain (distracted by Suez).',
+                        col2Title: 'The Prague Spring',
+                        col2Date: 'January – August 1968',
+                        col2Points: [
+                            '<strong>Key Leaders:</strong> Alexander Dubček (Czechoslovakia) vs Leonid Brezhnev (USSR).',
+                            '<strong>Goal:</strong> "Socialism with a Human Face": ending press censorship, free speech, freedom to travel, and legalizing trade unions.',
+                            '<strong>Crucial Stance:</strong> Dubček explicitly promised Czechoslovakia would <em>remain loyal to the Warsaw Pact</em> and Comecon.',
+                            '<strong>Soviet Action:</strong> 500,000 Warsaw Pact troops invaded on 20–21 August 1968; non-violent resistance; Dubček replaced by Gustáv Husák.'
+                        ],
+                        col2Outcome: 'Led directly to the Brezhnev Doctrine (Nov 1968), legalizing Soviet military invasion if socialism was threatened anywhere.',
+                        interlinkAnalysis: 'Both proved that Moscow would use crushing military force to maintain the satellite buffer zone. However, Hungary was triggered by anti-Stalinist armed riots demanding neutrality, whereas Prague was an internal Communist Party reform movement that terrified Brezhnev because of the potential contagion of free speech.',
+                        examinerTip: 'Ensure you link Nagy to 1956 Hungary and the Warsaw Pact exit, and Dubček to 1968 Czechoslovakia, press freedoms, and the Brezhnev Doctrine.',
+                        modelSentence: '“Unlike Imre Nagy, who fatalistically withdrew Hungary from the Warsaw Pact in 1956, Alexander Dubček carefully maintained Czechoslovakia’s Warsaw Pact membership in 1968, but was invaded nevertheless under the Brezhnev Doctrine.”'
+                    },
+                    {
+                        id: 'bay-of-pigs-missiles',
+                        category: 'cuba',
+                        categoryLabel: 'Cuban Crises',
+                        title: 'The Bay of Pigs is NOT the Cuban Missile Crisis',
+                        subtitle: 'A Failed CIA Invasion vs A 13-Day Nuclear Brinkmanship Confrontation',
+                        dates: 'April 1961 vs October 1962',
+                        order: 1961,
+                        icon: 'fa-solid fa-radiation',
+                        headerBg: 'bg-accent-ruby',
+                        timeGap: '18 Months (April 1961 – October 1962)',
+                        keyDistinction: 'Bay of Pigs = Failed invasion of exiles; Missile Crisis = Soviet nuclear launch sites discovered',
+                        myth: '“The Cuban Missile Crisis occurred in April 1961 when JFK sent US troops to remove nuclear missiles from the Bay of Pigs.”',
+                        mythDetail: 'Students often conflate the two events, claiming the Bay of Pigs was an operation to destroy Soviet nuclear missiles, or that Soviet missiles were already in Cuba during the Bay of Pigs.',
+                        reality: 'The Bay of Pigs was a botched amphibious invasion by CIA-trained Cuban exiles in 1961; nuclear missiles were not placed in Cuba until autumn 1962.',
+                        realityDetail: 'In April 1961, there were zero nuclear weapons in Cuba. The Bay of Pigs was a failed attempt to overthrow Fidel Castro. The humiliation and threat of another US attack directly drove Castro to seek military protection from Khrushchev, resulting in the secret shipment of nuclear missiles in late 1962.',
+                        col1Title: 'Bay of Pigs Invasion',
+                        col1Date: '17–19 April 1961',
+                        col1Points: [
+                            '<strong>What It Was:</strong> 1,400 CIA-trained anti-Castro Cuban exiles (Brigade 2506) landed on the southern coast of Cuba.',
+                            '<strong>Why It Failed:</strong> Premature air strikes failed to destroy Castro’s air force; JFK cancelled crucial US air cover; Cuban civilians supported Castro.',
+                            '<strong>Nuclear Status:</strong> Zero Soviet nuclear missiles were in Cuba at this time.',
+                            '<strong>Direct Result:</strong> Within 72 hours, all exiles were killed or captured; JFK was deeply humiliated.'
+                        ],
+                        col1Outcome: 'Pushed Castro to openly declare Cuba a Marxist-Leninist state and sign defensive military pacts with Khrushchev.',
+                        col2Title: 'Cuban Missile Crisis',
+                        col2Date: '14–28 October 1962',
+                        col2Points: [
+                            '<strong>What It Was:</strong> A 13-day superpower nuclear standoff after US U-2 spy planes photographed Soviet intermediate-range nuclear missile launchpads (IRBMs) in Cuba.',
+                            '<strong>JFK’s Actions:</strong> Imposed a naval "quarantine" (blockade) around Cuba, put US forces on DEFCON 2, and demanded missile removal.',
+                            '<strong>Near Catastrophe:</strong> A U-2 plane was shot down, and Soviet sub B-59 nearly fired a nuclear torpedo.',
+                            '<strong>The Deal:</strong> Khrushchev withdrew missiles; JFK promised not to invade Cuba and secretly agreed to pull US Jupiter missiles from Turkey.'
+                        ],
+                        col2Outcome: 'Created the Washington-Moscow direct telephone hotline (1963) and the Partial Nuclear Test Ban Treaty (1963).',
+                        interlinkAnalysis: 'The Bay of Pigs was the indispensable catalyst for the Missile Crisis. Without the humiliation of the Bay of Pigs, Castro would never have requested Soviet military garrisons, and Khrushchev would not have had the pretext to secretly base nuclear missiles 90 miles from Florida.',
+                        examinerTip: 'Frame the Bay of Pigs as a primary cause of the Cuban Missile Crisis, not as the crisis itself. Always explain the causal chain: Bay of Pigs &rarr; Castro fears invasion &rarr; Khrushchev offers missiles.',
+                        modelSentence: '“While the 1961 Bay of Pigs invasion was a disastrous conventional attempt by CIA-backed exiles to topple Castro, it directly provoked the 1962 Cuban Missile Crisis by convincing Khrushchev that only nuclear missiles could deter a full-scale US invasion.”'
+                    },
+                    {
+                        id: 'truman-marshall',
+                        category: 'doctrines',
+                        categoryLabel: 'Doctrines & Alliances',
+                        title: 'The Truman Doctrine is NOT Just Financial Aid',
+                        subtitle: 'Distinguishing the Ideological/Military Doctrine from Economic Reconstruction',
+                        dates: 'March 1947 vs June 1947',
+                        order: 1947,
+                        icon: 'fa-solid fa-coins',
+                        headerBg: 'bg-accent-forest',
+                        timeGap: '3 Months (March 1947 – June 1947)',
+                        keyDistinction: 'Truman Doctrine = Political containment policy; Marshall Plan = $13bn economic assistance program',
+                        myth: '“The Truman Doctrine was a $13 billion financial aid fund given to rebuild all countries in Europe.”',
+                        mythDetail: 'Students frequently mix up the names, dates, and amounts, referring to the Marshall Plan as the Truman Doctrine, or stating that the Truman Doctrine was purely an economic package.',
+                        reality: 'The Truman Doctrine was a diplomatic and military pledge of containment; the Marshall Plan was the practical economic program that put the doctrine into action.',
+                        realityDetail: 'Announced in March 1947, the Truman Doctrine committed the US to halt the spread of communism worldwide, starting with $400m in military and economic aid to Greece and Turkey. The Marshall Plan, proposed three months later by George Marshall, provided $13.15 billion in grants and equipment to rebuild Western European economies.',
+                        col1Title: 'The Truman Doctrine',
+                        col1Date: 'March 1947',
+                        col1Points: [
+                            '<strong>Core Principle:</strong> An ideological policy commitment to "contain" communism from spreading beyond where it already existed.',
+                            '<strong>Trigger:</strong> Britain announced it could no longer afford to fund royalist forces in the Greek Civil War against communist rebels; Turkey faced Soviet pressure over the Dardanelles.',
+                            '<strong>Action:</strong> Truman asked Congress for $400 million in military and financial aid specifically for Greece and Turkey.',
+                            '<strong>Significance:</strong> Marked the official end of traditional American peacetime isolationism.'
+                        ],
+                        col1Outcome: 'Established the Cold War policy of active global containment.',
+                        col2Title: 'The Marshall Plan (ERP)',
+                        col2Date: 'June 1947 (Passed 1948)',
+                        col2Points: [
+                            '<strong>Core Principle:</strong> European Recovery Program: communism only bred in conditions of poverty, hunger, and ruined infrastructure.',
+                            '<strong>Action:</strong> Provided $13.15 billion in grants, machinery, and food to 16 Western European nations (UK received $3.2bn, France $2.7bn).',
+                            '<strong>Condition:</strong> Aid had to be spent on US equipment and goods, stimulating the American domestic economy.',
+                            '<strong>Soviet View:</strong> Denounced by Stalin as "dollar imperialism" (buying political allies); banned all satellite states from accepting.'
+                        ],
+                        col2Outcome: 'Revived Western European industries and deepened the economic divide of Europe.',
+                        interlinkAnalysis: 'The Marshall Plan was described by Winston Churchill as the "most unselfish act in history", but politically it was the economic engine of the Truman Doctrine: the Truman Doctrine stated the goal (containment), while the Marshall Plan provided the dollars to achieve it.',
+                        examinerTip: 'Remember the pair: Truman Doctrine = political/military containment of Greece and Turkey; Marshall Plan = $13bn economic recovery for Western Europe.',
+                        modelSentence: '“The Marshall Plan was essentially the Truman Doctrine in economic form: while the Truman Doctrine announced America’s political commitment to contain communism, the Marshall Plan provided the $13 billion required to eradicate the poverty that nurtured it.”'
+                    },
+                    {
+                        id: 'nato-warsaw',
+                        category: 'doctrines',
+                        categoryLabel: 'Military Pacts',
+                        title: 'The Warsaw Pact Was NOT Formed in 1949 to Rival NATO',
+                        subtitle: 'A 6-Year Gap Triggered by the Rearmament of West Germany',
+                        dates: '1949 vs 1955',
+                        order: 1949,
+                        icon: 'fa-solid fa-shield-halved',
+                        headerBg: 'bg-accent-slate',
+                        timeGap: '6 Years (1949–1955)',
+                        keyDistinction: 'NATO created after Berlin Blockade; Warsaw Pact created when West Germany joined NATO',
+                        myth: '“In 1949, when the West set up NATO, Stalin immediately retaliated by creating the Warsaw Pact.”',
+                        mythDetail: 'Students often assume that because NATO and the Warsaw Pact were Cold War opposites, they were founded in the same year in direct response to one another.',
+                        reality: 'There was a six-year gap between the formation of NATO (April 1949) and the creation of the Warsaw Pact (May 1955).',
+                        realityDetail: 'NATO was formed in 1949 following the Berlin Blockade and the 1948 communist coup in Czechoslovakia. Stalin relied on bilateral treaties with Eastern Bloc states and did not create a unified military alliance until May 1955, when West Germany (FRG) was formally admitted into NATO and allowed to rearm, reviving Soviet fears of German invasion.',
+                        col1Title: 'Creation of NATO',
+                        col1Date: 'April 1949',
+                        col1Points: [
+                            '<strong>Catalyst:</strong> Soviet takeover of Czechoslovakia (1948) and the Berlin Blockade (1948–49).',
+                            '<strong>Significance:</strong> First peacetime military alliance in US history; 12 founding Western nations pledged collective defense under <em>Article 5</em>.',
+                            '<strong>Soviet Counter in 1949:</strong> Stalin created <em>Comecon</em> (economic) and turned the Soviet zone into East Germany (GDR), but did NOT create the Warsaw Pact.'
+                        ],
+                        col1Outcome: 'Secured Western Europe under the American nuclear umbrella.',
+                        col2Title: 'Creation of the Warsaw Pact',
+                        col2Date: 'May 1955',
+                        col2Points: [
+                            '<strong>Catalyst:</strong> On 9 May 1955, West Germany (FRG) officially joined NATO and was permitted to rearm a new military (Bundeswehr).',
+                            '<strong>Soviet Reaction:</strong> Terrified of a rearmed, Western-backed Germany, Khrushchev united 8 Eastern Bloc nations in Warsaw 5 days later.',
+                            '<strong>Function:</strong> Mutual defense treaty, but primarily used by Moscow to legally station Soviet troops across Eastern Europe to police dissent.'
+                        ],
+                        col2Outcome: 'Cemented the permanent bipolar military partition of Europe into armed alliance blocs.',
+                        interlinkAnalysis: 'The Warsaw Pact was not a direct response to NATO’s birth in 1949, but rather a direct response to West Germany joining NATO in 1955. Moscow could tolerate a defensive Western alliance, but a rearmed Germany integrated into NATO was viewed as an existential threat.',
+                        examinerTip: 'Always link the 1955 Warsaw Pact directly to the rearmament and NATO entry of West Germany, not the 1949 founding of NATO.',
+                        modelSentence: '“Although NATO was established in 1949 following the Berlin Blockade, the Soviet Union did not create the Warsaw Pact until six years later in 1955, when the rearmament and NATO accession of West Germany revived intense fears of German invasion.”'
+                    },
+                    {
+                        id: 'arms-race-detente',
+                        category: 'arms',
+                        categoryLabel: 'Nuclear & Treaties',
+                        title: 'SALT 1 Did NOT Abolish All Nuclear Weapons',
+                        subtitle: 'Caps and Limitations vs Total Nuclear Disarmament',
+                        dates: '1972',
+                        order: 1972,
+                        icon: 'fa-solid fa-handshake-angle',
+                        headerBg: 'bg-brown-800',
+                        timeGap: 'Détente Era (1969–1972)',
+                        keyDistinction: 'Arms Limitation (Caps) vs Arms Elimination (Disarmament)',
+                        myth: '“The SALT 1 treaty in 1972 eliminated nuclear weapons and successfully ended the Cold War.”',
+                        mythDetail: 'Students often state that SALT 1 disarmed the superpowers, destroyed existing nuclear stockpiles, or ended the Cold War altogether.',
+                        reality: 'SALT 1 (Strategic Arms Limitation Talks) only capped the number of ballistic missile launchers; it did not destroy existing nuclear weapons or cover multiple warheads (MIRVs).',
+                        realityDetail: 'Signed in Moscow by Nixon and Brezhnev in May 1972, SALT 1 froze the number of strategic ballistic missile launchers at existing levels for 5 years and restricted anti-ballistic missile (ABM) defenses to two sites each. It slowed the quantitative expansion of missiles, but allowed both superpowers to continue modernizing warhead technology (MIRVs) and building nuclear bombers.',
+                        col1Title: 'What SALT 1 Actually Agreed',
+                        col1Date: 'May 1972',
+                        col1Points: [
+                            '<strong>ABM Treaty:</strong> Anti-Ballistic Missile systems limited to only 2 sites with 100 interceptor missiles each (ensuring MAD remained effective).',
+                            '<strong>Interim Agreement:</strong> 5-year freeze on offensive ICBM and SLBM launchers (USA capped at 1,054 ICBMs; USSR at 1,618).',
+                            '<strong>Verification:</strong> Allowed satellite surveillance to ensure compliance without physical on-site inspections.'
+                        ],
+                        col1Outcome: 'Recognized nuclear parity between superpowers and institutionalized MAD.',
+                        col2Title: 'What SALT 1 Did NOT Do',
+                        col2Date: 'Limitations & Gaps',
+                        col2Points: [
+                            '<strong>No Disarmament:</strong> Did not destroy a single nuclear warhead or bomb.',
+                            '<strong>Ignored MIRVs:</strong> Did not ban Multiple Independently Targetable Re-entry Vehicles (fitting multiple nuclear warheads onto one missile).',
+                            '<strong>Ignored Strategic Bombers:</strong> Left strategic nuclear bombers and tactical nuclear weapons completely uncontrolled.',
+                            '<strong>Did Not End Cold War:</strong> Cold War resumed with intensity in 1979 following the Soviet invasion of Afghanistan.'
+                        ],
+                        col2Outcome: 'Superpowers continued to massively expand their total warhead counts throughout the 1970s.',
+                        interlinkAnalysis: 'SALT 1 was the high-water mark of Détente. It proved that despite irreconcilable ideological rivalries, the superpowers could negotiate binding limits on strategic arms to manage the dangers of MAD.',
+                        examinerTip: 'Use precise language: SALT stands for Strategic Arms *Limitation* Talks, not *Disarmament*. Write that it capped missile launchers, rather than eliminating bombs.',
+                        modelSentence: '“Rather than disarming the superpowers, SALT 1 merely placed a temporary ceiling on intercontinental missile launchers, ensuring that Mutually Assured Destruction remained intact while permitting both superpowers to continue expanding their warhead counts through MIRV technology.”'
+                    }
+                ],
+
+                get filteredTraps() {
+                    let results = [...this.traps];
+
+                    if (this.selectedFilter !== 'all') {
+                        results = results.filter(t => t.category === this.selectedFilter);
+                    }
+
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        results = results.filter(t => 
+                            t.title.toLowerCase().includes(q) ||
+                            t.subtitle.toLowerCase().includes(q) ||
+                            t.myth.toLowerCase().includes(q) ||
+                            t.reality.toLowerCase().includes(q) ||
+                            t.col1Title.toLowerCase().includes(q) ||
+                            t.col2Title.toLowerCase().includes(q) ||
+                            t.interlinkAnalysis.toLowerCase().includes(q) ||
+                            t.examinerTip.toLowerCase().includes(q)
+                        );
+                    }
+
+                    results.sort((a, b) => {
+                        return this.sortAscending ? a.order - b.order : b.order - a.order;
+                    });
+
+                    return results;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
