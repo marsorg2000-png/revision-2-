@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict &amp; Tension Revision Hub (1945–1972) | GCSE History</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#ede3d0',
+                            300: '#dfceb0',
+                            400: '#cbb389',
+                        },
+                        brown: {
+                            600: '#7c5c3e',
+                            700: '#5e432c',
+                            800: '#422e1d',
+                            900: '#2c1e13',
+                        },
+                        accent: {
+                            navy: '#1b365d',
+                            burgundy: '#581825',
+                            forest: '#1e3f20',
+                            gold: '#b48b35',
+                            ruby: '#822727',
+                            slate: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .summary-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .summary-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-beige-100 text-brown-900 min-h-full flex flex-col antialiased selection:bg-brown-600 selection:text-white" x-data="conflictApp()">
+
+    <!-- Header -->
+    <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3.5">
+                <a href="conflict-timeline.html" class="bg-brown-800 hover:bg-brown-700 p-2.5 rounded-xl shadow-inner border border-brown-700 text-beige-200 transition" title="Timeline View">
+                    <i class="fa-solid fa-globe text-beige-200 text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">Conflict &amp; Tension Revision Hub</h1>
+                    <p class="text-xs text-beige-300">The Cold War &amp; International Relations (1945–1972) &bull; Complete Revision Summary</p>
+                </div>
+            </div>
+
+            <!-- Hub Quick Navigation Links -->
+            <div class="flex items-center gap-2">
+                <div class="hidden sm:flex items-center gap-2 bg-brown-800/90 px-3.5 py-1.5 rounded-xl border border-brown-700 text-xs">
+                    <i class="fa-solid fa-layer-group text-accent-gold text-xs"></i>
+                    <span class="text-beige-300">Modules:</span>
+                    <span class="font-bold text-beige-50">10 Core Topics</span>
+                </div>
+                <a href="conflict-timeline.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-timeline text-[10px]"></i>
+                    <span>Timeline</span>
+                </a>
+                <a href="conflict-keywords.html" class="px-3 py-1.5 rounded-xl bg-brown-800 hover:bg-brown-700 border border-brown-700 text-beige-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-bookmark text-[10px]"></i>
+                    <span>Keywords</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto space-y-6">
+
+        <!-- Search & Filter Controls -->
+        <div class="bg-beige-200/90 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-beige-300 shadow-sm space-y-4">
+            
+            <!-- Search Input -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brown-700">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Search Cold War topics, treaties, crises (e.g. Yalta, Berlin Blockade, Korea, Cuba, Prague Spring, SALT 1, Kennan)..."
+                        class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-beige-50 border border-beige-300 text-brown-900 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600 focus:border-brown-600 shadow-inner placeholder:text-brown-700/60"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0" 
+                        @click="searchQuery = ''" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-brown-600 hover:text-brown-900 transition"
+                        title="Clear search"
+                    >
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs">
+                    <div class="bg-brown-800/10 px-3.5 py-2.5 rounded-xl border border-brown-800/10 font-medium text-brown-800 whitespace-nowrap">
+                        <span x-text="visibleTopicsCount"></span> / 10 topics shown
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-beige-300/80 text-xs">
+                <span class="font-semibold text-brown-800 mr-1 flex items-center gap-1">
+                    <i class="fa-solid fa-filter text-[11px] text-brown-700"></i> Topic:
+                </span>
+                <button @click="selectedTopicFilter = 'all'" :class="selectedTopicFilter === 'all' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">All 10 Topics</button>
+                <button @click="selectedTopicFilter = 'leaders'" :class="selectedTopicFilter === 'leaders' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">1. Leaders &amp; Ideology</button>
+                <button @click="selectedTopicFilter = 'summits'" :class="selectedTopicFilter === 'summits' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">2. Yalta &amp; Potsdam</button>
+                <button @click="selectedTopicFilter = 'expansion'" :class="selectedTopicFilter === 'expansion' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">3. Expansion &amp; Doctrines</button>
+                <button @click="selectedTopicFilter = 'berlin'" :class="selectedTopicFilter === 'berlin' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">4. Berlin Blockade</button>
+                <button @click="selectedTopicFilter = 'alliances'" :class="selectedTopicFilter === 'alliances' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">5. NATO vs Warsaw Pact</button>
+                <button @click="selectedTopicFilter = 'asia'" :class="selectedTopicFilter === 'asia' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">6. China, Korea &amp; Vietnam</button>
+                <button @click="selectedTopicFilter = 'arms-space'" :class="selectedTopicFilter === 'arms-space' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">7. Arms &amp; Space Race</button>
+                <button @click="selectedTopicFilter = 'uprisings'" :class="selectedTopicFilter === 'uprisings' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">8. Hungary &amp; Prague Spring</button>
+                <button @click="selectedTopicFilter = 'cuba'" :class="selectedTopicFilter === 'cuba' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">9. Cuban Missile Crisis</button>
+                <button @click="selectedTopicFilter = 'detente'" :class="selectedTopicFilter === 'detente' ? 'bg-brown-800 text-beige-50 shadow-sm' : 'bg-beige-50 text-brown-800 hover:bg-beige-300/60 border border-beige-300'" class="px-2.5 py-1.5 rounded-lg font-medium transition">10. Détente &amp; SALT 1</button>
+            </div>
+        </div>
+
+        <!-- Topics Stack -->
+        <div class="space-y-6">
+
+            <!-- ========================================== -->
+            <!-- TOPIC 1: Leaders & Ideology -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('leaders')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center border-b border-accent-navy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-users text-beige-200"></i>
+                        <span>1. Superpower Leaders (1945–1972+) &amp; Ideology: Capitalism vs Communism</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 1</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <!-- Leaders Table -->
+                    <div>
+                        <h4 class="font-bold text-brown-900 mb-3 flex items-center space-x-2 text-xs uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-accent-navy"></span>
+                            <span>Superpower Leaders &amp; Dates in Office (1945–1972+)</span>
+                        </h4>
+                        <div class="overflow-x-auto rounded-xl border border-beige-300">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-brown-900 text-beige-100 font-bold">
+                                        <th class="p-3 w-1/2">USA (Presidents)</th>
+                                        <th class="p-3 w-1/2 border-l border-brown-800">USSR (Leaders)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-medium"><strong>Franklin D. Roosevelt</strong> (up to April 1945)</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Josef Stalin</strong> (up to March 1953)</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-medium"><strong>Harry S. Truman</strong> (1945–1953)</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Collective Leadership</strong> (1953–1956) [Malenkov, Molotov, Khrushchev]</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-medium"><strong>Dwight D. Eisenhower</strong> (1953–1961)</td>
+                                        <td class="p-3 border-l border-beige-300"><strong>Nikita Khrushchev</strong> (1956–1964)</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-medium"><strong>John F. Kennedy</strong> (1961–1963)</td>
+                                        <td class="p-3 border-l border-beige-300" rowspan="3"><strong>Leonid Brezhnev</strong> (1964–1972+)</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-medium"><strong>Lyndon B. Johnson</strong> (1963–1969)</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-medium"><strong>Richard Nixon</strong> (1969–1972+)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Capitalism vs Communism -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                            <span>Ideological Differences: Capitalism vs Communism</span>
+                        </h4>
+                        <p class="text-xs text-brown-700 leading-relaxed">
+                            At its core, the Cold War was an irreconcilable conflict between two rival philosophies. Communists believed equality required total state control of society and the economy, whereas Capitalists believed individual freedom and free markets drove prosperity.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <!-- Capitalism -->
+                            <div class="bg-blue-50/70 border border-blue-200 p-4 rounded-xl space-y-2">
+                                <div class="flex items-center justify-between pb-2 border-b border-blue-200">
+                                    <strong class="text-blue-950 font-bold text-sm flex items-center gap-1.5">
+                                        <i class="fa-solid fa-flag-usa text-blue-700"></i> Capitalism (USA &amp; West)
+                                    </strong>
+                                    <span class="px-2 py-0.5 rounded bg-blue-200 text-blue-900 font-semibold text-[10px]">Free Market</span>
+                                </div>
+                                <ul class="list-disc pl-4 space-y-1.5 text-blue-950">
+                                    <li><strong>Free Market Economy:</strong> Prices and production determined by private businesses and consumer supply and demand, not state quotas.</li>
+                                    <li><strong>Private Ownership:</strong> Individuals and private corporations own factories, farms, land, and resources for private profit.</li>
+                                    <li><strong>Free Allocation of Labour:</strong> Citizens choose their employment freely; companies hire without government direction.</li>
+                                    <li><strong>Multi-Party Democracy:</strong> Multiple competing political parties; government elected by citizens in regular free, secret-ballot elections.</li>
+                                    <li><strong>Living Standards:</strong> Higher average standard of living and technological consumer choice, but alongside marked wealth inequality.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Communism -->
+                            <div class="bg-rose-50/70 border border-rose-200 p-4 rounded-xl space-y-2">
+                                <div class="flex items-center justify-between pb-2 border-b border-rose-200">
+                                    <strong class="text-rose-950 font-bold text-sm flex items-center gap-1.5">
+                                        <i class="fa-solid fa-star text-rose-700"></i> Communism (USSR &amp; East)
+                                    </strong>
+                                    <span class="px-2 py-0.5 rounded bg-rose-200 text-rose-900 font-semibold text-[10px]">Command Economy</span>
+                                </div>
+                                <ul class="list-disc pl-4 space-y-1.5 text-rose-950">
+                                    <li><strong>Centrally Planned Economy:</strong> State economic ministries dictate all prices, industrial output targets, and resource distribution.</li>
+                                    <li><strong>State Ownership:</strong> Private businesses, land, banks, and factories abolished; property owned collectively by the state for workers.</li>
+                                    <li><strong>Government Allocation:</strong> The state assigns raw materials, capital, and labor quotas to specific regions and industrial sectors.</li>
+                                    <li><strong>One-Party State:</strong> Governed exclusively by the Communist Party (CP); no opposition permitted, media censored, and dissent suppressed.</li>
+                                    <li><strong>Living Standards:</strong> Lower average living standards and consumer shortages, but lower unemployment and guaranteed state healthcare.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Roots of Mistrust Before WW2 -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-accent-forest"></span>
+                            <span>Why Was There Deep Mistrust Between the USA &amp; USSR Before WW2?</span>
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">1. Ideological Opposition</strong>
+                                <p class="text-brown-800">Both superpowers believed the other's system was fundamentally hostile and sought world domination; Marx predicted the destruction of capitalism.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">2. World War One (1917)</strong>
+                                <p class="text-brown-800">Following the Bolshevik Revolution, Lenin signed the Treaty of Brest-Litovsk, abandoning Britain and France to face Imperial Germany alone.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">3. Russian Civil War (1918–21)</strong>
+                                <p class="text-brown-800">Britain, France, the USA, and Japan sent armed troops and weapons to back the anti-Bolshevik "Whites" to strangle communism in its cradle.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">4. The "Red Scare" in the West</strong>
+                                <p class="text-brown-800">Western media and political campaigns depicted communism as a deadly contagion that aimed to overturn democratic liberties and religious faith.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">5. Stalin’s Brutal Regime</strong>
+                                <p class="text-brown-800">The West viewed Stalin with horror due to the Great Terror, mass purges of army officers, show trials, forced collectivization, and Siberian Gulags.</p>
+                            </div>
+                            <div class="bg-beige-100 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">6. Nazi-Soviet Pact (1939)</strong>
+                                <p class="text-brown-800">Stalin’s non-aggression pact with Hitler and joint invasion of Poland was viewed in London and Washington as a cynical, unprincipled betrayal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 2: Wartime Conferences (Yalta & Potsdam) -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('summits')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center border-b border-accent-burgundy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-handshake text-beige-200"></i>
+                        <span>2. Wartime Conferences (1945): Yalta, Potsdam &amp; The Atomic Bomb</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 2</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <p class="text-xs text-brown-800 leading-relaxed">
+                        Towards the end of the Second World War, victory was looking likely for the Grand Alliance against Nazi Germany. The leaders of the US, USSR, and Britain sat down to discuss post-war plans at Yalta (February 1945) and finalized them once Germany was defeated at Potsdam (July–August 1945).
+                    </p>
+
+                    <!-- Yalta Section -->
+                    <div class="bg-beige-100/90 p-5 rounded-2xl border border-beige-300 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-beige-300 gap-2">
+                            <h4 class="font-bold text-brown-900 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-check text-accent-gold"></i>
+                                <span>Yalta Conference (4–11 February 1945 &bull; Crimea, USSR)</span>
+                            </h4>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-beige-200 text-brown-800 font-semibold border border-beige-300">Churchill, Roosevelt, Stalin</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-beige-50 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">The West's Aims (Roosevelt &amp; Churchill)</strong>
+                                <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                    <li>East-West wartime cooperation must continue into peacetime through the new <strong>United Nations (UN)</strong>.</li>
+                                    <li>Germany should be demilitarized and rebuilt as an independent, democratic country.</li>
+                                    <li>Liberated Eastern European nations must enjoy <strong>self-determination</strong> and free democratic elections.</li>
+                                    <li>Global economic stability guaranteed through the newly formed World Bank and International Monetary Fund (IMF).</li>
+                                </ul>
+                            </div>
+                            <div class="bg-beige-50 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">The USSR's Aims (Stalin)</strong>
+                                <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                    <li>Create a permanent pro-Soviet <strong>buffer zone ("sphere of influence")</strong> in Eastern Europe to prevent future invasions.</li>
+                                    <li>Keep Germany economically and militarily crippled so it could never attack Russia again.</li>
+                                    <li>Extract massive German industrial reparations ($20 billion, with 50% to the USSR) to rebuild the devastated Soviet economy.</li>
+                                    <li>Reject authority of Western capitalist institutions like World Bank/IMF while securing a veto in the UN Security Council.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Individual Leaders at Yalta -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Churchill (Britain):</strong>
+                                <p class="text-brown-800">Aware of Stalin’s expansionist aims and determined to protect British empire interests. Sought close partnership with USA; deeply mistrustful of Stalin as an ardent anti-communist.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Roosevelt (USA):</strong>
+                                <p class="text-brown-800">Committed to working with the USSR and got on well with Stalin personally. Believed that only a democratic, capitalist Europe could prevent a future war.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Stalin (USSR):</strong>
+                                <p class="text-brown-800">Determined that the catastrophic losses suffered by the USSR (27 million dead) could never be repeated. Viewed a buffer zone of friendly states as non-negotiable security.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 text-xs">
+                            <strong class="text-brown-900 block mb-1">Key Yalta Agreements:</strong>
+                            <p class="text-brown-800">Germany to be divided into 4 occupation zones (USA, USSR, Britain, France). Free democratic elections promised for liberated Eastern Europe (Declaration on Liberated Europe). Stalin agreed to join the United Nations with a Security Council veto, and agreed to enter the war against Japan 3 months after Germany’s surrender.</p>
+                        </div>
+                    </div>
+
+                    <!-- Potsdam Section -->
+                    <div class="bg-beige-100/90 p-5 rounded-2xl border border-beige-300 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-beige-300 gap-2">
+                            <h4 class="font-bold text-brown-900 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-xmark text-accent-ruby"></i>
+                                <span>Potsdam Conference (17 July – 2 August 1945 &bull; Germany)</span>
+                            </h4>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-beige-200 text-brown-800 font-semibold border border-beige-300">Attlee, Truman, Stalin</span>
+                        </div>
+
+                        <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 space-y-1">
+                            <strong class="block font-bold">Why Had Relations Deteriorated Since Yalta?</strong>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li><strong>Change of Leaders:</strong> Roosevelt died in April 1945; replaced by Harry Truman, an outspoken anti-communist determined to take a hard line. Churchill was replaced midway by Clement Attlee.</li>
+                                <li><strong>No Common Enemy:</strong> Nazi Germany surrendered in May 1945; the military alliance binding the superpowers vanished.</li>
+                                <li><strong>Red Army Occupation:</strong> The Soviet army occupied Eastern Europe, setting up communist puppet regimes in Poland, breaking Yalta promises.</li>
+                                <li><strong>The Atomic Secret:</strong> On 16 July 1945, the US successfully tested the first atomic bomb (Trinity test). Truman casually informed Stalin that America had a "new weapon of unusual destructive force", sparking intense Soviet suspicion.</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Attlee (Britain):</strong>
+                                <p class="text-brown-800">Focused on urgent domestic reconstruction (founding the Welfare State). Feared Soviet expansion, wanted a secure Germany, and recognized Britain needed American financial backing.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Truman (USA):</strong>
+                                <p class="text-brown-800">Demanded self-determination for Eastern Europe and refused heavy reparations that would destroy the German economy. Believed the atomic bomb gave the US complete diplomatic leverage.</p>
+                            </div>
+                            <div class="bg-beige-50 p-3 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Stalin (USSR):</strong>
+                                <p class="text-brown-800">Demanded massive reparations to rebuild Russia and felt entitled to a sphere of influence after taking Berlin. Deeply suspicious of US atomic monopoly.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                                <strong class="text-emerald-900 font-bold block text-sm border-b border-beige-200 pb-1">Agreements Reached:</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>Confirmation of Germany’s division into 4 occupation zones.</li>
+                                    <li>Demilitarization, de-Nazification, and war crime trials at Nuremberg.</li>
+                                    <li>Orderly transfer of ethnic Germans from Poland, Czechoslovakia, and Hungary back to Germany.</li>
+                                    <li>Each power to extract reparations primarily from its own occupation zone (USSR allowed 10% industrial equipment from Western zones).</li>
+                                </ul>
+                            </div>
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                                <strong class="text-rose-900 font-bold block text-sm border-b border-beige-200 pb-1">Persistent Disagreements:</strong>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li><strong>German Reparations:</strong> Stalin demanded crippling reparations; Truman refused, fearing economic collapse would mirror the Treaty of Versailles.</li>
+                                    <li><strong>Poland's Borders:</strong> Stalin shifted Poland's border west to the Oder-Neisse line without Western agreement.</li>
+                                    <li><strong>Self-Determination:</strong> Truman protested Stalin's refusal to hold free, democratic elections in Soviet-occupied Eastern Europe.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-950 space-y-1">
+                            <strong class="block font-bold">Impact of the Atomic Bomb (Hiroshima &amp; Nagasaki, August 1945):</strong>
+                            <p>
+                                Dropping atomic bombs on Hiroshima (6 Aug) and Nagasaki (9 Aug) ended the Pacific War without needing Soviet military intervention. While Truman intended it as a demonstration of American supremacy ("atomic diplomacy"), it terrified Stalin, confirmed his fear of US encirclement, and accelerated the Soviet crash program to build an atomic bomb (achieved in August 1949).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 3: Soviet Expansionism & Doctrines -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('expansion')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center border-b border-brown-700">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-chess-board text-beige-200"></i>
+                        <span>3. Soviet Expansionism (1945–1949) &amp; The Western Response (Doctrines)</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 3</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <!-- Satellite States Takeover -->
+                    <div>
+                        <h4 class="font-bold text-brown-900 mb-2 flex items-center space-x-2 text-xs uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-accent-burgundy"></span>
+                            <span>The Soviet Takeover of Eastern Europe (Salami Tactics 1945–1949)</span>
+                        </h4>
+                        <p class="text-xs text-brown-700 mb-3">
+                            The USSR wanted to expand its influence in Eastern Europe to form a protective buffer zone. Despite pledging self-determination at Yalta, Stalin used "salami tactics" (slicing away democratic opposition bit by bit) to install loyal communist puppet governments throughout Eastern Europe.
+                        </p>
+                        <div class="overflow-x-auto rounded-xl border border-beige-300">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-brown-900 text-beige-100 font-bold">
+                                        <th class="p-3 w-1/4">Country &amp; Year</th>
+                                        <th class="p-3 w-3/4 border-l border-brown-800">Method of Takeover &amp; Key Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Albania (1945)</td>
+                                        <td class="p-3 border-l border-beige-300">Local communist partisans led by Enver Hoxha seized complete power at the end of WW2 with virtually no opposition.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Bulgaria (1945)</td>
+                                        <td class="p-3 border-l border-beige-300">A left-wing "Fatherland Front" coalition won power in late 1945; the communists soon executed the leaders of all opposition parties and abolished the monarchy.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Poland (1947)</td>
+                                        <td class="p-3 border-l border-beige-300">A coalition government was formed in 1945, but the pro-Soviet Lublin Poles rigged the 1947 elections. Non-communist leaders (Stanisław Mikołajczyk) were forced to flee into exile.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Hungary (1947)</td>
+                                        <td class="p-3 border-l border-beige-300">Despite non-communists winning elections, Soviet occupation troops ensured Mátyás Rákosi took control of the police. He formed the brutal AVH secret police, imprisoned political rivals, and achieved one-party communist rule.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Romania (1945–1947)</td>
+                                        <td class="p-3 border-l border-beige-300">Soviet deputy foreign minister Vyshinsky forced King Michael to appoint a communist prime minister; elections were rigged in 1946 and the monarchy was abolished in 1947.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">Czechoslovakia (1948)</td>
+                                        <td class="p-3 border-l border-beige-300">The only genuine democracy in Eastern Europe. In February 1948, communists staged an armed coup; foreign minister Jan Masaryk "fell" to his death from a window, and all non-communist parties were banned.</td>
+                                    </tr>
+                                    <tr class="hover:bg-beige-100">
+                                        <td class="p-3 font-semibold text-brown-900">East Germany (GDR, 1949)</td>
+                                        <td class="p-3 border-l border-beige-300">Following the Berlin Blockade, the Soviets officially turned their occupation zone into the communist German Democratic Republic (GDR) in October 1949.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Western Diplomatic Warnings -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-accent-navy"></span>
+                            <span>Western Diplomatic Warnings: The Long Telegram &amp; Iron Curtain Speech</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-paper-plane text-accent-navy"></i> Kennan's Long Telegram (Feb 1946)
+                                </strong>
+                                <p class="text-brown-800">
+                                    An 8,000-word secret dispatch from US diplomat George Kennan in Moscow analyzing Soviet motives:
+                                </p>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>The USSR viewed capitalism as an existential rival and sought relentless expansion.</li>
+                                    <li>Soviet leadership was impervious to the logic of reason but highly sensitive to the logic of force.</li>
+                                    <li>Directly advised the US to adopt a policy of long-term, patient, but firm <strong>containment</strong>.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-microphone text-accent-burgundy"></i> Churchill's Iron Curtain Speech (March 1946)
+                                </strong>
+                                <p class="text-brown-800">
+                                    Delivered at Westminster College in Fulton, Missouri, with President Truman present:
+                                </p>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li><em>"From Stettin in the Baltic to Trieste in the Adriatic, an iron curtain has descended across the Continent."</em></li>
+                                    <li>Warned that Soviet power was placing ancient European capitals under absolute totalitarian control.</li>
+                                    <li>Stalin furiously denounced the speech as warmongering racism and a "call to arms".</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doctrines and Economic Warfare -->
+                    <div class="border-t border-beige-200 pt-5 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-accent-forest"></span>
+                            <span>The Policy of Containment vs The Soviet Counter-Measures</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <!-- Truman Doctrine -->
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <div class="flex items-center justify-between pb-1 border-b border-beige-200">
+                                    <strong class="text-brown-900 font-bold text-sm">Truman Doctrine (March 1947)</strong>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-blue-100 text-blue-900 font-semibold border border-blue-200">US Containment</span>
+                                </div>
+                                <p class="text-brown-800">
+                                    Prompted by Britain’s withdrawal of military funding to royalist forces fighting communist rebels in the <strong>Greek Civil War</strong> and Soviet pressure on <strong>Turkey</strong>.
+                                </p>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>Committed the USA to <em>"support free peoples who are resisting attempted subjugation by armed minorities or outside pressures."</em></li>
+                                    <li>Congress approved $400 million in emergency military and economic aid for Greece and Turkey.</li>
+                                    <li>Marked the official end of American peacetime isolationism and the beginning of active global containment.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Marshall Plan -->
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <div class="flex items-center justify-between pb-1 border-b border-beige-200">
+                                    <strong class="text-brown-900 font-bold text-sm">The Marshall Plan (June 1947)</strong>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-semibold border border-emerald-200">$13.15bn Aid</span>
+                                </div>
+                                <p class="text-brown-800">
+                                    Announced by US Secretary of State George Marshall; recognized that postwar economic poverty, bread queues, and ruined cities were the breeding ground of communism.
+                                </p>
+                                <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                    <li>Provided <strong>$13.15 billion</strong> in grants, machinery, and food to 16 Western European nations (UK got $3.2bn, France $2.7bn).</li>
+                                    <li>Stimulated the US domestic economy (aid had to be spent on US equipment).</li>
+                                    <li>Stalin condemned it as "dollar imperialism" (buying allies) and banned all Eastern Bloc countries (including Czechoslovakia) from accepting it.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Cominform -->
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <div class="flex items-center justify-between pb-1 border-b border-beige-200">
+                                    <strong class="text-brown-900 font-bold text-sm">Cominform (September 1947)</strong>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-rose-100 text-rose-900 font-semibold border border-rose-200">Ideological Control</span>
+                                </div>
+                                <p class="text-brown-800">
+                                    <strong>Communist Information Bureau:</strong> Established by Stalin in Warsaw to enforce strict ideological conformity across all communist parties in the Eastern Bloc. Expelled Tito’s Yugoslavia in 1948 when Tito accepted Western Marshall Aid.
+                                </p>
+                            </div>
+
+                            <!-- Comecon -->
+                            <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                                <div class="flex items-center justify-between pb-1 border-b border-beige-200">
+                                    <strong class="text-brown-900 font-bold text-sm">Comecon (January 1949)</strong>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-semibold border border-amber-200">Economic Integration</span>
+                                </div>
+                                <p class="text-brown-800">
+                                    <strong>Council for Mutual Economic Assistance:</strong> Stalin’s direct alternative to the Marshall Plan. It coordinated national economic plans, banned trade with the capitalist West, and directed member economies to provide heavy industry and grain to the USSR.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 4: Berlin Blockade & Airlift -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('berlin')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-forest text-white px-6 py-4 flex justify-between items-center border-b border-accent-forest/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-plane text-beige-200"></i>
+                        <span>4. The Berlin Blockade &amp; Airlift (June 1948 – May 1949)</span>
+                    </h3>
+                    <span class="bg-green-900/60 border border-green-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 4</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <!-- Causes -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Causes of the Blockade</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Western Integration:</strong> In 1947, the USA and Britain merged their zones into <em>Bizonia</em> (joined by France in 1948 to create <em>Trizonia</em>).</li>
+                                <li><strong>New Currency:</strong> In June 1948, the Western Allies introduced the stable <strong>Deutsche Mark</strong> to revive the German economy without consulting Stalin.</li>
+                                <li><strong>Soviet Vulnerability:</strong> West Berlin was an island of capitalist prosperity deep inside the Soviet zone (100 miles inside East Germany); Stalin feared it as a base for Western espionage.</li>
+                            </ul>
+                        </div>
+
+                        <!-- The Blockade -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">The Crisis (June 1948)</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li>From April 1948, a 'mini-blockade' included military supply route blockages and traffic restrictions.</li>
+                                <li>On <strong>24 June 1948</strong>, Stalin severed all road, rail, canal, and electrical links from West Germany to West Berlin.</li>
+                                <li>Stalin intended to starve West Berlin’s 2.5 million inhabitants of food, coal, and medical supplies until the Allies abandoned the city.</li>
+                                <li>Truman famously stated: <em>"We are going to stay. Period."</em> Driving an armored convoy through would risk World War 3.</li>
+                            </ul>
+                        </div>
+
+                        <!-- The Airlift -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">The Western Airlift &amp; Outcomes</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Operation Vittles:</strong> Starting 26 June 1948, US and British cargo planes flew down three narrow air corridors day and night.</li>
+                                <li>At its height, planes landed every 3 minutes, delivering 4,000 tonnes of cargo daily (the "Easter Parade" on 16 April 1949 delivered nearly 12,000 tonnes).</li>
+                                <li>On <strong>12 May 1949</strong>, humiliated, Stalin lifted the blockade after 318 days.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Consequences Callout -->
+                    <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 text-xs space-y-1.5">
+                        <strong class="text-brown-900 block font-semibold text-sm">Direct Consequences of the Blockade:</strong>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-brown-800">
+                            <div class="p-2.5 bg-beige-50 rounded-lg border border-beige-200">
+                                <strong>1. Two Separate German States:</strong> In May 1949, the Western zones formed the <strong>Federal Republic of Germany (FRG / West Germany)</strong>. In October 1949, the Soviet zone became the <strong>German Democratic Republic (GDR / East Germany)</strong>.
+                            </div>
+                            <div class="p-2.5 bg-beige-50 rounded-lg border border-beige-200">
+                                <strong>2. Creation of NATO:</strong> Proved Western Europe was vulnerable to Soviet aggression, directly precipitating the creation of the <strong>NATO</strong> military defense pact in April 1949.
+                            </div>
+                            <div class="p-2.5 bg-beige-50 rounded-lg border border-beige-200">
+                                <strong>3. Propaganda Victory:</strong> A colossal public relations victory for the USA; cast America as heroic protectors of freedom dropping sweets ("Candy Bomber" Gail Halvorsen) against brutal Soviet tyranny.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 5: Alliance Systems (NATO vs Warsaw) -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('alliances')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-800 text-white px-6 py-4 flex justify-between items-center border-b border-brown-700">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-id-card text-beige-200"></i>
+                        <span>5. Military Alliances: NATO (1949) vs The Warsaw Pact (1955)</span>
+                    </h3>
+                    <span class="bg-brown-900 border border-brown-600 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 5</span>
+                </div>
+
+                <div class="p-6 space-y-4 text-sm">
+                    <div class="overflow-x-auto rounded-xl border border-beige-300">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-brown-900 text-beige-100 font-bold">
+                                    <th class="p-3 w-1/5">Feature</th>
+                                    <th class="p-3 w-2/5 border-l border-brown-800">NATO (North Atlantic Treaty Organization)</th>
+                                    <th class="p-3 w-2/5 border-l border-brown-800">The Warsaw Pact</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-beige-300 bg-beige-100/50 text-brown-800">
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-bold text-brown-900">Formed &amp; Catalyst</td>
+                                    <td class="p-3 border-l border-beige-300"><strong>April 1949</strong> in Washington. Created directly in response to the Berlin Blockade and Soviet takeover of Czechoslovakia.</td>
+                                    <td class="p-3 border-l border-beige-300"><strong>May 1955</strong> in Warsaw. Created in response to <strong>West Germany joining NATO</strong> and rearming, which terrified Moscow.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-bold text-brown-900">Membership</td>
+                                    <td class="p-3 border-l border-beige-300">12 original members: USA, Britain, France, Canada, Italy, Norway, Denmark, Belgium, Netherlands, Luxembourg, Portugal, Iceland. (Greece &amp; Turkey joined 1952; West Germany joined 1955).</td>
+                                    <td class="p-3 border-l border-beige-300">8 communist states: USSR, Poland, East Germany, Czechoslovakia, Hungary, Romania, Bulgaria, Albania (withdrew 1968).</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-bold text-brown-900">Core Purpose</td>
+                                    <td class="p-3 border-l border-beige-300"><strong>Article 5 (Collective Defense):</strong> An armed attack against one member state in Europe or North America shall be considered an attack against them all.</td>
+                                    <td class="p-3 border-l border-beige-300">Mutual defense treaty and counter-balance to NATO, but primarily used by the USSR to preserve military and political control behind the Iron Curtain.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-bold text-brown-900">Military Capabilities</td>
+                                    <td class="p-3 border-l border-beige-300">Approx. 50 divisions (25 active) supported by superior Western air power, advanced naval fleets, and the US nuclear umbrella.</td>
+                                    <td class="p-3 border-l border-beige-300">Vastly superior conventional ground force: over 5.5 million troops, 175 divisions, 35,000 tanks, and massive artillery stationed across Central Europe.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-bold text-brown-900">Nuclear Weapons</td>
+                                    <td class="p-3 border-l border-beige-300">Held by USA, Britain (from 1952), France (from 1960).</td>
+                                    <td class="p-3 border-l border-beige-300">Held by the USSR.</td>
+                                </tr>
+                                <tr class="hover:bg-beige-100">
+                                    <td class="p-3 font-bold text-brown-900">Command &amp; Leadership</td>
+                                    <td class="p-3 border-l border-beige-300">Officially a voluntary alliance with joint decision-making, though the Supreme Allied Commander Europe (SACEUR) was always an American general.</td>
+                                    <td class="p-3 border-l border-beige-300">Total Soviet dominance; all military forces were commanded directly by a Soviet marshal in Moscow, and non-Soviet members had no real independence.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 6: Cold War in Asia (China, Korea, Vietnam) -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('asia')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-navy text-white px-6 py-4 flex justify-between items-center border-b border-accent-navy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-earth-asia text-beige-200"></i>
+                        <span>6. The Cold War in Asia: Communist China, The Korean War &amp; Early Vietnam</span>
+                    </h3>
+                    <span class="bg-blue-900/60 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 6</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <!-- Chinese Revolution -->
+                    <div class="bg-beige-100/80 p-5 rounded-2xl border border-beige-300 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-flag text-rose-700"></i>
+                            <span>The Communist Revolution in China (October 1949)</span>
+                        </h4>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Following the Chinese Civil War, Mao Zedong defeated Chiang Kai-shek's US-backed Nationalists and declared the <strong>People’s Republic of China (PRC)</strong> on 1 October 1949.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">Sino-Soviet Treaty of Friendship (Feb 1950):</strong>
+                                <p class="text-brown-800">
+                                    Stalin and Mao signed a 30-year treaty: USSR granted $300m in aid (95% repayable, spent on Soviet goods), sent 20,000 Soviet technicians, and accepted 8,000 Chinese students. However, Stalin retained lucrative mining rights in Xinjiang and deep-water ports.
+                                </p>
+                            </div>
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1">
+                                <strong class="text-brown-900 block font-semibold">American Reaction &amp; NSC-68:</strong>
+                                <p class="text-brown-800">
+                                    Shocked US politicians viewed the "Fall of China" as a catastrophe and a failure of containment. The US refused to recognize the PRC at the UN (giving China's seat to Taiwan). In 1950, <strong>NSC-68</strong> recommended quadrupling US defense spending to combat global communist expansion.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- The Korean War -->
+                    <div class="bg-beige-100/80 p-5 rounded-2xl border border-beige-300 space-y-3">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-accent-navy"></i>
+                            <span>The Korean War (1950–1953): The First Superpower Proxy War</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                                <strong class="text-brown-900 block font-bold text-sm">1. Origins &amp; Outbreak</strong>
+                                <p class="text-brown-800">
+                                    At Potsdam, Korea was divided along the <strong>38th Parallel</strong>: North Korea under communist <strong>Kim Il Sung</strong>; South Korea under authoritarian capitalist <strong>Syngman Rhee</strong>.
+                                </p>
+                                <p class="text-brown-800">
+                                    With Soviet tanks and artillery supplied by Stalin, Kim invaded South Korea on <strong>25 June 1950</strong>, capturing Seoul within three days and cornering US/South Korean forces at the Pusan Perimeter.
+                                </p>
+                            </div>
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                                <strong class="text-brown-900 block font-bold text-sm">2. UN Intervention &amp; Escalation</strong>
+                                <p class="text-brown-800">
+                                    The US sponsored a UN Security Council resolution authorizing military defense. The USSR was boycotting the UN over its refusal to seat Communist China, so it could not cast its veto!
+                                </p>
+                                <p class="text-brown-800">
+                                    US General <strong>Douglas MacArthur</strong> launched an amphibious landing at Incheon (Sept 1950), liberating Seoul and advancing north to the Yalu River. Alarmed, Mao sent 300,000 Chinese "volunteers", pushing UN troops back in freezing winter.
+                                </p>
+                            </div>
+                            <div class="bg-beige-50 p-3.5 rounded-xl border border-beige-300 space-y-1.5">
+                                <strong class="text-brown-900 block font-bold text-sm">3. MacArthur Sacking &amp; Armistice</strong>
+                                <p class="text-brown-800">
+                                    MacArthur demanded permission to bomb China and use atomic weapons. Fearing World War 3, Truman fired MacArthur in April 1951 for insubordination.
+                                </p>
+                                <p class="text-brown-800">
+                                    The war ground into a bloody trench stalemate. Following Stalin's death, an armistice was signed in <strong>July 1953</strong>, establishing the Demilitarized Zone (DMZ) along the 38th Parallel.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Early Vietnam -->
+                    <div class="bg-beige-100/80 p-5 rounded-2xl border border-beige-300 space-y-2">
+                        <h4 class="font-bold text-brown-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-tree text-accent-forest"></i>
+                            <span>Early Involvement in Vietnam (1954–1963)</span>
+                        </h4>
+                        <p class="text-xs text-brown-800 leading-relaxed">
+                            Following France's defeat at <strong>Dien Bien Phu (1954)</strong>, Vietnam was temporarily divided at the 17th Parallel. President Eisenhower refused to sign the Geneva Accords, formulating the <strong>Domino Theory</strong> (if Vietnam fell to communism, Laos, Cambodia, Thailand, and Burma would follow like falling dominoes). The US backed the Catholic dictator Ngo Dinh Diem in the South. In 1960, the communist <strong>Vietcong</strong> formed to liberate the South. Under JFK, US "military advisers" swelled to 16,000 before both Diem and JFK were assassinated in late 1963, setting the stage for massive escalation under LBJ.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 7: Arms Race, Space Race & 1960s Crises -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('arms-space')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-900 text-white px-6 py-4 flex justify-between items-center border-b border-brown-800">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-rocket text-beige-200"></i>
+                        <span>7. The Arms Race, Space Race, U-2 Spy Crisis &amp; The Berlin Wall (1961)</span>
+                    </h3>
+                    <span class="bg-brown-800 border border-brown-700 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 7</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Arms Race -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-bomb text-accent-ruby"></i> Nuclear Arms Race &amp; Concepts
+                            </strong>
+                            <p class="text-brown-800">
+                                <strong>Nuclear Timeline:</strong> 1945 US A-bomb &rarr; 1949 USSR A-bomb &rarr; 1952 US H-bomb &rarr; 1953 USSR H-bomb &rarr; 1957 ICBMs (Inter-Continental Ballistic Missiles).
+                            </p>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>MAD (Mutually Assured Destruction):</strong> Realization that any nuclear strike would trigger instantaneous retaliation, obliterating both civilizations. Nuclear weapons became deterrents.</li>
+                                <li><strong>Brinkmanship:</strong> Policy associated with US Secretary of State John Foster Dulles: pushing an adversary to the brink of nuclear war to force them to back down.</li>
+                                <li><strong>Domestic Impact:</strong> US civil defense "duck and cover" drills in schools, private backyard bomb shelters, anti-communist loyalty purges under Senator Joe McCarthy, and the British CND (Campaign for Nuclear Disarmament) protest marches.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Space Race -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-satellite text-accent-navy"></i> The Space Race (1957–1975)
+                            </strong>
+                            <p class="text-brown-800">
+                                The Space Race demonstrated superior scientific capability and ICBM missile propulsion technology.
+                            </p>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>Soviet Early Triumphs:</strong> <em>Sputnik</em> (Oct 1957 - first satellite), <em>Laika</em> (Nov 1957 - first animal in space), and <strong>Yuri Gagarin</strong> (April 1961 - first human in orbit).</li>
+                                <li><strong>American Response:</strong> JFK pledged to put a man on the moon before the decade was out; <strong>Neil Armstrong</strong> walked on the moon in July 1969.</li>
+                                <li><strong>Symbol of Détente:</strong> Culminated in the joint Apollo-Soyuz docking mission in July 1975.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- U-2 Incident & Berlin Wall -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs border-t border-beige-200 pt-5">
+                        <!-- U-2 Incident -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-plane-slash text-accent-burgundy"></i> The U-2 Spy Plane Incident (May 1960)
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li>On 1 May 1960, an American U-2 spy plane piloted by <strong>Gary Powers</strong> was shot down by a surface-to-air missile over Soviet territory.</li>
+                                <li>The US falsely claimed it was a stray weather plane; Khrushchev triumphantly produced Powers alive alongside photographs of Soviet military bases.</li>
+                                <li>Eisenhower refused to apologize; Khrushchev stormed out of the <strong>Paris Peace Summit</strong>, shattering early attempts at "peaceful coexistence".</li>
+                            </ul>
+                        </div>
+
+                        <!-- Berlin Wall -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-border-all text-accent-forest"></i> The Berlin Wall Crisis (August 1961)
+                            </strong>
+                            <ul class="list-disc pl-4 space-y-1 text-brown-800">
+                                <li><strong>The Brain Drain:</strong> Between 1949 and 1961, over 2.7 million skilled East Germans (doctors, engineers, teachers) fled to West Berlin, severely crippling the GDR economy.</li>
+                                <li>On the night of <strong>12–13 August 1961</strong>, East German soldiers erected barbed wire across Berlin, quickly replaced by a concrete wall with watchtowers and minefields.</li>
+                                <li>Led to the tense <strong>Checkpoint Charlie</strong> US-Soviet tank standoff in October 1961.</li>
+                                <li>JFK visited in June 1963, delivering his famous <em>"Ich bin ein Berliner"</em> speech, declaring that while a wall was hell, it was <em>"a hell of a lot better than a war."</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 8: Eastern European Uprisings -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('uprisings')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-burgundy text-white px-6 py-4 flex justify-between items-center border-b border-accent-burgundy/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-person-military-pointing text-beige-200"></i>
+                        <span>8. Challenges to Soviet Control: The Hungarian Uprising (1956) &amp; The Prague Spring (1968)</span>
+                    </h3>
+                    <span class="bg-red-900/60 border border-red-400/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 8</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Hungarian Uprising -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-3">
+                            <div class="pb-2 border-b border-beige-200">
+                                <strong class="text-brown-900 font-bold block text-sm">The Hungarian Uprising (Oct–Nov 1956)</strong>
+                                <span class="text-[10px] text-brown-600 font-medium">Revolt against Stalinism &bull; Khrushchev's Crackdown</span>
+                            </div>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Causes:</strong> Hatred of the brutal Stalinist dictator Mátyás Rákosi, food shortages, AVH secret police terror, and inspiration from Khrushchev’s "Secret Speech" denouncing Stalin.</li>
+                                <li><strong>Reforms:</strong> Riots in Budapest forced moderate communist <strong>Imre Nagy</strong> into power. Nagy abolished AVH terror, released political prisoners (Cardinal Mindszenty), and promised free elections.</li>
+                                <li><strong>The Fatal Mistake:</strong> On 1 November 1956, Nagy announced that Hungary would <strong>withdraw from the Warsaw Pact</strong> and become neutral.</li>
+                                <li><strong>Soviet Invasion:</strong> On <strong>4 November 1956</strong>, Khrushchev sent 1,000 tanks and 200,000 troops into Budapest. 3,000 Hungarians died fighting; 200,000 fled to Austria. Nagy was arrested, executed, and replaced by the loyal puppet <strong>János Kádár</strong>.</li>
+                                <li><strong>Significance:</strong> Proved the West (distracted by the Suez Crisis) would not intervene militarily behind the Iron Curtain to assist captive nations.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Prague Spring -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-3">
+                            <div class="pb-2 border-b border-beige-200">
+                                <strong class="text-brown-900 font-bold block text-sm">The Prague Spring, Czechoslovakia (1968)</strong>
+                                <span class="text-[10px] text-brown-600 font-medium">Dubček's Liberal Reforms &bull; The Brezhnev Doctrine</span>
+                            </div>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Causes:</strong> Economic stagnation, censorship, and widespread resentment of the hardline Stalinist Antonín Novotný.</li>
+                                <li><strong>"Socialism with a Human Face":</strong> In January 1968, new reformist leader <strong>Alexander Dubček</strong> launched the Action Programme: abolition of press censorship, legalization of political clubs, freedom of speech and travel, and trade with West Germany. Dubček insisted Czechoslovakia would remain in the Warsaw Pact.</li>
+                                <li><strong>Soviet Invasion:</strong> Soviet leader Leonid Brezhnev feared democratic ideas would infect other satellite states. On <strong>20–21 August 1968</strong>, 500,000 Warsaw Pact troops invaded. Czechs offered peaceful resistance (standing in front of tanks). Dubček was arrested, flown to Moscow, and replaced by hardliner Gustáv Husák.</li>
+                                <li><strong>The Brezhnev Doctrine (Nov 1968):</strong> Decreed that any threat to socialism in one communist country was a threat to all socialist countries, justifying military invasion by the USSR to preserve one-party rule.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 9: The Cuban Missile Crisis (1962) -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('cuba')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-accent-ruby text-white px-6 py-4 flex justify-between items-center border-b border-accent-ruby/80">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-radiation text-beige-200"></i>
+                        <span>9. The Cuban Missile Crisis (October 1962): The Edge of Nuclear War</span>
+                    </h3>
+                    <span class="bg-rose-950 border border-rose-500/30 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 9</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <!-- Origins -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">1. Origins &amp; Motives</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Cuban Revolution (1959):</strong> Fidel Castro overthrew pro-American dictator Fulgencio Batista, nationalizing US oil refineries and sugar plantations.</li>
+                                <li><strong>Bay of Pigs (April 1961):</strong> CIA-trained Cuban exiles invaded Cuba; JFK withheld air support, resulting in complete disaster and pushing Castro into an economic and military alliance with Khrushchev.</li>
+                                <li><strong>Khrushchev’s Motives:</strong> Protect Cuba from another US invasion, close the US missile gap, and counter US nuclear <strong>Jupiter missiles in Turkey</strong>.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Thirteen Days -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">2. The "Thirteen Days" (Oct 1962)</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>14 Oct:</strong> A US U-2 spy plane photographed Soviet nuclear missile launch pads under construction in Cuba (capable of striking all US major cities within 20 minutes).</li>
+                                <li><strong>22 Oct:</strong> Rejecting air strikes, JFK announced a naval <strong>"quarantine" (blockade)</strong> around Cuba and placed the military on DEFCON 3 (later DEFCON 2, one step from nuclear war).</li>
+                                <li><strong>24 Oct:</strong> Soviet ships carrying missile equipment reached the blockade line and turned back.</li>
+                                <li><strong>27 Oct ("Black Saturday"):</strong> A US U-2 plane was shot down over Cuba, and Soviet submarine B-59 came within minutes of firing a nuclear torpedo (prevented by officer Vasily Arkhipov).</li>
+                            </ul>
+                        </div>
+
+                        <!-- Resolution & Impact -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">3. Resolution &amp; Consequences</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>The Deal:</strong> Khrushchev agreed to dismantle and withdraw all missiles from Cuba. In return, JFK publicly promised not to invade Cuba, and secretly agreed to withdraw US Jupiter missiles from Turkey.</li>
+                                <li><strong>Direct Hotline (1963):</strong> A teletype link between the White House and Kremlin was established to prevent accidental war.</li>
+                                <li><strong>Test Ban Treaty (1963):</strong> Partial Nuclear Test Ban Treaty banned underwater, atmospheric, and outer-space testing.</li>
+                                <li><strong>Fall of Khrushchev:</strong> Soviet hardliners viewed the withdrawal as a humiliating surrender; Khrushchev was ousted in 1964.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- TOPIC 10: Détente & SALT 1 (1968–1972) -->
+            <!-- ========================================== -->
+            <article x-show="isTopicVisible('detente')" class="summary-card bg-beige-50 rounded-2xl border border-beige-300 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-brown-900 text-white px-6 py-4 flex justify-between items-center border-b border-brown-800">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center space-x-2 tracking-tight">
+                        <i class="fa-solid fa-handshake-angle text-beige-200"></i>
+                        <span>10. The Thaw &amp; Détente: Nixon, China, and the SALT 1 Treaty (1968–1972)</span>
+                    </h3>
+                    <span class="bg-accent-gold/40 border border-accent-gold/50 text-xs px-2.5 py-1 rounded-full text-beige-100 font-semibold">Topic 10</span>
+                </div>
+
+                <div class="p-6 space-y-6 text-sm">
+                    <div class="bg-beige-100/90 p-4 rounded-xl border border-beige-300 text-xs text-brown-800 leading-relaxed">
+                        <strong class="text-brown-900 font-bold block mb-1">Definition of Détente:</strong>
+                        A French term meaning the "easing of hostility or strained relations", referring to the period between the late 1960s and 1979 where the USA and USSR pursued diplomatic negotiation, trade, and arms control rather than confrontation.
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Why did Détente happen? -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Key Factors Driving Détente:</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Nuclear Fear:</strong> The Cuban Missile Crisis demonstrated that brinkmanship brought the world to the brink of MAD.</li>
+                                <li><strong>Economic Exhaustion in USSR:</strong> The Soviet Union was spending 20% of its GDP on the military, causing severe living standard drops and industrial stagnation. Brezhnev needed Western grain and technology imports.</li>
+                                <li><strong>US Vietnam Fatigue:</strong> The Vietnam War cost the US over $168 billion, 58,000 casualties, and caused massive domestic civil protests. Nixon wanted "Peace with Honour" and reduced defense burdens.</li>
+                                <li><strong>Sino-Soviet Split:</strong> Armed border clashes erupted along the Ussuri River between China and the USSR in 1969. Nixon and Henry Kissinger cleverly exploited this rift by practicing "triangular diplomacy".</li>
+                            </ul>
+                        </div>
+
+                        <!-- Nixon China Visit & SALT 1 -->
+                        <div class="bg-beige-100 p-4 rounded-xl border border-beige-300 space-y-2">
+                            <strong class="text-brown-900 font-bold block text-sm border-b border-beige-200 pb-1">Key Breakthroughs (1971–1972):</strong>
+                            <ul class="list-disc pl-4 space-y-1.5 text-brown-800">
+                                <li><strong>Nixon Visits China (February 1972):</strong> Nixon shocked the world by traveling to Beijing to meet Mao Zedong. Terrified of a US-Chinese anti-Soviet alliance, Brezhnev immediately invited Nixon to Moscow.</li>
+                                <li><strong>SALT 1 Treaty (May 1972):</strong> Strategic Arms Limitation Treaty signed by Nixon and Brezhnev in Moscow:
+                                    <ul class="list-circle pl-4 space-y-1 pt-1 text-brown-800">
+                                        <li><strong>ABM Treaty:</strong> Anti-Ballistic Missile systems restricted to only 2 sites with 100 interceptor missiles each (ensuring MAD remained a valid deterrent).</li>
+                                        <li><strong>Interim Agreement:</strong> Placed 5-year caps on ICBMs (USA 1,054; USSR 1,618) and SLBM submarine launchers.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>The Basic Treaty (1972):</strong> West and East Germany formally recognized each other as sovereign independent states, paving the way for UN entry in 1973.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Empty Search State -->
+        <div x-show="visibleTopicsCount === 0" x-cloak class="text-center py-16 px-4 bg-beige-50 rounded-2xl border border-beige-300 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-beige-200 mx-auto flex items-center justify-center text-brown-700 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-brown-900 mb-1">No Cold War revision topics match your search</h3>
+            <p class="text-xs sm:text-sm text-brown-700 max-w-sm mx-auto mb-4">
+                We couldn't find any content matching "<span class="font-semibold text-brown-900" x-text="searchQuery"></span>".
+            </p>
+            <div class="flex justify-center gap-2">
+                <button 
+                    @click="resetFilters()" 
+                    class="px-4 py-2 bg-brown-700 hover:bg-brown-800 text-beige-50 text-xs font-semibold rounded-xl shadow transition"
+                >
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brown-900 text-beige-300 text-center py-5 text-xs border-t border-brown-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>Conflict &amp; Tension Revision Hub &bull; The Cold War (1945–1972) Comprehensive Summary &bull; Built for GCSE Exam Success 📚</p>
+            <div class="flex items-center gap-4">
+                <a href="conflict-timeline.html" class="text-beige-200 hover:text-white underline">Timeline</a>
+                <a href="conflict-keywords.html" class="text-beige-200 hover:text-white underline">Keywords</a>
+                <a href="health-revision-hub.html" class="text-beige-200 hover:text-white underline">Health Hub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function conflictApp() {
+            return {
+                selectedTopicFilter: 'all',
+                searchQuery: '',
+
+                // Metadata for search indexing
+                topicKeywords: {
+                    'leaders': 'roosevelt truman eisenhower kennedy johnson nixon stalin khrushchev brezhnev capitalism communism ideology mistrust red scare civil war nazi-soviet pact command economy free market',
+                    'summits': 'yalta potsdam conference 1945 churchill fdr truman attlee stalin atomic bomb hiroshima nagasaki declaration on liberated europe united nations reparations buffer zone',
+                    'expansion': 'satellite states eastern europe poland hungary bulgaria romania czechoslovakia gdr albania salami tactics rakosi avh long telegram kennan iron curtain churchill truman doctrine containment marshall plan 13 billion cominform comecon dollar imperialism',
+                    'berlin': 'berlin blockade airlift 1948 1949 bizonia trizonia deutsche mark operation vittles candy bomber easter parade stalin frg gdr west east germany',
+                    'alliances': 'nato north atlantic treaty organization warsaw pact 1949 1955 collective defense article 5 west germany rearming divisions saceur',
+                    'asia': 'china 1949 mao zedong chiang kai-shek nsc-68 sino-soviet treaty korea korean war 38th parallel kim il sung syngman rhee macarthur incheon yalu river dien bien phu domino theory diem vietcong 17th parallel',
+                    'arms-space': 'arms race space race hydrogen h-bomb icbm mad mutually assured destruction brinkmanship sputnik laika gagarin armstrong moon u-2 spy plane gary powers paris peace summit berlin wall 1961 checkpoint charlie ich bin ein berliner brain drain',
+                    'uprisings': 'hungarian uprising 1956 hungary nagy rakosi kadar budapest warsaw pact neutrality prague spring czechoslovakia 1968 dubcek socialism with a human face action programme brezhnev doctrine',
+                    'cuba': 'cuba cuban missile crisis 1962 castro batista bay of pigs 13 thirteen days defcon quarantine naval blockade u-2 arkhipov jupiter turkey hotline test ban treaty',
+                    'detente': 'detente thaw salt 1 1972 nixon china visit mao brezhnev abm treaty anti-ballistic missile basic treaty triangular diplomacy ussuri river'
+                },
+
+                isTopicVisible(topicId) {
+                    // Check filter button
+                    if (this.selectedTopicFilter !== 'all' && this.selectedTopicFilter !== topicId) {
+                        return false;
+                    }
+
+                    // Check search query
+                    if (this.searchQuery && this.searchQuery.trim() !== '') {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        const keywords = this.topicKeywords[topicId] || '';
+                        return keywords.includes(q) || topicId.includes(q);
+                    }
+
+                    return true;
+                },
+
+                get visibleTopicsCount() {
+                    const allKeys = Object.keys(this.topicKeywords);
+                    return allKeys.filter(key => this.isTopicVisible(key)).length;
+                },
+
+                resetFilters() {
+                    this.selectedTopicFilter = 'all';
+                    this.searchQuery = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
