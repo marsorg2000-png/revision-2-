@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -28,7 +28,7 @@
     <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <a href="index.html" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20 hover:scale-105 transition-transform">
+                <a href="index.html" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20 hover:scale-105 transition-transform" aria-label="Home">
                     <i class="fa-solid fa-arrow-left text-slate-950 font-bold text-lg"></i>
                 </a>
                 <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
@@ -224,9 +224,10 @@
                     </div>
                 </div>
                 <div>
-                    <a href="#exam-guides" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all shadow-lg shadow-amber-500/20 inline-flex items-center gap-2">
+                    <!-- Updated Exam Guidance button pointing to external exam guidance webpage -->
+                    <a href="germany-exam-guidance.html" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all shadow-lg shadow-amber-500/20 inline-flex items-center gap-2 group">
                         <span>View Exam Guides</span>
-                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                        <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                     </a>
                 </div>
             </div>
