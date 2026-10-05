@@ -27,7 +27,8 @@
                         accent: {
                             navy: '#1b365d',
                             burgundy: '#581825',
-                            forest: '#1e3f20',
+                            forest: '#14532d',
+                            teal: '#0f766e',
                             amber: '#b45309',
                             crimson: '#881337',
                         }
@@ -36,19 +37,21 @@
             }
         }
     </script>
-    <!-- Alpine.js for lightweight reactivity -->
+    <!-- Alpine.js for reactive state management -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+        }
         [x-cloak] { display: none !important; }
         
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
         }
         ::-webkit-scrollbar-track {
             background: #ede3d0;
@@ -76,19 +79,19 @@
     <header class="bg-brown-900 text-beige-100 shadow-md sticky top-0 z-50 border-b border-brown-800 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <div class="bg-brown-800 p-2.5 rounded-xl shadow-inner border border-brown-700 flex items-center justify-center">
-                    <i class="fa-solid fa-list-check text-beige-200 text-xl"></i>
+                <div class="bg-brown-800 p-2.5 rounded-2xl shadow-inner border border-brown-700 flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap text-beige-200 text-xl"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-beige-50">GCSE History PLC Auditor</h1>
-                        <span class="bg-accent-amber text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">RAG Diagnostic</span>
+                        <span class="bg-accent-amber text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">AQA 8145</span>
                     </div>
-                    <p class="text-xs text-beige-300">Personalised Learning Checklists • Conflict & Tension (1945–1972) &amp; Germany (1890–1945)</p>
+                    <p class="text-xs text-beige-300">Personalised Learning Checklists • Germany • Health and the People • Conflict &amp; Tension</p>
                 </div>
             </div>
 
-            <!-- View Switcher -->
+            <!-- View Switcher & Action Buttons -->
             <div class="flex flex-wrap items-center gap-2">
                 <button 
                     @click="activeView = 'checklist'"
@@ -102,9 +105,9 @@
                     :class="activeView === 'plan' ? 'bg-accent-forest text-white shadow font-bold' : 'bg-brown-800 text-beige-300 hover:text-white'"
                     class="px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 border border-brown-700 relative">
                     <i class="fa-solid fa-clipboard-list"></i>
-                    <span>Your Revision Plan</span>
+                    <span>Revision Plan</span>
                     <span 
-                        class="px-1.5 py-0.2 rounded-full text-[10px] font-bold"
+                        class="px-1.5 py-0.5 rounded-full text-[10px] font-bold"
                         :class="redCount > 0 ? 'bg-red-600 text-white' : 'bg-brown-700 text-beige-300'"
                         x-text="redCount + amberCount">
                     </span>
@@ -119,7 +122,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
         <!-- Critical Data Persistence Notice Banner -->
@@ -130,10 +133,10 @@
                 </div>
                 <div class="space-y-0.5">
                     <h3 class="font-extrabold text-sm text-brown-900 flex items-center gap-1.5">
-                        <span>Important Notice: Answers Are Not Saved Automatically on this Site!</span>
+                        <span>Notice: Progress Is Kept In Active Session</span>
                     </h3>
                     <p class="text-xs text-brown-800 leading-relaxed">
-                        This site <strong>does not remember your answers</strong> if you refresh or close this tab. Once you complete your RAG self-assessment, click <strong>"Save as Document"</strong> or <strong>"Print Revision Plan"</strong> below to download or print your customized list of what to revise.
+                        Assess your confidence for each topic using <strong>Red</strong>, <strong>Amber</strong>, or <strong>Green</strong>. Filter by <strong>Germany</strong>, <strong>Health</strong>, or <strong>Conflict</strong>, then click <strong>"Save Document"</strong> or <strong>"Revision Plan"</strong> to export your targeted study plan before leaving this page.
                     </p>
                 </div>
             </div>
@@ -142,7 +145,7 @@
                     @click="exportRevisionDocument()"
                     class="bg-amber-700 hover:bg-amber-800 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
                     <i class="fa-solid fa-floppy-disk"></i>
-                    <span>Export / Save Now</span>
+                    <span>Export / Save Plan</span>
                 </button>
             </div>
         </div>
@@ -154,11 +157,13 @@
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs no-print">
                 <div class="bg-beige-50 p-3.5 rounded-2xl border border-beige-300 shadow-sm flex items-center justify-between">
                     <div>
-                        <span class="text-brown-600 block">Total Topics</span>
-                        <span class="text-xl font-black text-brown-900" x-text="plcItems.length"></span>
+                        <span class="text-brown-600 block font-medium">Active Scope</span>
+                        <span class="text-xl font-black text-brown-900" x-text="filteredItems.length"></span>
+                        <span class="text-[10px] text-brown-600 block" x-text="`of ${plcItems.length} total topics`"></span>
                     </div>
                     <div class="text-right text-[11px] font-semibold text-brown-600">
-                        <span x-text="ratedCount"></span> Completed (<span x-text="Math.round((ratedCount / plcItems.length) * 100) + '%'"></span>)
+                        <span x-text="ratedCountInFilter"></span> Rated
+                        <div class="text-[10px] font-bold text-brown-800" x-text="filteredItems.length ? Math.round((ratedCountInFilter / filteredItems.length) * 100) + '%' : '0%'"></div>
                     </div>
                 </div>
 
@@ -166,9 +171,9 @@
                 <div class="bg-red-50 p-3.5 rounded-2xl border border-red-200 shadow-sm flex items-center justify-between">
                     <div>
                         <span class="text-red-800 font-semibold block">RED (Urgent Need)</span>
-                        <span class="text-xl font-black text-red-900" x-text="redCount"></span>
+                        <span class="text-xl font-black text-red-900" x-text="redCountInFilter"></span>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-xs">
+                    <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                         R
                     </div>
                 </div>
@@ -177,9 +182,9 @@
                 <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-200 shadow-sm flex items-center justify-between">
                     <div>
                         <span class="text-amber-800 font-semibold block">AMBER (Consolidate)</span>
-                        <span class="text-xl font-black text-amber-900" x-text="amberCount"></span>
+                        <span class="text-xl font-black text-amber-900" x-text="amberCountInFilter"></span>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs">
+                    <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                         A
                     </div>
                 </div>
@@ -188,70 +193,139 @@
                 <div class="bg-green-50 p-3.5 rounded-2xl border border-green-200 shadow-sm flex items-center justify-between">
                     <div>
                         <span class="text-green-800 font-semibold block">GREEN (Secure)</span>
-                        <span class="text-xl font-black text-green-900" x-text="greenCount"></span>
+                        <span class="text-xl font-black text-green-900" x-text="greenCountInFilter"></span>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs">
+                    <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                         G
                     </div>
                 </div>
             </div>
 
-            <!-- Subject & Unit Filter Controls -->
-            <div class="bg-beige-200/80 p-4 rounded-3xl border border-beige-300 shadow-sm space-y-3 no-print">
-                <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 text-xs">
+            <!-- PRIMARY SECTION FILTERS (Germany, Health, Conflict) -->
+            <div class="bg-beige-200/90 p-4 sm:p-5 rounded-3xl border border-beige-300 shadow-sm space-y-4 no-print">
+                
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-wider text-brown-800 mb-2">
+                        <i class="fa-solid fa-layer-group mr-1.5"></i> Select Main Subject Area / Paper:
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <!-- All Topics Filter Button -->
+                        <button 
+                            @click="setMajorSubject('all')"
+                            :class="majorSubject === 'all' 
+                                ? 'bg-brown-900 text-beige-50 shadow-md ring-2 ring-brown-700 font-black' 
+                                : 'bg-beige-50 text-brown-800 hover:bg-beige-300/80 border border-beige-300 font-semibold'"
+                            class="px-3.5 py-3 rounded-2xl text-xs transition flex items-center justify-center gap-2 text-center">
+                            <i class="fa-solid fa-asterisk text-xs"></i>
+                            <span>All 3 Papers (<span x-text="plcItems.length"></span>)</span>
+                        </button>
+
+                        <!-- All Germany Filter Button -->
+                        <button 
+                            @click="setMajorSubject('germany')"
+                            :class="majorSubject === 'germany' 
+                                ? 'bg-accent-burgundy text-white shadow-md ring-2 ring-red-400 font-black' 
+                                : 'bg-beige-50 text-brown-900 hover:bg-rose-50 border border-beige-300 font-semibold'"
+                            class="px-3.5 py-3 rounded-2xl text-xs transition flex items-center justify-center gap-2 text-center">
+                            <i class="fa-solid fa-landmark text-xs"></i>
+                            <span>All Germany (1890–1945)</span>
+                        </button>
+
+                        <!-- All Health Filter Button -->
+                        <button 
+                            @click="setMajorSubject('health')"
+                            :class="majorSubject === 'health' 
+                                ? 'bg-accent-teal text-white shadow-md ring-2 ring-teal-400 font-black' 
+                                : 'bg-beige-50 text-brown-900 hover:bg-emerald-50 border border-beige-300 font-semibold'"
+                            class="px-3.5 py-3 rounded-2xl text-xs transition flex items-center justify-center gap-2 text-center">
+                            <i class="fa-solid fa-notes-medical text-xs"></i>
+                            <span>All Health &amp; People</span>
+                        </button>
+
+                        <!-- All Conflict Filter Button -->
+                        <button 
+                            @click="setMajorSubject('conflict')"
+                            :class="majorSubject === 'conflict' 
+                                ? 'bg-accent-navy text-white shadow-md ring-2 ring-blue-400 font-black' 
+                                : 'bg-beige-50 text-brown-900 hover:bg-blue-50 border border-beige-300 font-semibold'"
+                            class="px-3.5 py-3 rounded-2xl text-xs transition flex items-center justify-center gap-2 text-center">
+                            <i class="fa-solid fa-shield-halved text-xs"></i>
+                            <span>All Conflict &amp; Tension</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Secondary Controls: Sub-unit Dropdown, RAG Filter, Search -->
+                <div class="pt-3 border-t border-beige-300/80 grid grid-cols-1 md:grid-cols-12 gap-3 items-center text-xs">
                     
-                    <!-- Subject Selector -->
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="font-bold text-brown-800"><i class="fa-solid fa-book-bookmark mr-1"></i> Paper / Unit:</span>
+                    <!-- Sub-unit Selector -->
+                    <div class="md:col-span-4 flex items-center gap-2">
+                        <span class="font-bold text-brown-800 whitespace-nowrap"><i class="fa-solid fa-filter mr-1"></i> Sub-unit:</span>
                         <select 
-                            x-model="selectedSubject"
-                            class="bg-beige-50 border border-beige-300 text-brown-900 rounded-xl px-3 py-1.5 font-semibold focus:outline-none focus:ring-2 focus:ring-brown-600">
-                            <option value="all">All Topics (Conflict &amp; Tension + Germany)</option>
-                            <optgroup label="Conflict and Tension 1945–1972">
-                                <option value="conflict_all">All Conflict &amp; Tension Units</option>
-                                <option value="conflict_u1">Unit 1: The Origins of the Cold War</option>
-                                <option value="conflict_u2">Unit 2: The Development of the Cold War</option>
-                                <option value="conflict_u3">Unit 3: The Transformation of the Cold War</option>
-                            </optgroup>
-                            <optgroup label="Germany 1890–1945">
-                                <option value="germany_all">All Germany Units</option>
-                                <option value="germany_u1">Unit 1: Growth of Democracy (1890–1929)</option>
-                                <option value="germany_u2">Unit 2: Germany and the Depression</option>
-                                <option value="germany_u3">Unit 3: Germany under the Nazis</option>
-                            </optgroup>
+                            x-model="subUnitFilter"
+                            class="w-full bg-beige-50 border border-beige-300 text-brown-900 rounded-xl px-3 py-1.5 font-medium focus:outline-none focus:ring-2 focus:ring-brown-600 shadow-inner">
+                            <option value="all">All Units in Selected Paper</option>
+
+                            <template x-if="majorSubject === 'all' || majorSubject === 'germany'">
+                                <optgroup label="🇩🇪 Germany: 1890–1945">
+                                    <option value="germany_u1">Germany U1: Democracy (1890–1929)</option>
+                                    <option value="germany_u2">Germany U2: The Depression &amp; Hitler</option>
+                                    <option value="germany_u3">Germany U3: Nazi Rule &amp; WW2</option>
+                                </optgroup>
+                            </template>
+
+                            <template x-if="majorSubject === 'all' || majorSubject === 'health'">
+                                <optgroup label="🏥 Britain: Health &amp; the People">
+                                    <option value="health_u1">Health U1: Medieval Medicine (c1000–c1500)</option>
+                                    <option value="health_u2">Health U2: Renaissance Beginnings (c1500–c1750)</option>
+                                    <option value="health_u3">Health U3: 19th Century Revolution (c1750–c1900)</option>
+                                    <option value="health_u4">Health U4: Modern Medicine (c1900–present)</option>
+                                </optgroup>
+                            </template>
+
+                            <template x-if="majorSubject === 'all' || majorSubject === 'conflict'">
+                                <optgroup label="🕊️ Conflict &amp; Tension: 1945–1972">
+                                    <option value="conflict_u1">Conflict U1: Origins of the Cold War</option>
+                                    <option value="conflict_u2">Conflict U2: Development of the Cold War</option>
+                                    <option value="conflict_u3">Conflict U3: Transformation of the Cold War</option>
+                                </optgroup>
+                            </template>
                         </select>
                     </div>
 
-                    <!-- Filter by Rating -->
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="font-bold text-brown-800 mr-1">Show:</span>
+                    <!-- Filter by RAG Confidence -->
+                    <div class="md:col-span-5 flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-brown-800 mr-1">Rating:</span>
                         <button @click="ratingFilter = 'all'" :class="ratingFilter === 'all' ? 'bg-brown-900 text-beige-50 font-bold' : 'bg-beige-50 text-brown-800 border border-beige-300'" class="px-2.5 py-1 rounded-lg transition font-medium">All</button>
                         <button @click="ratingFilter = 'unrated'" :class="ratingFilter === 'unrated' ? 'bg-brown-900 text-beige-50 font-bold' : 'bg-beige-50 text-brown-800 border border-beige-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Unrated</button>
-                        <button @click="ratingFilter = 'red'" :class="ratingFilter === 'red' ? 'bg-red-700 text-white font-bold' : 'bg-red-100 text-red-900 border border-red-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Red Only</button>
-                        <button @click="ratingFilter = 'amber'" :class="ratingFilter === 'amber' ? 'bg-amber-600 text-white font-bold' : 'bg-amber-100 text-amber-900 border border-amber-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Amber Only</button>
-                        <button @click="ratingFilter = 'green'" :class="ratingFilter === 'green' ? 'bg-green-700 text-white font-bold' : 'bg-green-100 text-green-900 border border-green-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Green Only</button>
+                        <button @click="ratingFilter = 'red'" :class="ratingFilter === 'red' ? 'bg-red-700 text-white font-bold' : 'bg-red-100 text-red-900 border border-red-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Red</button>
+                        <button @click="ratingFilter = 'amber'" :class="ratingFilter === 'amber' ? 'bg-amber-600 text-white font-bold' : 'bg-amber-100 text-amber-900 border border-amber-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Amber</button>
+                        <button @click="ratingFilter = 'green'" :class="ratingFilter === 'green' ? 'bg-green-700 text-white font-bold' : 'bg-green-100 text-green-900 border border-green-300'" class="px-2.5 py-1 rounded-lg transition font-medium">Green</button>
                     </div>
 
                     <!-- Search Input -->
-                    <div class="relative w-full md:w-64">
+                    <div class="md:col-span-3 relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-brown-600 text-xs"></i>
                         <input 
                             type="text" 
                             x-model="searchQuery" 
-                            placeholder="Filter topics by keyword..." 
+                            placeholder="Filter keywords..." 
                             class="w-full bg-beige-50 border border-beige-300 rounded-xl pl-8 pr-3 py-1.5 text-xs text-brown-900 focus:outline-none focus:ring-2 focus:ring-brown-600 shadow-inner">
                     </div>
                 </div>
 
-                <!-- Bulk Set Options -->
+                <!-- Footer Summary Bar with Reset Button -->
                 <div class="flex items-center justify-between border-t border-beige-300/70 pt-2.5 text-xs text-brown-700">
-                    <span x-text="`Showing ${filteredItems.length} of ${plcItems.length} checklist items`"></span>
-                    <div class="flex items-center gap-2">
+                    <div>
+                        <span class="font-semibold text-brown-900" x-text="`Showing ${filteredItems.length} topics`"></span>
+                        <span class="text-brown-600" x-text="getActiveFilterLabel()"></span>
+                    </div>
+                    <div class="flex items-center gap-3">
                         <button 
                             @click="resetAllRatings()"
                             class="text-brown-700 hover:text-red-700 transition flex items-center gap-1 font-semibold">
                             <i class="fa-solid fa-rotate-left"></i>
-                            <span>Clear All Ratings</span>
+                            <span>Clear Ratings</span>
                         </button>
                     </div>
                 </div>
@@ -259,16 +333,20 @@
 
             <!-- Grouped PLC Table List -->
             <div class="space-y-6">
-                <template x-for="group in groupedChecklist" :key="group.title">
+                <template x-for="group in groupedChecklist" :key="group.key">
                     <div class="bg-beige-50 rounded-3xl border border-beige-300 shadow-sm overflow-hidden" x-show="group.items.length > 0">
                         
                         <!-- Group Header -->
-                        <div class="bg-brown-900 text-beige-100 px-5 py-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div class="text-beige-100 px-5 py-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
+                             :class="group.headerBg">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-2.5 h-2.5 rounded-full" :class="group.themeColor"></span>
-                                <h3 class="font-extrabold text-sm sm:text-base text-beige-50" x-text="group.title"></h3>
+                                <i :class="group.iconClass" class="text-base"></i>
+                                <div>
+                                    <h3 class="font-black text-sm sm:text-base text-beige-50" x-text="group.title"></h3>
+                                    <span class="text-[10px] text-beige-300 block font-normal" x-text="group.subtitle"></span>
+                                </div>
                             </div>
-                            <span class="text-xs bg-brown-800 text-beige-300 px-2.5 py-1 rounded-lg border border-brown-700" 
+                            <span class="text-xs bg-black/25 text-beige-200 px-3 py-1 rounded-xl font-semibold border border-white/10" 
                                   x-text="`${group.items.filter(i => i.rating).length} of ${group.items.length} completed`">
                             </span>
                         </div>
@@ -276,8 +354,8 @@
                         <!-- Topics List -->
                         <div class="divide-y divide-beige-200">
                             <template x-for="item in group.items" :key="item.id">
-                                <div class="p-4 sm:px-6 hover:bg-beige-100/50 transition flex flex-col md:flex-row md:items-center justify-between gap-3"
-                                     :class="item.rating === 'red' ? 'bg-red-50/30' : (item.rating === 'amber' ? 'bg-amber-50/30' : (item.rating === 'green' ? 'bg-green-50/20' : ''))">
+                                <div class="p-4 sm:px-6 hover:bg-beige-100/60 transition flex flex-col md:flex-row md:items-center justify-between gap-3"
+                                     :class="item.rating === 'red' ? 'bg-red-50/40' : (item.rating === 'amber' ? 'bg-amber-50/40' : (item.rating === 'green' ? 'bg-green-50/30' : ''))">
                                     
                                     <!-- Topic Details -->
                                     <div class="space-y-1 md:w-3/5">
@@ -300,7 +378,7 @@
                                             :class="item.rating === 'red' ? 'bg-red-600 text-white ring-2 ring-red-400 font-black shadow-md scale-105' : 'bg-red-100 hover:bg-red-200 text-red-900 border border-red-300'"
                                             class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                                             title="Need to revise this urgently">
-                                            <i class="fa-solid fa-circle text-[9px] text-red-500" :class="item.rating === 'red' ? 'text-white' : ''"></i>
+                                            <i class="fa-solid fa-circle text-[8px] text-red-500" :class="item.rating === 'red' ? 'text-white' : ''"></i>
                                             <span>Red</span>
                                         </button>
 
@@ -310,7 +388,7 @@
                                             :class="item.rating === 'amber' ? 'bg-amber-500 text-white ring-2 ring-amber-300 font-black shadow-md scale-105' : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'"
                                             class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                                             title="Some knowledge, needs consolidation">
-                                            <i class="fa-solid fa-circle text-[9px] text-amber-500" :class="item.rating === 'amber' ? 'text-white' : ''"></i>
+                                            <i class="fa-solid fa-circle text-[8px] text-amber-500" :class="item.rating === 'amber' ? 'text-white' : ''"></i>
                                             <span>Amber</span>
                                         </button>
 
@@ -320,7 +398,7 @@
                                             :class="item.rating === 'green' ? 'bg-green-700 text-white ring-2 ring-green-400 font-black shadow-md scale-105' : 'bg-green-100 hover:bg-green-200 text-green-900 border border-green-300'"
                                             class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                                             title="Confident and secure in this topic">
-                                            <i class="fa-solid fa-circle text-[9px] text-green-600" :class="item.rating === 'green' ? 'text-white' : ''"></i>
+                                            <i class="fa-solid fa-circle text-[8px] text-green-600" :class="item.rating === 'green' ? 'text-white' : ''"></i>
                                             <span>Green</span>
                                         </button>
 
@@ -336,23 +414,23 @@
             <!-- Empty Search Results -->
             <div x-show="filteredItems.length === 0" class="text-center py-12 bg-beige-50 rounded-3xl border border-beige-300">
                 <i class="fa-solid fa-magnifying-glass text-3xl text-brown-400 mb-2"></i>
-                <h4 class="font-bold text-brown-900 text-base">No checklist items found</h4>
-                <p class="text-xs text-brown-700">Try adjusting your search query or subject filters.</p>
-                <button @click="searchQuery = ''; selectedSubject = 'all'; ratingFilter = 'all';" class="mt-3 px-4 py-1.5 bg-brown-800 text-beige-50 text-xs font-bold rounded-xl shadow">Reset Filters</button>
+                <h4 class="font-bold text-brown-900 text-base">No checklist items match this filter</h4>
+                <p class="text-xs text-brown-700">Try adjusting your paper filter or clearing your search term.</p>
+                <button @click="resetFilters()" class="mt-3 px-4 py-2 bg-brown-800 text-beige-50 text-xs font-bold rounded-xl shadow">Show All Topics</button>
             </div>
 
             <!-- Bottom Navigation Bar to Revision Plan -->
             <div class="bg-gradient-to-r from-brown-900 to-accent-navy text-beige-50 p-5 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4 no-print">
                 <div>
-                    <h3 class="font-extrabold text-base text-beige-100">Finished Rating Your Confidence?</h3>
-                    <p class="text-xs text-beige-300">Generate your personalized priority revision plan and export it as a revision checklist document.</p>
+                    <h3 class="font-extrabold text-base text-beige-100">Audit in progress!</h3>
+                    <p class="text-xs text-beige-300">Ready to see your prioritised list of what to revise based on your Red &amp; Amber ratings?</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button 
                         @click="activeView = 'plan'"
                         class="bg-accent-forest hover:bg-green-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg">
                         <i class="fa-solid fa-list-check"></i>
-                        <span>View What You Need to Revise (<span x-text="redCount + amberCount"></span>)</span>
+                        <span>View Your Revision Priorities (<span x-text="redCount + amberCount"></span>)</span>
                     </button>
                 </div>
             </div>
@@ -365,8 +443,8 @@
             <!-- Plan Header Actions -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 no-print">
                 <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-brown-900">Your Priority Revision Action Plan</h2>
-                    <p class="text-xs text-brown-700">Targeted checklist generated automatically from your RED and AMBER ratings.</p>
+                    <h2 class="text-xl sm:text-2xl font-bold text-brown-900">Your Personalised Revision Plan</h2>
+                    <p class="text-xs text-brown-700">Focus your revision time on high-impact areas flagged as RED and AMBER.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <button 
@@ -398,7 +476,7 @@
                     </div>
                     <h3 class="font-extrabold text-lg text-brown-900">No Revision Items Flagged Yet!</h3>
                     <p class="text-xs text-brown-700 max-w-md mx-auto">
-                        You have not marked any topics as <strong>Red</strong> or <strong>Amber</strong> yet, or all topics are rated Green. Head back to the checklist to audit your topics!
+                        You have not marked any topics as <strong>Red</strong> or <strong>Amber</strong> yet, or all topics are currently Green. Head back to the checklist to audit Germany, Health, or Conflict!
                     </p>
                     <button @click="activeView = 'checklist'" class="bg-brown-800 text-beige-50 px-4 py-2 rounded-xl text-xs font-bold shadow">
                         Go to RAG Checklist
@@ -406,22 +484,22 @@
                 </div>
             </template>
 
-            <!-- Printable Summary Sheet -->
+            <!-- Printable / Structured Plan -->
             <div class="space-y-6" x-show="redCount > 0 || amberCount > 0">
                 
-                <!-- RED: Top Urgent Priorities -->
+                <!-- RED: Urgent Priorities -->
                 <div class="bg-beige-50 rounded-3xl border-2 border-red-300 shadow-sm overflow-hidden" x-show="redCount > 0">
                     <div class="bg-red-700 text-white px-5 py-3.5 flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-fire text-yellow-300"></i>
                             <h3 class="font-black text-sm sm:text-base">1. Top Urgent Priority: RED Topics (<span x-text="redCount"></span>)</h3>
                         </div>
-                        <span class="text-xs bg-red-800/80 px-2.5 py-1 rounded-lg font-bold border border-red-500">Revise First • Flashcards &amp; Practice Questions</span>
+                        <span class="text-xs bg-red-800/80 px-2.5 py-1 rounded-lg font-bold border border-red-500">Revise First • Flashcards &amp; Retrieval</span>
                     </div>
 
                     <div class="p-5 space-y-4">
                         <p class="text-xs text-brown-700 italic">
-                            These are topics where your subject knowledge is currently weak. Use your exercise book, BBC Bitesize, and the 4-step timed question loop for these first:
+                            These topics represent critical gaps. Prioritise these during your upcoming study sessions before attempting exam questions:
                         </p>
 
                         <div class="space-y-3">
@@ -429,13 +507,15 @@
                                 <div class="bg-red-50/60 border border-red-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start gap-2">
                                     <div class="space-y-1">
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-red-200 text-red-950 uppercase" x-text="item.unitName"></span>
+                                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded uppercase"
+                                                  :class="getSubcategoryBadge(item.subject)"
+                                                  x-text="item.unitName"></span>
                                             <span class="font-extrabold text-sm text-brown-900" x-text="item.topic"></span>
                                         </div>
                                         <p class="text-xs text-brown-800" x-text="item.description"></p>
                                     </div>
                                     <span class="text-[10px] bg-red-600 text-white font-black px-2.5 py-1 rounded-lg self-end sm:self-center flex-shrink-0">
-                                        URGENT REVISION
+                                        URGENT NEED
                                     </span>
                                 </div>
                             </template>
@@ -450,12 +530,12 @@
                             <i class="fa-solid fa-triangle-exclamation text-amber-200"></i>
                             <h3 class="font-black text-sm sm:text-base">2. Consolidation Priority: AMBER Topics (<span x-text="amberCount"></span>)</h3>
                         </div>
-                        <span class="text-xs bg-amber-700/80 px-2.5 py-1 rounded-lg font-bold border border-amber-400">Review &amp; Test • Dual Coding &amp; Total Recall</span>
+                        <span class="text-xs bg-amber-700/80 px-2.5 py-1 rounded-lg font-bold border border-amber-400">Review &amp; Test • Timed Questions</span>
                     </div>
 
                     <div class="p-5 space-y-4">
                         <p class="text-xs text-brown-700 italic">
-                            You have some understanding here, but specific facts, dates, key names, and causation links need strengthening to guarantee full marks:
+                            You have working knowledge here. Focus on precise dates, key individuals, factor comparisons, and causation chains:
                         </p>
 
                         <div class="space-y-3">
@@ -463,7 +543,9 @@
                                 <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start gap-2">
                                     <div class="space-y-1">
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-amber-200 text-amber-950 uppercase" x-text="item.unitName"></span>
+                                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded uppercase"
+                                                  :class="getSubcategoryBadge(item.subject)"
+                                                  x-text="item.unitName"></span>
                                             <span class="font-extrabold text-sm text-brown-900" x-text="item.topic"></span>
                                         </div>
                                         <p class="text-xs text-brown-800" x-text="item.description"></p>
@@ -484,11 +566,11 @@
                             <i class="fa-solid fa-circle-check text-green-200"></i>
                             <h3 class="font-black text-sm sm:text-base">3. Secure Topics: GREEN (<span x-text="greenCount"></span>)</h3>
                         </div>
-                        <span class="text-xs bg-green-800/80 px-2.5 py-1 rounded-lg font-bold border border-green-500">Maintain • Quick Spaced Quiz</span>
+                        <span class="text-xs bg-green-800/80 px-2.5 py-1 rounded-lg font-bold border border-green-500">Maintain • Spaced Retrieval</span>
                     </div>
 
                     <div class="p-5 space-y-2">
-                        <p class="text-xs text-brown-700">Topics you feel confident in. Review lightly every 2–3 weeks using 5-minute brain dumps so you don't forget them.</p>
+                        <p class="text-xs text-brown-700">Topics you feel secure in. Test yourself periodically with 5-minute memory dumps so they stay fresh:</p>
                         <div class="flex flex-wrap gap-1.5 pt-2">
                             <template x-for="item in greenItems" :key="item.id">
                                 <span class="bg-green-100 text-green-900 border border-green-300 text-xs px-2.5 py-1 rounded-xl font-medium flex items-center gap-1">
@@ -508,513 +590,974 @@
 
     <!-- Footer -->
     <footer class="bg-brown-900 text-beige-300 text-center py-4 text-xs border-t border-brown-800 mt-auto no-print">
-        <p>GCSE History PLC Auditor &bull; AQA 8145 Revision Support &bull; Conflict &amp; Tension &bull; Germany 1890–1945 📚</p>
+        <p>GCSE History PLC Auditor &bull; AQA 8145 Revision Support &bull; Germany &bull; Health and the People &bull; Conflict &amp; Tension 📚</p>
     </footer>
 
-    <!-- Alpine.js Application Logic -->
     <script>
         function plcAuditApp() {
             return {
                 activeView: 'checklist',
-                selectedSubject: 'all',
+                majorSubject: 'all', // 'all', 'germany', 'health', 'conflict'
+                subUnitFilter: 'all',
                 ratingFilter: 'all',
                 searchQuery: '',
 
-                // Full PLC Dataset compiled from the provided Conflict & Tension Unit 1, 2, 3 PLCs and Germany Unit 1, 2, 3 Knowledge Organisers
+                // Complete GCSE specification dataset covering Germany, Health, and Conflict
                 plcItems: [
-                    // ================= CONFLICT & TENSION: UNIT 1 (ORIGINS) =================
+                    // =========================================================================
+                    // SECTION 1: GERMANY (1890–1945): DEMOCRACY AND DICTATORSHIP
+                    // =========================================================================
                     {
-                        id: 1,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'WW2 & Ideologies',
-                        topic: 'End of WW2 & Ideological Contrast',
-                        description: 'Contrasting attitudes and core ideologies between the capitalist USA and communist USSR (economy, democracy, individual freedoms).',
-                        rating: null
-                    },
-                    {
-                        id: 2,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Pre-1945 Relations',
-                        topic: 'Superpower Relations Before 1945',
-                        description: 'Mistrust before WW2: Russian Civil War intervention, Red Scare, Stalin’s brutal purges, and the 1939 Nazi-Soviet Pact.',
-                        rating: null
-                    },
-                    {
-                        id: 3,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Conferences',
-                        topic: 'Yalta Conference & Division of Germany',
-                        description: 'Agreements on dividing Germany and Berlin into 4 zones, free elections in Eastern Europe, and founding of the United Nations.',
-                        rating: null
-                    },
-                    {
-                        id: 4,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Conferences',
-                        topic: 'Potsdam Conference (July–August 1945)',
-                        description: 'Deteriorating relationships between Yalta and Potsdam; confirmation of German division, reparations disagreements, and border shifts.',
-                        rating: null
-                    },
-                    {
-                        id: 5,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Leadership Aims',
-                        topic: 'Aims of Stalin, Churchill, Roosevelt, Attlee & Truman',
-                        description: 'Differing personalities and national security goals: Soviet sphere of influence vs Western self-determination and open trade.',
-                        rating: null
-                    },
-                    {
-                        id: 6,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Nuclear Weapons',
-                        topic: 'Impact of the Atomic Bomb on Relations',
-                        description: 'Hiroshima and Nagasaki (August 1945); Truman’s atomic diplomacy and heightened Soviet suspicion and insecurity.',
-                        rating: null
-                    },
-                    {
-                        id: 7,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Diplomacy & Rivalry',
-                        topic: 'The Iron Curtain & East-West Rivalry',
-                        description: 'George Kennan’s Long Telegram (Feb 1946) and Winston Churchill’s Fulton Missouri "Iron Curtain" speech (March 1946).',
-                        rating: null
-                    },
-                    {
-                        id: 8,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Soviet Expansion',
-                        topic: 'Soviet Expansion in Eastern Europe',
-                        description: 'Methods used to create satellite states (1945–48) in Albania, Bulgaria, Poland, Hungary (Rákosi & AVH), Romania, and Czechoslovakia.',
-                        rating: null
-                    },
-                    {
-                        id: 9,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'US Policies',
-                        topic: 'Truman Doctrine & Marshall Plan',
-                        description: 'Containment policy (March 1947), aid to Greece and Turkey, $13.15bn European Recovery Program, and Stalin’s hostile reaction.',
-                        rating: null
-                    },
-                    {
-                        id: 10,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Soviet Counter-Policies',
-                        topic: 'Cominform, Comecon & Yugoslavia',
-                        description: 'Establishment of Cominform (1947) and Comecon (1949); Tito’s defiance in Yugoslavia and expulsion from the Soviet bloc.',
-                        rating: null
-                    },
-                    {
-                        id: 11,
-                        subject: 'conflict_u1',
-                        unitName: 'Conflict Unit 1: Origins',
-                        category: 'Berlin 1948',
-                        topic: 'The Berlin Blockade and Airlift',
-                        description: 'Causes (Deutsche Mark, Trizonia), 24 June 1948 blockade, Operation Vittles airlift logistics, Easter Parade, and creation of FRG & GDR (1949).',
-                        rating: null
-                    },
-
-                    // ================= CONFLICT & TENSION: UNIT 2 (DEVELOPMENT) =================
-                    {
-                        id: 12,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'Cold War in Asia',
-                        topic: 'Communist Revolution in China (1949)',
-                        description: 'Mao Zedong’s victory, Western fears of failing containment, NSC-68 military build-up, and the 1950 Sino-Soviet Treaty of Friendship.',
-                        rating: null
-                    },
-                    {
-                        id: 13,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'Cold War in Asia',
-                        topic: 'The Korean War (1950–1953)',
-                        description: 'Invasion of South Korea, UN intervention, Inchon landings, MacArthur’s sacking over nuclear threats, and stalemate at the 38th Parallel.',
-                        rating: null
-                    },
-                    {
-                        id: 14,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'Cold War in Asia',
-                        topic: 'Military Campaigns in Vietnam (France & USA)',
-                        description: 'Viet Minh victory at Dien Bien Phu (1954), 17th parallel division, Domino Theory, Eisenhower’s New Look, Diem’s coup, and Vietcong guerrilla tactics.',
-                        rating: null
-                    },
-                    {
-                        id: 15,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'Military Alliances',
-                        topic: 'NATO (1949) and the Warsaw Pact (1955)',
-                        description: 'Collective defense structures, membership comparison, rearmament of West Germany (1955), and Soviet command dominance.',
-                        rating: null
-                    },
-                    {
-                        id: 16,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'Arms & Space Race',
-                        topic: 'The Nuclear Arms Race & MAD',
-                        description: 'Soviet A-bomb (1949), H-bombs (1952/53), ICBMs, Mutually Assured Destruction (MAD), Brinkmanship, and civil defense ("Duck and Cover").',
-                        rating: null
-                    },
-                    {
-                        id: 17,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'Arms & Space Race',
-                        topic: 'The Space Race (Sputnik to Apollo)',
-                        description: 'Propaganda & rocket weapons: Sputnik (1957), Laika, Yuri Gagarin (1961), Neil Armstrong Moon landing (1969), and Apollo-Soyuz (1975).',
-                        rating: null
-                    },
-                    {
-                        id: 18,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'The Thaw & Crises',
-                        topic: 'The Hungarian Uprising (1956)',
-                        description: 'Destalinisation, student protests, Imre Nagy’s reforms and Warsaw Pact withdrawal, Soviet tank invasion, and Western non-intervention.',
-                        rating: null
-                    },
-                    {
-                        id: 19,
-                        subject: 'conflict_u2',
-                        unitName: 'Conflict Unit 2: Development',
-                        category: 'The Thaw & Crises',
-                        topic: 'The 1960 U2 Spy Plane Incident',
-                        description: 'Gary Powers shot down, American weather plane cover story exposed, Eisenhower’s refusal to apologize, and collapse of the Paris Summit.',
-                        rating: null
-                    },
-
-                    // ================= CONFLICT & TENSION: UNIT 3 (TRANSFORMATION) =================
-                    {
-                        id: 20,
-                        subject: 'conflict_u3',
-                        unitName: 'Conflict Unit 3: Transformation',
-                        category: 'Berlin Crisis',
-                        topic: 'Construction of the Berlin Wall (1961)',
-                        description: 'Khrushchev’s Vienna Summit ultimatum, East German refugee "brain drain", overnight closure (13 Aug 1961), and Checkpoint Charlie tank standoff.',
-                        rating: null
-                    },
-                    {
-                        id: 21,
-                        subject: 'conflict_u3',
-                        unitName: 'Conflict Unit 3: Transformation',
-                        category: 'Cuban Crisis',
-                        topic: 'Cuban Missile Crisis: Causes & Events (1962)',
-                        description: 'Cuban Revolution (Castro 1959), Bay of Pigs failure (1961), U2 discovery of missile silos, naval quarantine, DEFCON 2, and Black Saturday (Arkhipov).',
-                        rating: null
-                    },
-                    {
-                        id: 22,
-                        subject: 'conflict_u3',
-                        unitName: 'Conflict Unit 3: Transformation',
-                        category: 'Cuban Crisis',
-                        topic: 'Outcomes of the Cuban Missile Crisis',
-                        description: 'Public removal of missiles from Cuba, secret deal on Turkish missiles, Washington-Moscow Hotline (1963), and Test Ban Treaty (PTBT 1963).',
-                        rating: null
-                    },
-                    {
-                        id: 23,
-                        subject: 'conflict_u3',
-                        unitName: 'Conflict Unit 3: Transformation',
-                        category: 'Prague Spring',
-                        topic: 'The Prague Spring & Brezhnev Doctrine (1968)',
-                        description: 'Alexander Dubček’s "Socialism with a human face", abolition of censorship, Warsaw Pact invasion (Aug 1968), and the Brezhnev Doctrine.',
-                        rating: null
-                    },
-                    {
-                        id: 24,
-                        subject: 'conflict_u3',
-                        unitName: 'Conflict Unit 3: Transformation',
-                        category: 'Détente & Treaties',
-                        topic: 'Détente & The Superpower Relationship',
-                        description: 'Motivations for relaxing tensions (economics, Vietnam strain, nuclear parity, Sino-Soviet split) and triangular diplomacy.',
-                        rating: null
-                    },
-                    {
-                        id: 25,
-                        subject: 'conflict_u3',
-                        unitName: 'Conflict Unit 3: Transformation',
-                        category: 'Détente & Treaties',
-                        topic: 'SALT 1 & Nixon/Brezhnev Summits (1972)',
-                        description: 'Nixon’s visits to Beijing and Moscow; signing of the ABM Treaty and Interim Agreement on offensive ICBMs/SLBMs.',
-                        rating: null
-                    },
-
-                    // ================= GERMANY: UNIT 1 (GROWTH OF DEMOCRACY) =================
-                    {
-                        id: 26,
+                        id: 101,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Imperial Germany',
-                        topic: 'Kaiser Wilhelm II & Ruling Germany',
-                        description: 'Autocratic constitution (Kaiser, Chancellor, Bundesrat, Reichstag), Prussian militarism, Weltpolitik, and industrialization.',
+                        topic: 'Kaiser Wilhelm II & The Imperial System',
+                        description: 'Autocratic constitution (Kaiser, Chancellor, Bundesrat, Reichstag), Prussian militarism, Weltpolitik, and rapid industrial growth.',
                         rating: null
                     },
                     {
-                        id: 27,
+                        id: 102,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Imperial Germany',
                         topic: 'Socialism & The Navy Laws',
-                        description: 'Growth of the SPD, trade unions, 1898–1912 Navy Laws to rival Britain, increasing national debt, and social tension.',
+                        description: 'Growth of the SPD and trade unions, Kaiser’s Naval Laws (1898–1912) to challenge Great Britain, mounting debt, and social unrest.',
                         rating: null
                     },
                     {
-                        id: 28,
+                        id: 103,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'WW1 & Revolution',
-                        topic: 'Impact of WW1 & The Kaiser’s Abdication',
-                        description: 'British naval blockade, starvation and strikes, Kiel naval mutiny (Oct 1918), Kaiser’s abdication (9 Nov 1918), and armistice.',
+                        topic: 'Impact of WW1 & Kaiser’s Abdication',
+                        description: 'British naval blockade, starvation and civilian strikes, Kiel naval mutiny (Oct 1918), Kaiser’s abdication (9 Nov 1918), and armistice.',
                         rating: null
                     },
                     {
-                        id: 29,
+                        id: 104,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Weimar Republic',
                         topic: 'The 1919 Weimar Constitution',
-                        description: 'Strengths (universal vote over 20, PR fairness, bill of rights) and weaknesses (coalitions, Article 48 emergency decree powers).',
+                        description: 'Strengths (universal voting rights over 20, proportional representation, bill of rights) vs weaknesses (coalition instability, Article 48 emergency decrees).',
                         rating: null
                     },
                     {
-                        id: 30,
+                        id: 105,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Versailles',
                         topic: 'The Treaty of Versailles (1919)',
-                        description: 'Terms (10% land lost, 100k army, no air force/tanks/U-boats, £6.6bn reparations, Article 231 War Guilt), "diktat" & "stab in the back".',
+                        description: 'Key terms: 10% land lost, army capped at 100,000, £6.6bn reparations, Article 231 War Guilt Clause, "diktat" label, and the "stab-in-the-back" myth.',
                         rating: null
                     },
                     {
-                        id: 31,
+                        id: 106,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Early Unrest',
                         topic: 'Political Uprisings (1919–1923)',
-                        description: 'Spartacist Revolt (Jan 1919: Luxemburg/Liebknecht & Freikorps), Kapp Putsch (March 1920: general strike), and Munich Putsch (Nov 1923).',
+                        description: 'Spartacist Revolt (Jan 1919: Luxemburg, Liebknecht & Freikorps), Kapp Putsch (March 1920: Berlin general strike), and Munich Beer Hall Putsch (Nov 1923).',
                         rating: null
                     },
                     {
-                        id: 32,
+                        id: 107,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: '1923 Crisis',
                         topic: 'Occupation of the Ruhr & Hyperinflation',
-                        description: 'Default on reparations, French/Belgian invasion of the Ruhr, passive resistance, printing money, hyperinflation impact on middle class.',
+                        description: 'Reparation defaults, French/Belgian military occupation, passive resistance, endless banknote printing, and wiping out middle-class savings.',
                         rating: null
                     },
                     {
-                        id: 33,
+                        id: 108,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Stresemann Era',
-                        topic: 'Economic Recovery under Stresemann (1924–29)',
-                        description: 'Rentenmark/Reichsmark, Dawes Plan (1924: 800m gold marks loans), Young Plan (1929), and underlying dependence on US loans.',
+                        topic: 'Economic Recovery Under Gustav Stresemann',
+                        description: 'Rentenmark and Reichsmark currency reset, Dawes Plan (1924 loans), Young Plan (1929 reduced debt), and reliance on short-term US loans.',
                         rating: null
                     },
                     {
-                        id: 34,
+                        id: 109,
                         subject: 'germany_u1',
-                        unitName: 'Germany Unit 1: Democracy 1890–1929',
+                        unitName: 'Germany U1: Democracy 1890–1929',
                         category: 'Stresemann Era',
-                        topic: 'Foreign Policy Successes & Weimar Culture',
-                        description: 'Locarno Pact (1925), League of Nations entry (1926), Kellogg-Briand Pact (1928), and the "Golden Twenties" (Bauhaus, jazz, cabaret, cinema).',
+                        topic: 'Locarno, League of Nations & Weimar Culture',
+                        description: 'Locarno Treaties (1925), entry into League of Nations (1926), Kellogg-Briand Pact (1928), and the Golden Twenties (Bauhaus, jazz, cabaret, film).',
                         rating: null
                     },
-
-                    // ================= GERMANY: UNIT 2 (DEPRESSION & RISE OF NAZIS) =================
                     {
-                        id: 35,
+                        id: 110,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Great Depression',
-                        topic: 'The 1929 Wall Street Crash & Impact on Germany',
-                        description: 'Recall of US loans, factory closures, 6 million unemployed by 1932, poverty, collapse of Weimar welfare, and rise of extremist votes.',
+                        topic: 'The Wall Street Crash & Impact on Germany',
+                        description: 'Recall of US Dawes loans, massive banking collapse, 6 million unemployed by 1932, homelessness, and political radicalisation.',
                         rating: null
                     },
                     {
-                        id: 36,
+                        id: 111,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Nazi Support',
-                        topic: 'Reasons for the Growth of the Nazi Party',
-                        description: 'Hitler’s personal appeal/speeches, discontent with Weimar failure, fear of communism, Goebbels’ propaganda, and SA intimidation.',
+                        topic: 'Reasons for the Rise of the Nazi Party',
+                        description: 'Hitler’s charismatic oratory, fear of communism, Goebbels’ targeted propaganda, SA street fighting, and failure of Weimar coalition governments.',
                         rating: null
                     },
                     {
-                        id: 37,
+                        id: 112,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Nazi Support',
-                        topic: 'Who Voted for the Nazis and Why?',
-                        description: 'Appeals to farmers (higher food prices), middle classes (anti-communism), women (family values), businesses, and youth.',
+                        topic: 'Appeals to Different Social Groups',
+                        description: 'Promises to farmers (higher tariffs), middle classes (restoring law and order), women (family stability), big industrialists, and unemployed youth.',
                         rating: null
                     },
                     {
-                        id: 38,
+                        id: 113,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Political Maneuvers',
-                        topic: 'Hitler’s Road to Chancellor (1930–1933)',
-                        description: 'Elections of 1930 and 1932 (Nazis largest party with 37%), Brüning’s cuts, failures of Von Papen and Von Schleicher, and Hindenburg’s deal.',
+                        topic: 'Hitler’s Appointment as Chancellor (1930–1933)',
+                        description: '1932 elections making NSDAP the largest party, Brüning’s austerity, intrigue by Von Papen and Von Schleicher, and Hindenburg’s deal (Jan 1933).',
                         rating: null
                     },
                     {
-                        id: 39,
+                        id: 114,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Path to Dictatorship',
                         topic: 'Reichstag Fire & Protection Decree (Feb 1933)',
-                        description: 'Van der Lubbe, blaming communists, emergency decree suspending civil liberties, arrest of 4,000 communists, and March 1933 election.',
+                        description: 'Van der Lubbe blamed, decree for the Protection of People and State suspending free speech/press, and mass arrests of Communist candidates.',
                         rating: null
                     },
                     {
-                        id: 40,
+                        id: 115,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Path to Dictatorship',
-                        topic: 'The Enabling Act & Elimination of Opposition',
-                        description: 'Passing of the Enabling Act (23 March 1933: 444–94), banning trade unions (2 May 1933 / DAF), and banning rival political parties (July 1933).',
+                        topic: 'The Enabling Act & Gleichschaltung (1933)',
+                        description: 'Passing of the Enabling Act (23 March 1933), banning free trade unions (2 May 1933), creation of DAF, and outlawing opposition parties (July 1933).',
                         rating: null
                     },
                     {
-                        id: 41,
+                        id: 116,
                         subject: 'germany_u2',
-                        unitName: 'Germany Unit 2: Depression',
+                        unitName: 'Germany U2: Depression & Hitler',
                         category: 'Path to Dictatorship',
-                        topic: 'The Night of the Long Knives (30 June 1934)',
-                        description: 'Purge of Ernst Röhm and SA leadership, SS execution of rivals, winning army loyalty, and Hitler becoming Führer upon Hindenburg’s death.',
+                        topic: 'Night of the Long Knives & Hitler as Führer',
+                        description: 'Purging Ernst Röhm and the SA leadership (30 June 1934), securing army loyalty oath, and Hitler assuming the title of Führer on Hindenburg’s death.',
+                        rating: null
+                    },
+                    {
+                        id: 117,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Economy & Work',
+                        topic: 'Work Schemes, Rearmament & Autarky',
+                        description: 'RAD (National Labour Service), Autobahn construction, reintroduction of conscription (1935), Göring’s Four-Year Plan, and "invisible unemployment".',
+                        rating: null
+                    },
+                    {
+                        id: 118,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Economy & Work',
+                        topic: 'Workers & Daily Life: DAF, SDA & KDF',
+                        description: 'German Labour Front (DAF), Beauty of Labour (SDA improved factory conditions), Strength Through Joy (KDF holidays/events), and the Volkswagen saver scheme.',
+                        rating: null
+                    },
+                    {
+                        id: 119,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Social Control',
+                        topic: 'Policies Towards Women and Families',
+                        description: 'Kinder, Küche, Kirche (Children, Kitchen, Church), Marriage Loans, Mother’s Cross medals, forced sterilisation laws, and wartime factory conscription.',
+                        rating: null
+                    },
+                    {
+                        id: 120,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Youth & Education',
+                        topic: 'Education & Youth Groups (Hitler Youth / BDM)',
+                        description: 'Curriculum overhaul (Race Science, PE, German History), compulsory Hitler Youth membership (1939), and domestic training in the BDM.',
+                        rating: null
+                    },
+                    {
+                        id: 121,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Police State',
+                        topic: 'SS, Gestapo, Courts & Concentration Camps',
+                        description: 'Himmler’s SS empire (SD, Waffen SS), Gestapo plainclothes surveillance & informers, Nazi People’s Court, and early concentration camps (Dachau 1933).',
+                        rating: null
+                    },
+                    {
+                        id: 122,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Propaganda & Culture',
+                        topic: 'Goebbels, Media Censorship & The Arts',
+                        description: 'Ministry of Public Enlightenment and Propaganda, cheap "People’s Receivers", censorship of press/film, book burnings, and banning modern degenerate art.',
+                        rating: null
+                    },
+                    {
+                        id: 123,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Religion',
+                        topic: 'Control of the Churches',
+                        description: '1933 Concordat with Pope Pius XI, Protestant Reich Church (Ludwig Müller) vs Confessional Church (Martin Niemöller & Dietrich Bonhoeffer).',
+                        rating: null
+                    },
+                    {
+                        id: 124,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Persecution',
+                        topic: 'Persecution of Minorities & The Holocaust',
+                        description: 'Aryan master race ideology, 1935 Nuremberg Laws, Kristallnacht (Nov 1938), ghettoisation, Einsatzgruppen, and the 1942 Wannsee Conference.',
+                        rating: null
+                    },
+                    {
+                        id: 125,
+                        subject: 'germany_u3',
+                        unitName: 'Germany U3: Nazi Rule & WW2',
+                        category: 'Opposition & War',
+                        topic: 'Opposition, Total War & Home Front (1939–1945)',
+                        description: 'Edelweiss Pirates, White Rose movement (Scholl siblings), July 1944 Stauffenberg bomb plot, food rationing, Allied bombing raids, and Speer’s Total War.',
                         rating: null
                     },
 
-                    // ================= GERMANY: UNIT 3 (NAZI RULE) =================
+                    // =========================================================================
+                    // SECTION 2: BRITAIN: HEALTH AND THE PEOPLE (OXFORD AQA SPECIFICATION)
+                    // =========================================================================
+                    // --- PART ONE: MEDICINE STANDS STILL: MEDIEVAL MEDICINE ---
                     {
-                        id: 42,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Economy & Work',
-                        topic: 'Reducing Unemployment & Economic Policy',
-                        description: 'RAD (National Labour Service), Autobahn construction, rearmament/conscription, invisible unemployment, Schacht vs Goering (4-Year Plan).',
+                        id: 201,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Medieval Medicine',
+                        topic: 'I can outline what a Medieval doctor knew',
+                        description: 'Natural, supernatural, Hippocratic and Galenic ideas (Four Humours, miasma, astrology, divine punishment).',
                         rating: null
                     },
                     {
-                        id: 43,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Economy & Work',
-                        topic: 'Workers and Control: DAF, SDA & KDF',
-                        description: 'German Labour Front (DAF), Beauty of Labour (SDA workplace upgrades), Strength Through Joy (KDF leisure/trips), and Volkswagen car scheme.',
+                        id: 202,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Medieval Medicine',
+                        topic: 'I can explain what training Medieval doctors received',
+                        description: 'University training under the Church, medical texts, and beliefs about the causes of illness.',
                         rating: null
                     },
                     {
-                        id: 44,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Social Policies',
-                        topic: 'Policies Towards Women and Families',
-                        description: 'Kinder, Küche, Kirche, marriage loans, Motherhood Medals, forced sterilization of "unfit", removal of female professionals, and wartime shift.',
+                        id: 203,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Medical Progress',
+                        topic: 'I can explain how the sick were treated by the Christian Church',
+                        description: 'Care versus cure, role of monasteries, infirmaries, and Medieval hospitals.',
                         rating: null
                     },
                     {
-                        id: 45,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Social Policies',
-                        topic: 'Education and Schools in Nazi Germany',
-                        description: 'Control of teachers (National Socialist Teachers League), ideological curriculum (Race Studies, History, PE trebled), and universities.',
+                        id: 204,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Medical Progress',
+                        topic: 'I can assess the contribution of Christianity to medical progress',
+                        description: 'Evaluating Christianity as both a promoter (hospitals, caring, preserving texts) and an obstacle (banning dissection, enforcing Galen).',
                         rating: null
                     },
                     {
-                        id: 46,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Social Policies',
-                        topic: 'Youth Groups: Hitler Youth & BDM',
-                        description: 'Hitler Youth activities (military training), League of German Girls (domestic roles), compulsory membership (1939), and exclusion of Jewish youth.',
+                        id: 205,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Medical Progress',
+                        topic: 'I can assess the contribution of Medieval Islamic medicine',
+                        description: 'Preservation of Greek ideas, Rhazes (distinguishing smallpox from measles), Ibn Sina/Avicenna (Canon of Medicine), and bimaristans.',
                         rating: null
                     },
                     {
-                        id: 47,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Control & Terror',
-                        topic: 'The Police State: SS, Gestapo & Courts',
-                        description: 'Himmler’s SS (SD, Waffen SS, Death’s Head Units), Gestapo secret police & informers, Nazi control of judges, and concentration camps.',
+                        id: 206,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Medical Progress',
+                        topic: 'I can evaluate medical progress in surgery',
+                        description: 'Surgery in Western Europe (barber-surgeons, John of Arderne, cautery) and the Islamic Empire (Abulcasis, surgical instruments).',
                         rating: null
                     },
                     {
-                        id: 48,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Control & Terror',
-                        topic: 'Propaganda, Censorship & Culture',
-                        description: 'Josef Goebbels, radio ("People’s Receivers"), film control, book burning, 1936 Berlin Olympics, banning modern "degenerate" art and jazz.',
+                        id: 207,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Public Health in the Middle Ages',
+                        topic: 'I can describe public health conditions in Medieval towns',
+                        description: 'Lack of clean piped water, waste disposal, open cesspools, rakers, butchers regulations, and local councils.',
                         rating: null
                     },
                     {
-                        id: 49,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Religion',
-                        topic: 'Control of Churches and Religion',
-                        description: '1933 Concordat with Catholic Church, persecution of priests, Protestant Reich Church (Bishop Müller) vs Confessional Church (Martin Niemöller).',
+                        id: 208,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'Public Health in the Middle Ages',
+                        topic: 'I can discuss public health conditions in abbeys & monasteries',
+                        description: 'Monastic running water, lavatoria, settling ponds, latrines, piped freshwater systems, and hygienic routines.',
                         rating: null
                     },
                     {
-                        id: 50,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Racial Policy & Holocaust',
-                        topic: 'Racial Persecution & The Final Solution',
-                        description: 'Master race/Aryans, persecution of Roma, disabled (euthanasia), 1935 Nuremberg Laws, Kristallnacht (1938), Einsatzgruppen, and Wannsee Conference (1942).',
+                        id: 209,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'The Black Death (1348)',
+                        topic: 'I can describe the main symptoms of the Black Death',
+                        description: 'Bubonic and pneumonic plague: buboes in armpits/groin, fever, vomiting blood, and black spots.',
                         rating: null
                     },
                     {
-                        id: 51,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Resistance',
-                        topic: 'Opposition and Resistance to the Nazis',
-                        description: 'Levels of opposition (grumbling, passive resistance, White Rose leaflets, Swing Youth, Edelweiss Pirates, and the July 1944 Bomb Plot).',
+                        id: 210,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'The Black Death (1348)',
+                        topic: 'I can explain beliefs about causes, treatment and prevention of the Black Death',
+                        description: 'Astrology, wrath of God, miasma, Jewish scapegoating, flagellants, carrying posies, bloodletting, and herbal remedies.',
                         rating: null
                     },
                     {
-                        id: 52,
-                        subject: 'germany_u3',
-                        unitName: 'Germany Unit 3: Nazi Rule',
-                        category: 'Wartime Impact',
-                        topic: 'Impact of the Second World War on Germany',
-                        description: 'Rationing (Nov 1939), female factory conscription, Allied bombing raids on cities, refugees, and Albert Speer’s 1942 Total War policy.',
+                        id: 211,
+                        subject: 'health_u1',
+                        unitName: 'Health Part 1: Medieval Medicine',
+                        category: 'The Black Death (1348)',
+                        topic: 'I can evaluate the impact of the Black Death',
+                        description: 'Demographic collapse (30–50% mortality rate), peasant labour shortages, Statute of Labourers, and social-economic upheaval.',
+                        rating: null
+                    },
+
+                    // --- PART TWO: THE BEGINNINGS OF CHANGE: THE IMPACT OF THE RENAISSANCE ON BRITAIN ---
+                    {
+                        id: 212,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Renaissance Impact',
+                        topic: 'I can define the term "Renaissance"',
+                        description: 'Rebirth of classical learning, scientific enquiry, humanism, questioning established authority, and the printing press.',
+                        rating: null
+                    },
+                    {
+                        id: 213,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Renaissance Impact',
+                        topic: 'I can assess the impact of the Renaissance on medicine',
+                        description: 'Scientific method, Royal Society (1660), microscopy, dissection, and decline of blind obedience to Galen.',
+                        rating: null
+                    },
+                    {
+                        id: 214,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Renaissance Pioneers',
+                        topic: 'I can outline the work of Andreas Vesalius & his contribution to England',
+                        description: 'De Humani Corporis Fabrica (1543), human dissections disproving Galen (jawbone, breastbone, heart septum), and influence on English anatomy.',
+                        rating: null
+                    },
+                    {
+                        id: 215,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Renaissance Pioneers',
+                        topic: 'I can examine Ambroise Paré’s achievement & contribution to England',
+                        description: 'Soothing ointment (egg yolk, rose oil, turpentine) replacing boiling oil in 1537, ligatures for amputations, prosthetic limbs, and translation into English (1591).',
+                        rating: null
+                    },
+                    {
+                        id: 216,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Renaissance Pioneers',
+                        topic: 'I can explain the methods of and opposition to William Harvey',
+                        description: 'De Motu Cordis (1628), experimental proof that heart acts as a pump circulating blood one way, valves, and contemporary opposition from Galenists.',
+                        rating: null
+                    },
+                    {
+                        id: 217,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Dealing with Disease',
+                        topic: 'I can describe traditional & new methods of treating disease (17th & 18th C.)',
+                        description: 'Traditional bloodletting and herbalism vs new chemical remedies (quinine/cinchona bark, laudanum, mercury, tobacco), and Thomas Sydenham.',
+                        rating: null
+                    },
+                    {
+                        id: 218,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Dealing with Disease',
+                        topic: 'I can summarise the measures taken against the Great Plague (1665)',
+                        description: 'Lord Mayor’s regulations, quarantine (red crosses, "Lord have mercy upon us"), watchmen, searchers, mass plague pits, and killing of cats and dogs.',
+                        rating: null
+                    },
+                    {
+                        id: 219,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Dealing with Disease',
+                        topic: 'I can describe changes to training and status of surgeons & doctors',
+                        description: 'Separation of surgeons from barbers (Company of Surgeons 1745), scientific hospital training, and growing professional status.',
+                        rating: null
+                    },
+                    {
+                        id: 220,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Dealing with Disease',
+                        topic: 'I can explain the growth of new hospitals & difference from Medieval',
+                        description: '18th-century voluntary hospitals (Guy’s, St Thomas’s), Thomas Coram’s Foundling Hospital, specialist clinics, and focus on medical treatment and doctor training.',
+                        rating: null
+                    },
+                    {
+                        id: 221,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Dealing with Disease',
+                        topic: 'I can evaluate John Hunter’s contribution to medical progress',
+                        description: 'Scientific surgical practice, observation and experimentation, huge anatomical specimen collection, aneurysm surgery, and training Edward Jenner.',
+                        rating: null
+                    },
+                    {
+                        id: 222,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Prevention of Disease',
+                        topic: 'I can describe smallpox and its treatment using inoculation',
+                        description: 'Smallpox epidemic threat, Lady Mary Wortley Montagu bringing inoculation from Turkey, Suttonian method, and dangers/costs of live smallpox inoculation.',
+                        rating: null
+                    },
+                    {
+                        id: 223,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Prevention of Disease',
+                        topic: 'I can explain how Edward Jenner made his discovery & opposition faced',
+                        description: 'Milkmaid cowpox immunity observation, 1796 experiment on James Phipps, Royal Society rejection, opposition from inoculators and religious critics.',
+                        rating: null
+                    },
+                    {
+                        id: 224,
+                        subject: 'health_u2',
+                        unitName: 'Health Part 2: Renaissance (c1500–c1750)',
+                        category: 'Prevention of Disease',
+                        topic: 'I can evaluate the impact of vaccination',
+                        description: 'Government funding for Jenner (£30,000), compulsory 1853 Vaccination Act, worldwide smallpox decline, and eventual WHO eradication (1980).',
+                        rating: null
+                    },
+
+                    // --- PART THREE: A REVOLUTION IN MEDICINE: 19TH-CENTURY BRITAIN ---
+                    {
+                        id: 225,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Surgery & Anaesthetics',
+                        topic: 'I can outline the development of anaesthetics (James Simpson & chloroform)',
+                        description: 'Humphry Davy (nitrous oxide), William Morton/Robert Liston (ether), James Simpson discovering chloroform (1847), and Queen Victoria’s endorsement (1853).',
+                        rating: null
+                    },
+                    {
+                        id: 226,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Surgery & Anaesthetics',
+                        topic: 'I can assess the impact of anaesthetics on surgery',
+                        description: 'Overcoming pain, but causing the "Black Period" of surgery (deeper operations without antiseptics increasing infection and blood loss deaths).',
+                        rating: null
+                    },
+                    {
+                        id: 227,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Germ Theory & Antiseptics',
+                        topic: 'I can summarise Louis Pasteur’s experiment and Germ Theory',
+                        description: 'Swan-neck flask experiments disproving Spontaneous Generation, 1861 publication of Germ Theory linking microbes to decay and disease.',
+                        rating: null
+                    },
+                    {
+                        id: 228,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Germ Theory & Antiseptics',
+                        topic: 'I can describe Joseph Lister’s antiseptic ideas and techniques',
+                        description: 'Applying Pasteur’s ideas to surgery, using carbolic acid spray (1865) on wounds, instruments and dressings, cutting mortality from 46% to 15%.',
+                        rating: null
+                    },
+                    {
+                        id: 229,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Germ Theory & Antiseptics',
+                        topic: 'I can explore why Pasteur’s theory took so long to be accepted in Britain',
+                        description: 'Continued belief in miasma, Dr Henry Bastian’s spontaneous generation backing, surgical resistance to carbolic spray, and lack of visible microscopic proof in blood.',
+                        rating: null
+                    },
+                    {
+                        id: 230,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Further Impact of Germ Theory',
+                        topic: 'I can outline Robert Koch’s methods and discoveries on microbes',
+                        description: 'Staining bacteria with industrial methyl violet dyes, photographing microbes, agar jelly solid cultures, and discovering specific bacteria (anthrax 1876, TB 1882, cholera 1883).',
+                        rating: null
+                    },
+                    {
+                        id: 231,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Further Impact of Germ Theory',
+                        topic: 'I can summarise Pasteur & Koch’s work in the 1880s, and discovery by Paul Ehrlich',
+                        description: 'Pasteur’s vaccines for chicken cholera, anthrax, and rabies; Franco-Prussian scientific rivalry; Paul Ehrlich’s "magic bullets" and Salvarsan 606 (1909) for syphilis.',
+                        rating: null
+                    },
+                    {
+                        id: 232,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Further Impact of Germ Theory',
+                        topic: 'I can explain the factors involved in the search for vaccines (1800–1900)',
+                        description: 'Science and technology (microscopes, dyes), individual genius, government funding, national rivalry, and communication.',
+                        rating: null
+                    },
+                    {
+                        id: 233,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Improvements in Public Health',
+                        topic: 'I can describe public health problems in industrial Britain',
+                        description: 'Rapid urbanisation, back-to-back slums, unpaved streets, cesspools, privies, contaminated water sources, overcrowding, and high infant mortality.',
+                        rating: null
+                    },
+                    {
+                        id: 234,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Improvements in Public Health',
+                        topic: 'I can examine the main cholera epidemics of the nineteenth century',
+                        description: 'Arrival in Britain (1831, 1848, 1853, 1866), terrifying sudden symptoms, dehydration, panic, and widespread miasma explanations.',
+                        rating: null
+                    },
+                    {
+                        id: 235,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Improvements in Public Health',
+                        topic: 'I can explore the role of public health reformers',
+                        description: 'Edwin Chadwick (1842 Report on the Sanitary Condition of the Labouring Population), John Snow (Broad Street pump 1854), and Florence Nightingale (Scutari & pavilion design).',
+                        rating: null
+                    },
+                    {
+                        id: 236,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Improvements in Public Health',
+                        topic: 'I can examine reasons for and consequences of Bazalgette’s sewer system',
+                        description: 'The Great Stink (1858) disrupting Parliament, Joseph Bazalgette designing 1,100 miles of underground sewers, diverting waste downstream, cutting London cholera.',
+                        rating: null
+                    },
+                    {
+                        id: 237,
+                        subject: 'health_u3',
+                        unitName: 'Health Part 3: 19th Century Revolution',
+                        category: 'Improvements in Public Health',
+                        topic: 'I can assess government initiatives (1848 and 1875 Public Health Acts)',
+                        description: 'Permissive 1848 Public Health Act (General Board of Health) vs compulsory 1875 Public Health Act, ending laissez-faire and mandating clean water, sewers, and inspectors.',
+                        rating: null
+                    },
+
+                    // --- PART FOUR: MODERN MEDICINE: MODERN TREATMENT OF DISEASE ---
+                    {
+                        id: 238,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Treatment of Disease',
+                        topic: 'I can summarise the development of the pharmaceutical industry',
+                        description: 'Transition from herbalism to multinational pharmaceutical companies, mass synthetic drug manufacturing, testing trials, and regulatory standards.',
+                        rating: null
+                    },
+                    {
+                        id: 239,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Treatment of Disease',
+                        topic: 'I can outline factors in Alexander Fleming’s discovery & penicillin development',
+                        description: 'Fleming’s accidental discovery (1928, Penicillium notatum), Florey and Chain purifying it at Oxford, Albert Alexander human trial (1941), US wartime mass manufacturing for D-Day.',
+                        rating: null
+                    },
+                    {
+                        id: 240,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Treatment of Disease',
+                        topic: 'I can examine key developments in knowledge, surgery & treatments since 1945',
+                        description: 'DNA double helix (Watson, Crick, Franklin 1953), Human Genome Project, genetic screening, advanced chemotherapy, radiotherapy, and targeted immunotherapy.',
+                        rating: null
+                    },
+                    {
+                        id: 241,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Treatment of Disease',
+                        topic: 'I can define antibiotic resistance',
+                        description: 'Overuse of antibiotics in humans and livestock leading to mutated resistant bacteria ("superbugs" like MRSA), and the urgent search for new treatments.',
+                        rating: null
+                    },
+                    {
+                        id: 242,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Treatment of Disease',
+                        topic: 'I can describe alternative treatments',
+                        description: 'Acupuncture, homeopathy, chiropractic care, herbalism, aromatherapy, and patient choices alongside NHS conventional treatments.',
+                        rating: null
+                    },
+                    {
+                        id: 243,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'War & Technology in Surgery',
+                        topic: 'I can outline the links between the two world wars & medical progress',
+                        description: 'Mass casualties accelerating urgency: WW1 blood banks, sodium citrate storage, Harold Gillies plastic surgery; WW2 burns treatment (Archibald McIndoe Guinea Pig Club) and penicillin.',
+                        rating: null
+                    },
+                    {
+                        id: 244,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'War & Technology in Surgery',
+                        topic: 'I can explore the latest technological breakthroughs since WW1 & WW2',
+                        description: 'Blood transfusions, mobile X-rays, organ transplant surgery (Christian Barnard heart transplant 1967), laser eye surgery, radiation therapy, keyhole/endoscopic and robotic surgery.',
+                        rating: null
+                    },
+                    {
+                        id: 245,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Public Health',
+                        topic: 'I can describe the impact of Booth, Rowntree & Boer War on public health',
+                        description: 'Charles Booth (30% London poverty), Seebohm Rowntree (York study of primary/secondary poverty), Boer War recruit crisis (up to 33% unfit), proving poverty was not self-inflicted.',
+                        rating: null
+                    },
+                    {
+                        id: 246,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Public Health',
+                        topic: 'I can outline the Liberal social reforms of 1906 onwards',
+                        description: 'Free School Meals (1906), School Medical Inspections (1907), Old Age Pensions (1908), Children’s Act (1908), and National Insurance Act (1911) for sick/unemployment pay.',
+                        rating: null
+                    },
+                    {
+                        id: 247,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Public Health',
+                        topic: 'I can examine the impact of the two world wars on public health',
+                        description: 'Evacuation of city children exposing urban squalor, government rationing improving national nutrition, Emergency Medical Service (EMS), and collective shared sacrifice.',
+                        rating: null
+                    },
+                    {
+                        id: 248,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Public Health',
+                        topic: 'I can explore the concept of the welfare state & development of the NHS',
+                        description: 'William Beveridge’s 1942 Report targeting the "Five Giants" (Want, Disease, Ignorance, Squalor, Idleness); Aneurin Bevan overcoming BMA doctor opposition to launch NHS in 1948.',
+                        rating: null
+                    },
+                    {
+                        id: 249,
+                        subject: 'health_u4',
+                        unitName: 'Health Part 4: Modern Medicine',
+                        category: 'Modern Public Health',
+                        topic: 'I can explore the costs, choices and issues relating to healthcare',
+                        description: 'Aging population, introduction of prescription/dental charges (1951), funding high-tech treatments, NICE rationing, bed blocking, lifestyle disease prevention, and public health campaigns.',
+                        rating: null
+                    },
+
+                    // =========================================================================
+                    // SECTION 3: CONFLICT AND TENSION (1945–1972)
+                    // =========================================================================
+                    {
+                        id: 301,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Ideological Contrast',
+                        topic: 'Ideological Conflict: Capitalism vs Communism',
+                        description: 'Contrasting attitudes between the capitalist USA (democracy, free enterprise, civil liberties) and communist USSR (one-party state, state-run economy).',
+                        rating: null
+                    },
+                    {
+                        id: 302,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Pre-1945 Relations',
+                        topic: 'Pre-1945 Mistrust & Wartime Alliance',
+                        description: 'Allied intervention in Russian Civil War, 1920s Red Scare, Stalin’s purges, 1939 Nazi-Soviet Pact, and delays opening a second front in Western Europe.',
+                        rating: null
+                    },
+                    {
+                        id: 303,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Wartime Conferences',
+                        topic: 'Yalta & Potsdam Conferences (1945)',
+                        description: 'Agreements on dividing Germany/Berlin into 4 zones, free elections promise, founding the UN; disagreements over Polish borders and German reparations.',
+                        rating: null
+                    },
+                    {
+                        id: 304,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Nuclear Weapons',
+                        topic: 'Atomic Bomb & Atomic Diplomacy',
+                        description: 'Hiroshima and Nagasaki (August 1945); Truman’s secrecy towards Stalin; onset of Soviet nuclear paranoia accelerating their own bomb development.',
+                        rating: null
+                    },
+                    {
+                        id: 305,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Rivalry Escalation',
+                        topic: 'Iron Curtain Speech & Soviet Satellite States',
+                        description: 'Churchill’s 1946 Fulton Missouri speech; Kennan’s Long Telegram; "salami tactics" establishing communist puppet governments across Eastern Europe.',
+                        rating: null
+                    },
+                    {
+                        id: 306,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'US Policies',
+                        topic: 'Truman Doctrine & Marshall Plan (1947)',
+                        description: 'Containment policy, $400m aid to Greece and Turkey, $13bn Marshall Plan economic recovery aid, and Soviet denunciations of "dollar imperialism".',
+                        rating: null
+                    },
+                    {
+                        id: 307,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Soviet Counter-Policies',
+                        topic: 'Cominform, Comecon & Yugoslav Split',
+                        description: 'Establishment of Cominform (1947) and Comecon (1949); Josip Broz Tito’s refusal to follow Moscow directives leading to Yugoslavia’s expulsion.',
+                        rating: null
+                    },
+                    {
+                        id: 308,
+                        subject: 'conflict_u1',
+                        unitName: 'Conflict U1: Origins (1945–49)',
+                        category: 'Berlin 1948',
+                        topic: 'Berlin Blockade & Airlift (1948–1949)',
+                        description: 'Causes (Trizonia, Deutsche Mark currency); Stalin cutting road/rail links; Operation Vittles flying in 2.3m tons of supplies; permanent division into FRG and GDR.',
+                        rating: null
+                    },
+                    {
+                        id: 309,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Asian Cold War',
+                        topic: 'Communist Revolution in China (1949)',
+                        description: 'Mao Zedong’s CCP defeating Chiang Kai-shek’s Nationalists; NSC-68 US policy review; 1950 Sino-Soviet Treaty of Friendship, Alliance, and Mutual Assistance.',
+                        rating: null
+                    },
+                    {
+                        id: 310,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Asian Cold War',
+                        topic: 'The Korean War (1950–1953)',
+                        description: 'North Korean invasion across 38th parallel; UN/US counter-offensive under MacArthur; Chinese military intervention; armistice signed at Panmunjom.',
+                        rating: null
+                    },
+                    {
+                        id: 311,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Asian Cold War',
+                        topic: 'Vietnam: Dien Bien Phu & Early US Infiltration',
+                        description: 'French defeat at Dien Bien Phu (1954); Geneva Accords dividing Vietnam along 17th parallel; Eisenhower’s Domino Theory and military advisors sent to Diem.',
+                        rating: null
+                    },
+                    {
+                        id: 312,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Alliances',
+                        topic: 'NATO (1949) vs Warsaw Pact (1955)',
+                        description: 'Creation of NATO for collective Western defense; rearmament of West Germany (1955) prompting the Soviet Union to form the Warsaw Pact military alliance.',
+                        rating: null
+                    },
+                    {
+                        id: 313,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Arms & Space Race',
+                        topic: 'Nuclear Arms Race, MAD & Space Race',
+                        description: 'Soviet A-bomb (1949), H-bombs (1952/53), ICBM delivery systems, Mutually Assured Destruction, Sputnik launch (1957), and Gagarin spaceflight (1961).',
+                        rating: null
+                    },
+                    {
+                        id: 314,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Crises & Thaw',
+                        topic: 'Hungarian Uprising (1956)',
+                        description: 'Khrushchev’s Secret Speech destalinisation; student protests; Imre Nagy proposing exit from Warsaw Pact; Soviet Red Army tanks invading Budapest.',
+                        rating: null
+                    },
+                    {
+                        id: 315,
+                        subject: 'conflict_u2',
+                        unitName: 'Conflict U2: Development (1949–60)',
+                        category: 'Crises & Thaw',
+                        topic: 'The 1960 U-2 Spy Plane Incident',
+                        description: 'Gary Powers shot down over Soviet airspace; Eisenhower’s cover-up exposed by Soviet display of wreckage; collapse of Paris Peace Summit.',
+                        rating: null
+                    },
+                    {
+                        id: 316,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict U3: Transformation (1960–72)',
+                        category: 'Berlin Crisis',
+                        topic: 'Construction of the Berlin Wall (1961)',
+                        description: 'Khrushchev’s 6-month ultimatum; East German skilled worker refugee crisis; barbed wire erected overnight (13 August 1961); Checkpoint Charlie standoff.',
+                        rating: null
+                    },
+                    {
+                        id: 317,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict U3: Transformation (1960–72)',
+                        category: 'Cuban Crisis',
+                        topic: 'Cuban Revolution & Bay of Pigs (1959–1961)',
+                        description: 'Fidel Castro overthrowing Batista (1959); nationalisation of US oil and sugar assets; CIA-backed Bay of Pigs exile invasion failure pushing Castro to the USSR.',
+                        rating: null
+                    },
+                    {
+                        id: 318,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict U3: Transformation (1960–72)',
+                        category: 'Cuban Crisis',
+                        topic: 'Cuban Missile Crisis: Thirteen Days (1962)',
+                        description: 'U-2 photos revealing Soviet MRBM launch sites in Cuba; Kennedy’s naval quarantine; DEFCON 2; secret deal withdrawing US Jupiter missiles from Turkey.',
+                        rating: null
+                    },
+                    {
+                        id: 319,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict U3: Transformation (1960–72)',
+                        category: 'Cuban Crisis',
+                        topic: 'Consequences of the Cuban Missile Crisis',
+                        description: 'Installation of Washington-Moscow Hotline (1963); Partial Nuclear Test Ban Treaty (1963); Khrushchev’s subsequent fall from power (1964).',
+                        rating: null
+                    },
+                    {
+                        id: 320,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict U3: Transformation (1960–72)',
+                        category: 'Prague Spring',
+                        topic: 'Prague Spring & Brezhnev Doctrine (1968)',
+                        description: 'Alexander Dubček’s "Socialism with a human face" (free press, trade unions); Warsaw Pact invasion of Czechoslovakia; Brezhnev Doctrine justification.',
+                        rating: null
+                    },
+                    {
+                        id: 321,
+                        subject: 'conflict_u3',
+                        unitName: 'Conflict U3: Transformation (1960–72)',
+                        category: 'Détente',
+                        topic: 'Détente, Triangular Diplomacy & SALT 1 (1972)',
+                        description: 'Reasons for relaxing tensions (Vietnam costs, economic strains, Sino-Soviet border clashes); Nixon visiting Beijing and Moscow; SALT 1 Treaty signing.',
                         rating: null
                     }
                 ],
 
+                // Method to switch the primary subject category
+                setMajorSubject(subject) {
+                    this.majorSubject = subject;
+                    this.subUnitFilter = 'all'; // reset granular unit on major switch
+                },
+
+                resetFilters() {
+                    this.majorSubject = 'all';
+                    this.subUnitFilter = 'all';
+                    this.ratingFilter = 'all';
+                    this.searchQuery = '';
+                },
+
+                getActiveFilterLabel() {
+                    let label = '';
+                    if (this.majorSubject === 'all') label += ' across All Papers';
+                    else if (this.majorSubject === 'germany') label += ' in Germany (1890–1945)';
+                    else if (this.majorSubject === 'health') label += ' in Health & the People';
+                    else if (this.majorSubject === 'conflict') label += ' in Conflict & Tension';
+
+                    if (this.ratingFilter !== 'all') {
+                        label += ` • Filtered: ${this.ratingFilter.toUpperCase()}`;
+                    }
+                    return label;
+                },
+
+                get filteredItems() {
+                    return this.plcItems.filter(item => {
+                        // 1. Major Subject Filter
+                        if (this.majorSubject === 'germany' && !item.subject.startsWith('germany')) return false;
+                        if (this.majorSubject === 'health' && !item.subject.startsWith('health')) return false;
+                        if (this.majorSubject === 'conflict' && !item.subject.startsWith('conflict')) return false;
+
+                        // 2. Sub-unit Filter
+                        if (this.subUnitFilter !== 'all' && item.subject !== this.subUnitFilter) return false;
+
+                        // 3. Rating Filter
+                        if (this.ratingFilter === 'unrated' && item.rating !== null) return false;
+                        if (this.ratingFilter === 'red' && item.rating !== 'red') return false;
+                        if (this.ratingFilter === 'amber' && item.rating !== 'amber') return false;
+                        if (this.ratingFilter === 'green' && item.rating !== 'green') return false;
+
+                        // 4. Keyword Search Query
+                        if (this.searchQuery.trim() !== '') {
+                            const q = this.searchQuery.toLowerCase();
+                            return item.topic.toLowerCase().includes(q) || 
+                                   item.description.toLowerCase().includes(q) || 
+                                   item.category.toLowerCase().includes(q) ||
+                                   item.unitName.toLowerCase().includes(q);
+                        }
+
+                        return true;
+                    });
+                },
+
+                // Filtered-scope KPI counts
+                get ratedCountInFilter() {
+                    return this.filteredItems.filter(i => i.rating !== null).length;
+                },
+                get redCountInFilter() {
+                    return this.filteredItems.filter(i => i.rating === 'red').length;
+                },
+                get amberCountInFilter() {
+                    return this.filteredItems.filter(i => i.rating === 'amber').length;
+                },
+                get greenCountInFilter() {
+                    return this.filteredItems.filter(i => i.rating === 'green').length;
+                },
+
+                // Global KPI counts for action plan & export
                 get ratedCount() {
                     return this.plcItems.filter(i => i.rating !== null).length;
                 },
-
                 get redCount() {
                     return this.plcItems.filter(i => i.rating === 'red').length;
                 },
-
                 get amberCount() {
                     return this.plcItems.filter(i => i.rating === 'amber').length;
                 },
-
                 get greenCount() {
                     return this.plcItems.filter(i => i.rating === 'green').length;
                 },
@@ -1022,11 +1565,9 @@
                 get redItems() {
                     return this.plcItems.filter(i => i.rating === 'red');
                 },
-
                 get amberItems() {
                     return this.plcItems.filter(i => i.rating === 'amber');
                 },
-
                 get greenItems() {
                     return this.plcItems.filter(i => i.rating === 'green');
                 },
@@ -1044,53 +1585,97 @@
                 },
 
                 getSubcategoryBadge(subject) {
-                    if (subject.startsWith('conflict')) {
-                        return 'bg-blue-100 text-blue-900 border border-blue-200';
+                    if (subject.startsWith('germany')) {
+                        return 'bg-rose-100 text-rose-950 border border-rose-300';
+                    } else if (subject.startsWith('health')) {
+                        return 'bg-emerald-100 text-emerald-950 border border-emerald-300';
                     } else {
-                        return 'bg-amber-100 text-amber-900 border border-amber-200';
+                        return 'bg-blue-100 text-blue-950 border border-blue-300';
                     }
                 },
 
-                get filteredItems() {
-                    return this.plcItems.filter(item => {
-                        // Subject filter
-                        if (this.selectedSubject !== 'all') {
-                            if (this.selectedSubject === 'conflict_all' && !item.subject.startsWith('conflict')) return false;
-                            if (this.selectedSubject === 'germany_all' && !item.subject.startsWith('germany')) return false;
-                            if (this.selectedSubject !== 'conflict_all' && this.selectedSubject !== 'germany_all' && item.subject !== this.selectedSubject) return false;
-                        }
-
-                        // Rating filter
-                        if (this.ratingFilter === 'unrated' && item.rating !== null) return false;
-                        if (this.ratingFilter === 'red' && item.rating !== 'red') return false;
-                        if (this.ratingFilter === 'amber' && item.rating !== 'amber') return false;
-                        if (this.ratingFilter === 'green' && item.rating !== 'green') return false;
-
-                        // Search query
-                        if (this.searchQuery.trim() !== '') {
-                            const q = this.searchQuery.toLowerCase();
-                            return item.topic.toLowerCase().includes(q) || 
-                                   item.description.toLowerCase().includes(q) || 
-                                   item.category.toLowerCase().includes(q);
-                        }
-
-                        return true;
-                    });
-                },
-
                 get groupedChecklist() {
-                    const groups = [
-                        { key: 'conflict_u1', title: 'Conflict & Tension — Unit 1: The Origins of the Cold War', themeColor: 'bg-accent-navy' },
-                        { key: 'conflict_u2', title: 'Conflict & Tension — Unit 2: The Development of the Cold War', themeColor: 'bg-accent-navy' },
-                        { key: 'conflict_u3', title: 'Conflict & Tension — Unit 3: The Transformation of the Cold War', themeColor: 'bg-accent-navy' },
-                        { key: 'germany_u1', title: 'Germany 1890–1945 — Unit 1: Growth of Democracy (1890–1929)', themeColor: 'bg-accent-burgundy' },
-                        { key: 'germany_u2', title: 'Germany 1890–1945 — Unit 2: Germany & The Depression', themeColor: 'bg-accent-burgundy' },
-                        { key: 'germany_u3', title: 'Germany 1890–1945 — Unit 3: Germany Under the Nazis', themeColor: 'bg-accent-burgundy' }
+                    const groupDefinitions = [
+                        // Germany Units
+                        { 
+                            key: 'germany_u1', 
+                            title: 'Germany (1890–1945) — Unit 1: The Growth of Democracy (1890–1929)', 
+                            subtitle: 'Kaiser Wilhelm II, WW1 Impact, Weimar Republic & Stresemann Era',
+                            headerBg: 'bg-accent-burgundy',
+                            iconClass: 'fa-solid fa-landmark text-rose-300'
+                        },
+                        { 
+                            key: 'germany_u2', 
+                            title: 'Germany (1890–1945) — Unit 2: Germany & The Depression', 
+                            subtitle: 'Wall Street Crash, Rise of NSDAP & Hitler’s Consolidation of Dictatorship',
+                            headerBg: 'bg-accent-burgundy',
+                            iconClass: 'fa-solid fa-arrow-trend-down text-rose-300'
+                        },
+                        { 
+                            key: 'germany_u3', 
+                            title: 'Germany (1890–1945) — Unit 3: Germany Under The Nazis (1933–1945)', 
+                            subtitle: 'Economic Control, Women, Youth, Police State, Holocaust & Home Front',
+                            headerBg: 'bg-accent-burgundy',
+                            iconClass: 'fa-solid fa-users-viewfinder text-rose-300'
+                        },
+
+                        // Health and the People Units (Oxford AQA Specification Checklist)
+                        { 
+                            key: 'health_u1', 
+                            title: 'Health & The People — Part 1: Medicine Stands Still: Medieval Medicine', 
+                            subtitle: 'Medieval Doctors, Christian Church, Islamic Medicine, Surgery, Town Sanitation & Black Death',
+                            headerBg: 'bg-accent-teal',
+                            iconClass: 'fa-solid fa-book-bible text-teal-200'
+                        },
+                        { 
+                            key: 'health_u2', 
+                            title: 'Health & The People — Part 2: The Beginnings of Change: The Renaissance', 
+                            subtitle: 'Vesalius, Paré, Harvey, 1665 Great Plague, John Hunter, Inoculation & Jenner Vaccination',
+                            headerBg: 'bg-accent-teal',
+                            iconClass: 'fa-solid fa-compass-drafting text-teal-200'
+                        },
+                        { 
+                            key: 'health_u3', 
+                            title: 'Health & The People — Part 3: A Revolution in Medicine (19th-Century Britain)', 
+                            subtitle: 'Simpson Chloroform, Pasteur Germ Theory, Lister Antiseptics, Koch Microbes, Cholera & Bazalgette Sewers',
+                            headerBg: 'bg-accent-teal',
+                            iconClass: 'fa-solid fa-microscope text-teal-200'
+                        },
+                        { 
+                            key: 'health_u4', 
+                            title: 'Health & The People — Part 4: Modern Medicine (c1900 to present day)', 
+                            subtitle: 'Pharmaceuticals, Fleming & Penicillin, Modern Surgery, Booth & Rowntree, Beveridge & 1948 NHS',
+                            headerBg: 'bg-accent-teal',
+                            iconClass: 'fa-solid fa-hospital text-teal-200'
+                        },
+
+                        // Conflict and Tension Units
+                        { 
+                            key: 'conflict_u1', 
+                            title: 'Conflict & Tension (1945–1972) — Unit 1: The Origins of the Cold War', 
+                            subtitle: 'Ideologies, Yalta & Potsdam, Atomic Diplomacy, Truman Doctrine & Berlin Blockade',
+                            headerBg: 'bg-accent-navy',
+                            iconClass: 'fa-solid fa-scale-unbalanced text-blue-200'
+                        },
+                        { 
+                            key: 'conflict_u2', 
+                            title: 'Conflict & Tension (1945–1972) — Unit 2: The Development of the Cold War', 
+                            subtitle: 'Korean War, NATO & Warsaw Pact, Nuclear Arms/Space Race, Hungarian Uprising',
+                            headerBg: 'bg-accent-navy',
+                            iconClass: 'fa-solid fa-rocket text-blue-200'
+                        },
+                        { 
+                            key: 'conflict_u3', 
+                            title: 'Conflict & Tension (1945–1972) — Unit 3: The Transformation of the Cold War', 
+                            subtitle: 'Berlin Wall 1961, Cuban Missile Crisis 1962, Prague Spring 1968 & Détente/SALT 1',
+                            headerBg: 'bg-accent-navy',
+                            iconClass: 'fa-solid fa-handshake text-blue-200'
+                        }
                     ];
 
                     const visibleItems = this.filteredItems;
 
-                    return groups.map(g => ({
+                    return groupDefinitions.map(g => ({
                         ...g,
                         items: visibleItems.filter(item => item.subject === g.key)
                     })).filter(g => g.items.length > 0);
@@ -1103,9 +1688,9 @@
                     const unrated = this.plcItems.filter(i => i.rating === null);
 
                     let docContent = "========================================================\n";
-                    docContent += "       GCSE HISTORY - PERSONALISED REVISION ACTION PLAN\n";
+                    docContent += "     GCSE HISTORY - PERSONALISED REVISION ACTION PLAN\n";
+                    docContent += "  Germany (1890–1945) • Health & People • Conflict & Tension\n";
                     docContent += "========================================================\n\n";
-                    docContent += "REMINDER: Your answers were compiled in active session memory.\n";
                     docContent += `Generated: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}\n`;
                     docContent += `Total Evaluated Topics: ${this.ratedCount} / ${this.plcItems.length}\n`;
                     docContent += `• RED (Urgent Need): ${reds.length}\n`;
@@ -1114,10 +1699,10 @@
 
                     docContent += "--------------------------------------------------------\n";
                     docContent += "1. TOP URGENT REVISION PRIORITIES (RED TOPICS)\n";
-                    docContent += "Strategy: Revise these first! Use exercise books, flashcards, and timed practice.\n";
+                    docContent += "Strategy: Revise these first! Use flashcards, exercise books, and retrieval tasks.\n";
                     docContent += "--------------------------------------------------------\n";
                     if (reds.length === 0) {
-                        docContent += "None! Excellent work.\n";
+                        docContent += "None flagged as Red. Excellent baseline knowledge!\n";
                     } else {
                         reds.forEach((item, index) => {
                             docContent += `${index + 1}. [${item.unitName}] ${item.topic}\n`;
@@ -1127,10 +1712,10 @@
 
                     docContent += "\n--------------------------------------------------------\n";
                     docContent += "2. CONSOLIDATION PRIORITIES (AMBER TOPICS)\n";
-                    docContent += "Strategy: Reinforce dates, specific names, key causation factors and mind maps.\n";
+                    docContent += "Strategy: Reinforce dates, key names, factor comparisons, and causation links.\n";
                     docContent += "--------------------------------------------------------\n";
                     if (ambers.length === 0) {
-                        docContent += "None! Excellent work.\n";
+                        docContent += "No amber topics flagged.\n";
                     } else {
                         ambers.forEach((item, index) => {
                             docContent += `${index + 1}. [${item.unitName}] ${item.topic}\n`;
@@ -1143,7 +1728,7 @@
                     docContent += "Strategy: Maintain through quick weekly quizzes and active brain dumps.\n";
                     docContent += "--------------------------------------------------------\n";
                     if (greens.length === 0) {
-                        docContent += "No green topics yet. Keep going!\n";
+                        docContent += "No green topics yet. Continue working through the checklist!\n";
                     } else {
                         greens.forEach((item, index) => {
                             docContent += `✓ [${item.unitName}] ${item.topic}\n`;
@@ -1152,15 +1737,15 @@
 
                     if (unrated.length > 0) {
                         docContent += `\n--------------------------------------------------------\n`;
-                        docContent += `* Note: You still have ${unrated.length} unrated topic(s) to check.\n`;
+                        docContent += `* Note: You still have ${unrated.length} unrated topic(s) remaining.\n`;
                     }
 
-                    // Download trigger as .txt file (universally openable in Word, Pages, Notepad, Docs)
+                    // Trigger plain text file download
                     const blob = new Blob([docContent], { type: 'text/plain;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = `GCSE_History_Revision_Action_Plan_${new Date().toISOString().slice(0, 10)}.txt`;
+                    link.download = `GCSE_History_Revision_Plan_${new Date().toISOString().slice(0, 10)}.txt`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
