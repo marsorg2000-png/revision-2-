@@ -46,12 +46,19 @@
             background-color: rgba(43, 32, 26, 0.65);
             backdrop-filter: blur(6px);
         }
+        mark {
+            background-color: #E2D6C3;
+            color: #2E6F40;
+            font-weight: 600;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body class="bg-[#F5F2EB] text-[#2B201A] min-h-screen flex flex-col font-sans antialiased selection:bg-[#2E6F40] selection:text-white">
 
     <!-- HEADER / NAVIGATION -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-[#FAF7F2]/90 border-b border-[#D8CEBC]">
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-[#FAF7F2]/90 border-b border-[#D8CEBC]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="index.html" class="flex items-center space-x-3 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2E6F40] to-[#255A33] flex items-center justify-center shadow-md shadow-[#2E6F40]/20 group-hover:scale-105 transition-transform text-white">
@@ -101,6 +108,13 @@
 
             <!-- HEADER ACTIONS -->
             <div class="flex items-center space-x-3">
+                <!-- Search Button (Triggers Global Search Modal) -->
+                <button onclick="openSearchModal()" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#EFE9DF] hover:bg-[#E2D6C3] text-[#5A4532] hover:text-[#2B201A] border border-[#D8CEBC] text-xs font-medium transition-all shadow-sm">
+                    <i class="fa-solid fa-magnifying-glass text-[#2E6F40]"></i>
+                    <span class="hidden md:inline">Search site...</span>
+                    <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] bg-[#FAF7F2] text-[#7A6658] border border-[#D8CEBC] rounded shadow-xs font-mono">⌘K</kbd>
+                </button>
+
                 <button onclick="openCreatePageModal()" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#FAF7F2] hover:bg-[#EFE9DF] text-[#5A4532] hover:text-[#2B201A] border border-[#D8CEBC] text-xs font-semibold transition-all shadow-sm">
                     <i class="fa-solid fa-plus text-[#2E6F40]"></i>
                     <span>Create Page</span>
@@ -125,11 +139,22 @@
                 GCSE History Revision Hub for <span class="bg-gradient-to-r from-[#2E6F40] to-[#B83A2B] bg-clip-text text-transparent">East Leake Academy</span>
             </h1>
 
-            <p class="text-lg sm:text-xl text-[#5C4D44] max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+            <p class="text-lg sm:text-xl text-[#5C4D44] max-w-2xl mx-auto mb-8 leading-relaxed font-normal">
                 Comprehensive, engaging revision notes, syllabus specifications, and structured exam practice designed to elevate your grade.
             </p>
 
-            <!-- ACTION BUTTONS ROW (All original buttons preserved with matching new palette) -->
+            <!-- WEBSITE-WIDE SEARCH BAR INTEGRATION -->
+            <div class="max-w-2xl mx-auto mb-10 relative">
+                <div class="relative flex items-center shadow-lg rounded-2xl bg-[#FAF7F2] border border-[#D8CEBC] focus-within:border-[#2E6F40] focus-within:ring-2 focus-within:ring-[#2E6F40]/20 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-[#7A6658] pl-5 text-lg"></i>
+                    <input type="text" id="heroSearchInput" onfocus="openSearchModal(this.value)" placeholder="Search all topics, units, specifications & exam guidance (e.g. Weimar, PEEL, NHS)..." class="w-full py-4 pl-4 pr-28 text-sm sm:text-base text-[#2B201A] bg-transparent focus:outline-none placeholder-[#7A6658]">
+                    <button onclick="openSearchModal(document.getElementById('heroSearchInput').value)" class="absolute right-2 px-4 py-2 bg-[#2E6F40] hover:bg-[#255A33] text-white rounded-xl text-xs font-semibold transition-all">
+                        Search Site
+                    </button>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS ROW -->
             <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-5xl mx-auto">
                 <!-- Explore Topics -->
                 <a href="#topics" class="px-6 py-3.5 rounded-xl bg-[#2E6F40] hover:bg-[#255A33] text-white font-bold transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#2E6F40]/20 flex items-center justify-center gap-2.5 text-sm sm:text-base">
@@ -305,7 +330,45 @@
         </div>
     </main>
 
-    <!-- CREATE PAGE MODAL (Restyled with parchment / heritage theme) -->
+    <!-- GLOBAL SITE-WIDE SEARCH MODAL -->
+    <div id="searchModal" class="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 p-4 modal-backdrop hidden" aria-modal="true" role="dialog">
+        <div class="bg-[#FAF7F2] border border-[#D8CEBC] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] text-[#2B201A]">
+            
+            <!-- Search Input Header -->
+            <div class="p-4 sm:p-5 border-b border-[#D8CEBC] bg-[#F5F2EB] flex items-center gap-3 relative">
+                <i class="fa-solid fa-magnifying-glass text-[#2E6F40] text-lg"></i>
+                <input type="text" id="modalSearchInput" oninput="performSearch(this.value)" placeholder="Search all pages (e.g., Versailles, Penicillin, PEEL, Hitler)..." class="w-full bg-transparent text-base sm:text-lg text-[#2B201A] focus:outline-none placeholder-[#7A6658]">
+                <button onclick="closeSearchModal()" class="text-[#7A6658] hover:text-[#2B201A] text-sm px-2 py-1 rounded-lg hover:bg-[#E2D6C3] transition-colors">
+                    <span class="hidden sm:inline">Esc</span> <i class="fa-solid fa-xmark text-base sm:hidden"></i>
+                </button>
+            </div>
+
+            <!-- Filter Categories Pill Bar -->
+            <div class="px-4 py-2.5 bg-[#EFE9DF] border-b border-[#D8CEBC] flex items-center gap-2 overflow-x-auto text-xs font-semibold text-[#5A4532]">
+                <span class="text-[#7A6658] text-[11px] uppercase tracking-wider mr-1">Filter:</span>
+                <button onclick="setSearchFilter('all')" id="filter-all" class="filter-btn active px-3 py-1 rounded-full bg-[#2E6F40] text-white shadow-xs">All Pages</button>
+                <button onclick="setSearchFilter('units')" id="filter-units" class="filter-btn px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#D8CEBC] hover:border-[#2E6F40]">Revision Units</button>
+                <button onclick="setSearchFilter('skills')" id="filter-skills" class="filter-btn px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#D8CEBC] hover:border-[#2E6F40]">Exam & Techniques</button>
+                <button onclick="setSearchFilter('custom')" id="filter-custom" class="filter-btn px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#D8CEBC] hover:border-[#2E6F40]">Custom Pages</button>
+            </div>
+
+            <!-- Search Results Content Area -->
+            <div id="searchResultsContainer" class="p-4 sm:p-6 overflow-y-auto space-y-4 flex-grow">
+                <!-- Dynamic Results get rendered here via JS -->
+            </div>
+
+            <!-- Modal Footer Info -->
+            <div class="px-5 py-3 bg-[#F5F2EB] border-t border-[#D8CEBC] text-[11px] text-[#7A6658] flex items-center justify-between">
+                <span id="searchStats">Indexing 8+ site pages and custom user topics</span>
+                <div class="flex items-center gap-3">
+                    <span><kbd class="px-1 bg-[#FAF7F2] border border-[#D8CEBC] rounded">↑</kbd> <kbd class="px-1 bg-[#FAF7F2] border border-[#D8CEBC] rounded">↓</kbd> navigate</span>
+                    <span><kbd class="px-1 bg-[#FAF7F2] border border-[#D8CEBC] rounded">↵</kbd> select</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE PAGE MODAL -->
     <div id="createPageModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden" aria-modal="true" role="dialog">
         <div class="bg-[#FAF7F2] border border-[#D8CEBC] rounded-2xl w-full max-w-lg p-6 sm:p-8 shadow-2xl relative text-[#2B201A]">
             <button onclick="closeCreatePageModal()" class="absolute top-4 right-4 text-[#7A6658] hover:text-[#2B201A] text-lg w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#EFE9DF] transition-colors">
@@ -380,18 +443,217 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC & COMPREHENSIVE MULTI-PAGE SEARCH ENGINE -->
     <script>
-        // Open modal
-        function openCreatePageModal() {
-            const modal = document.getElementById('createPageModal');
-            modal.classList.remove('hidden');
+        // MASTER WEBSITE SEARCH INDEX (Covers all pages on the site)
+        const websiteSearchIndex = [
+            {
+                title: "Germany 1918–1939: Depth Study",
+                url: "germany.html",
+                category: "units",
+                type: "Revision Unit",
+                badgeColor: "bg-[#2E6F40] text-white",
+                desc: "Weimar Republic, hyperinflation, Treaty of Versailles impact, Munich Putsch, Wall Street Crash, rise of Hitler, Gestapo, police state, Hitler Youth, Nazi economy, propaganda.",
+                keywords: ["weimar", "hitler", "nazi", "germany", "hyperinflation", "versailles", "reichstag", "goebbels", "ss", "gestapo", "depression", "1918", "1939", "stresemann"]
+            },
+            {
+                title: "Conflict and Tension (1890–1918 / 1918–1939)",
+                url: "conflict.html",
+                category: "units",
+                type: "Revision Unit",
+                badgeColor: "bg-[#B83A2B] text-white",
+                desc: "Causes of WWI, alliance system, Balkan crisis, Schlieffen Plan, League of Nations, Manchuria, Abyssinia, appeasement, remilitarisation of Rhineland, Nazi-Soviet Pact.",
+                keywords: ["conflict", "tension", "ww1", "ww2", "alliances", "kaiser", "sarajevo", "league of nations", "hitler", "mussolini", "appeasement", "rhineland", "sudetenland", "poland"]
+            },
+            {
+                title: "Britain: Health and the People c1000 to Present",
+                url: "health.html",
+                category: "units",
+                type: "Revision Unit",
+                badgeColor: "bg-[#2E6F40] text-white",
+                desc: "Medieval medicine, Hippocrates, Galen, Black Death, Renaissance surgery, Vesalius, Harvey, Jenner & smallpox, Pasteur, germ theory, Lister, NHS, Beveridge Report, Fleming & penicillin.",
+                keywords: ["health", "medicine", "doctors", "surgery", "black death", "cholera", "broad street", "snow", "pasteur", "koch", "penicillin", "fleming", "bevan", "nhs", "public health"]
+            },
+            {
+                title: "Elizabethan England c1568–1603",
+                url: "elizabeth.html",
+                category: "units",
+                type: "Revision Unit",
+                badgeColor: "bg-[#B83A2B] text-white",
+                desc: "Queen Elizabeth I, court & privy council, Religious Settlement, Mary Queen of Scots, Northern Rebellion, Ridolfi plot, Spanish Armada, Drake, Walter Raleigh, Elizabethan theatre.",
+                keywords: ["elizabeth", "tudors", "armada", "spain", "mary queen of scots", "catholic", "protestant", "puritans", "globe theatre", "poverty", "vagabonds", "raleigh", "drake"]
+            },
+            {
+                title: "How to Revise History - Active Revision Strategies",
+                url: "how-to-revise.html",
+                category: "skills",
+                type: "Study Guide",
+                badgeColor: "bg-[#5A4532] text-white",
+                desc: "Effective revision techniques for GCSE History: active recall, Leitner flashcard system, chronological timeline creation, duel coding, practice exam papers.",
+                keywords: ["revise", "revision", "flashcards", "study", "active recall", "timelines", "leitner", "memory", "exam prep", "mind maps"]
+            },
+            {
+                title: "Syllabus Specifications & Topic Checklists",
+                url: "specifications.html",
+                category: "skills",
+                type: "Specification",
+                badgeColor: "bg-[#5A4532] text-white",
+                desc: "Complete specification checklists for AQA / GCSE History modules. Track your confidence on every single sub-topic before your exam.",
+                keywords: ["specifications", "checklist", "topics", "aqa", "syllabus", "learning objectives", "grade 9", "modules"]
+            },
+            {
+                title: "Exam Technique Guidance & Essay Structuring",
+                url: "exam-technique.html",
+                category: "skills",
+                type: "Exam Technique",
+                badgeColor: "bg-[#B83A2B] text-white",
+                desc: "Master PEEL paragraphs (Point, Evidence, Explanation, Link), primary source evaluation (Utility & Provenance), 8-mark, 12-mark, and 16-mark essay structures.",
+                keywords: ["exam", "peel", "technique", "essay", "source analysis", "utility", "provenance", "how far do you agree", "16 mark", "12 mark", "evaluation"]
+            },
+            {
+                title: "Homepage / Revision Hub Main Dashboard",
+                url: "index.html",
+                category: "units",
+                type: "Hub",
+                badgeColor: "bg-[#2E6F40] text-white",
+                desc: "East Leake Academy History GCSE Central Hub. Quick access to all modules, exam guidance, and page generator.",
+                keywords: ["home", "index", "hub", "east leake", "academy", "units"]
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        // Initialize Custom Pages into Search Index
+        function getCombinedIndex() {
+            const savedPages = JSON.parse(localStorage.getItem('ela_custom_pages') || '[]');
+            const customIndexItems = savedPages.map(page => ({
+                title: page.title,
+                url: page.filename,
+                category: "custom",
+                type: page.category || "Custom Page",
+                badgeColor: "bg-[#2E6F40] text-white",
+                desc: page.desc || "User created custom revision module.",
+                keywords: page.title.toLowerCase().split(' ').concat((page.desc || '').toLowerCase().split(' '))
+            }));
+            return [...websiteSearchIndex, ...customIndexItems];
         }
 
-        // Close modal
+        // Search Modal Controls
+        function openSearchModal(initialQuery = '') {
+            const modal = document.getElementById('searchModal');
+            const input = document.getElementById('modalSearchInput');
+            modal.classList.remove('hidden');
+            if (initialQuery) {
+                input.value = initialQuery;
+            }
+            input.focus();
+            performSearch(input.value);
+        }
+
+        function closeSearchModal() {
+            document.getElementById('searchModal').classList.add('hidden');
+        }
+
+        // Global Keyboard Shortcut (Cmd+K / Ctrl+K & Esc)
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openSearchModal();
+            }
+            if (e.key === 'Escape') {
+                closeSearchModal();
+                closeCreatePageModal();
+            }
+        });
+
+        // Filter Buttons Switcher
+        function setSearchFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-[#2E6F40]', 'text-white');
+                btn.classList.add('bg-[#FAF7F2]', 'text-[#2B201A]');
+            });
+            const activeBtn = document.getElementById(`filter-${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-[#FAF7F2]', 'text-[#2B201A]');
+                activeBtn.classList.add('bg-[#2E6F40]', 'text-white');
+            }
+            performSearch(document.getElementById('modalSearchInput').value);
+        }
+
+        // Perform Search Query
+        function performSearch(query) {
+            const container = document.getElementById('searchResultsContainer');
+            const stats = document.getElementById('searchStats');
+            const fullIndex = getCombinedIndex();
+            const cleanQuery = query.trim().toLowerCase();
+
+            let results = fullIndex.filter(item => {
+                // Category Filter
+                if (currentFilter !== 'all' && item.category !== currentFilter) {
+                    return false;
+                }
+                // Text Query Filter
+                if (!cleanQuery) return true;
+
+                const matchTitle = item.title.toLowerCase().includes(cleanQuery);
+                const matchDesc = item.desc.toLowerCase().includes(cleanQuery);
+                const matchKeywords = item.keywords.some(k => k.includes(cleanQuery));
+
+                return matchTitle || matchDesc || matchKeywords;
+            });
+
+            stats.textContent = `Found ${results.length} result${results.length === 1 ? '' : 's'} across ${fullIndex.length} indexed site resources`;
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fa-solid fa-folder-open text-4xl text-[#7A6658] mb-3"></i>
+                        <h4 class="text-base font-bold text-[#2B201A]">No matching revision pages found</h4>
+                        <p class="text-xs text-[#5C4D44] mt-1 max-w-sm mx-auto">Try searching for keywords like "Weimar", "Armada", "PEEL", or "Penicillin".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = results.map(item => {
+                const highlightedTitle = highlightText(item.title, cleanQuery);
+                const highlightedDesc = highlightText(item.desc, cleanQuery);
+
+                return `
+                    <a href="${item.url}" class="block p-4 rounded-xl bg-[#FAF7F2] hover:bg-[#EFE9DF] border border-[#D8CEBC] hover:border-[#2E6F40] transition-all group">
+                        <div class="flex items-start justify-between gap-3 mb-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${item.badgeColor}">
+                                    ${item.type}
+                                </span>
+                                <h4 class="text-base font-bold text-[#2B201A] group-hover:text-[#2E6F40] transition-colors">${highlightedTitle}</h4>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-xs text-[#7A6658] group-hover:text-[#2E6F40] group-hover:translate-x-1 transition-all"></i>
+                        </div>
+                        <p class="text-xs text-[#5C4D44] leading-relaxed">${highlightedDesc}</p>
+                        <div class="mt-2 text-[11px] text-[#7A6658] font-mono">
+                            <i class="fa-solid fa-link text-[10px] mr-1"></i>${item.url}
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        // Helper to Highlight Matching Terms
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        // Page Creation Modal Controls
+        function openCreatePageModal() {
+            document.getElementById('createPageModal').classList.remove('hidden');
+        }
+
         function closeCreatePageModal() {
-            const modal = document.getElementById('createPageModal');
-            modal.classList.add('hidden');
+            document.getElementById('createPageModal').classList.add('hidden');
         }
 
         // Auto-format file name when title is typed
@@ -428,7 +690,10 @@
             savedPages.push({ title, filename, category, desc, date: new Date().toLocaleDateString() });
             localStorage.setItem('ela_custom_pages', JSON.stringify(savedPages));
 
-            // Generate ready-to-run HTML content styled with East Leake Academy theme
+            // Refresh Dynamic Banners & Search Index
+            renderCustomPagesBanner();
+
+            // Trigger file download
             const starterHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -463,50 +728,34 @@
 </body>
 </html>`;
 
-            // Trigger file download
             const blob = new Blob([starterHtml], { type: 'text/html' });
-            const downloadUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(downloadUrl);
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
 
-            // Close modal & refresh custom pages list
             closeCreatePageModal();
-            renderCustomPages();
-            document.getElementById('createPageForm').reset();
-            delete document.getElementById('newPageFilename').dataset.manualEdit;
         }
 
-        // Render saved pages on page load
-        function renderCustomPages() {
-            const container = document.getElementById('customPagesList');
+        // Render Custom Pages Banner if any exist
+        function renderCustomPagesBanner() {
             const banner = document.getElementById('customPagesBanner');
+            const list = document.getElementById('customPagesList');
             const savedPages = JSON.parse(localStorage.getItem('ela_custom_pages') || '[]');
 
-            if (savedPages.length === 0) {
-                banner.classList.add('hidden');
-                return;
+            if (savedPages.length > 0) {
+                banner.classList.remove('hidden');
+                list.innerHTML = savedPages.map(page => `
+                    <a href="${page.filename}" class="px-2.5 py-1 rounded-lg bg-[#EFE9DF] hover:bg-[#E2D6C3] text-[#2B201A] border border-[#D8CEBC] font-medium inline-flex items-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-text text-[#2E6F40]"></i> ${page.title}
+                    </a>
+                `).join('');
             }
-
-            banner.classList.remove('hidden');
-            container.innerHTML = savedPages.map(page => `
-                <a href="${page.filename}" class="px-2.5 py-1 rounded-md bg-[#EFE9DF] hover:bg-[#E2D6C3] text-[#2E6F40] hover:text-[#255A33] font-semibold border border-[#D8CEBC] transition-colors inline-flex items-center gap-1.5">
-                    <span>${page.title}</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-                </a>
-            `).join('');
         }
 
-        window.addEventListener('DOMContentLoaded', renderCustomPages);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeCreatePageModal();
-            }
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCustomPagesBanner();
         });
     </script>
 </body>
